@@ -3,7 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.microservicesteam</groupId>
   <artifactId>project-adele</artifactId>
+  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
+  <modules>
+    <module>booking</module>
+    <module>payment</module>
+    <module>notification</module>
+    <module>userprofile</module>
+  </modules>
 
   <name>project-adele</name>
 
