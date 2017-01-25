@@ -19,6 +19,7 @@
 		<module>adele-payment</module>
 		<module>adele-notification</module>
 		<module>adele-userprofile</module>
+		<module>adele-seating</module>
 	</modules>
 
 	<name>project-adele</name>
