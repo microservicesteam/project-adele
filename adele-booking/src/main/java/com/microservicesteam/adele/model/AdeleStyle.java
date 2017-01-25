@@ -19,7 +19,8 @@ import org.immutables.value.Value;
     typeImmutable = "Immutable*",
     builder = "builder",
     build = "build",    
-    visibility = PUBLIC)
+    visibility = PUBLIC,
+    overshadowImplementation = true)
 public @interface AdeleStyle {
 
 }
