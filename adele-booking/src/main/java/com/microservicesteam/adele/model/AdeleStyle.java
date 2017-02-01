@@ -10,8 +10,13 @@ import java.lang.annotation.Target;
 
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @Target({PACKAGE, TYPE})
 @Retention(CLASS)
+@JsonSerialize
+@JsonDeserialize
 @Value.Style(
     get = {"*"},
     init = "with*",
