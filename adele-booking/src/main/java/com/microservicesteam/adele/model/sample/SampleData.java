@@ -3,8 +3,7 @@ package com.microservicesteam.adele.model.sample;
 import static com.microservicesteam.adele.model.EventStatus.OPEN;
 
 import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
 import com.microservicesteam.adele.model.Coordinates;
 import com.microservicesteam.adele.model.Event;
@@ -20,10 +19,11 @@ import com.microservicesteam.adele.model.Venue;
 public class SampleData {
 	
 	public static Event event() {
-		return ImmutableEvent.builder().withName("Adele The Finale @ Wembley Stadium")
+		return ImmutableEvent.builder()
+				.withName("Adele The Finale @ Wembley Stadium")
 				.withDescription(
 						"Wembley Stadium connected by EE is delighted to announce we will welcome Adele to the national stadium in the summer of 2017 for the finale of her world tour.")
-				.withDateTime(DateTime.parse("2017-06-29T18:00:00+01:00"))
+				.withDateTime(LocalDateTime.of(2017, 06, 29, 18, 0, 0))
 				.withStatus(OPEN)
 				.withVenue(venue())
 				.build();

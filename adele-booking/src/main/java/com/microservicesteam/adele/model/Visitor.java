@@ -1,7 +1,8 @@
 package com.microservicesteam.adele.model;
 
+import java.time.LocalDate;
+
 import org.immutables.value.Value;
-import org.joda.time.LocalDate;
 
 @Value.Immutable
 public interface Visitor {

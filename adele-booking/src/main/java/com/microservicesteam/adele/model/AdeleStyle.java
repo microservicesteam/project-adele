@@ -8,6 +8,10 @@ import static org.immutables.value.Value.Style.ImplementationVisibility.PUBLIC;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -25,7 +29,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
     builder = "builder",
     build = "build",    
     visibility = PUBLIC,
-    overshadowImplementation = true)
+    overshadowImplementation = true,
+    passAnnotations = {Entity.class, Id.class, GeneratedValue.class})
 public @interface AdeleStyle {
 
 }

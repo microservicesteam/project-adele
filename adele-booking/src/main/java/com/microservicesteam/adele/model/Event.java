@@ -1,18 +1,21 @@
 package com.microservicesteam.adele.model;
 
+import java.time.LocalDateTime;
+
 import org.immutables.value.Value;
-import org.joda.time.DateTime;
 
 @Value.Immutable
 public interface Event {
 
+	Long id();
+	
     String name();
     
     String description();
     
     Venue venue();
     
-    DateTime dateTime();
+    LocalDateTime dateTime();
     
     EventStatus status();
     
