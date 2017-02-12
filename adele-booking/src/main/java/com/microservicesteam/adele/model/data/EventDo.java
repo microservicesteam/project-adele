@@ -52,6 +52,7 @@ public class EventDo extends AbstractDo<Long> {
                 .withId(id)
                 .withName(name)
                 .withDescription(description)
+                .withStatus(status)
                 .withDateTime(dateTime)
                 .withVenue(venue.toImmutable())
                 .build();

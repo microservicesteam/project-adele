@@ -6,19 +6,20 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Venue {
-    
+
     Long id();
 
     String address();
-    
+
     Coordinates coordinates();
-    
+
     List<Sector> sectors();
-    
-    static class Builder extends ImmutableVenue.Builder {}
-    
+
+    class Builder extends ImmutableVenue.Builder {
+    }
+
     static Builder builder() {
         return new Builder();
     }
-    
+
 }

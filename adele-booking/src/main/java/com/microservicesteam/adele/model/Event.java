@@ -18,9 +18,10 @@ public interface Event {
     LocalDateTime dateTime();
 
     EventStatus status();
-    
-    static class Builder extends ImmutableEvent.Builder {}
-    
+
+    class Builder extends ImmutableEvent.Builder {
+    }
+
     static Builder builder() {
         return new Builder();
     }
