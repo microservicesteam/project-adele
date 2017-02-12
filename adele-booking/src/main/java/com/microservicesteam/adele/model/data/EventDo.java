@@ -1,115 +1,63 @@
 package com.microservicesteam.adele.model.data;
 
+import static javax.persistence.CascadeType.PERSIST;
+
 import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import com.microservicesteam.adele.model.Event;
 import com.microservicesteam.adele.model.EventStatus;
-import com.microservicesteam.adele.model.Venue;
 
 @Entity
-public class EventDo implements Event {
-	
-	@Id
-	@GeneratedValue
-	private Long id;
+public class EventDo extends AbstractDo<Long> {
 
-	private String name;
-	
-	private String description;
-	
-	private EventStatus status;
-	
-	private LocalDateTime dateTime;
-	
-	public EventDo() {
-	}
+    public final String name;
 
-	public EventDo(String name, String description, EventStatus status, LocalDateTime dateTime) {
-		super();
-		this.name = name;
-		this.description = description;
-		this.status = status;
-		this.dateTime = dateTime;
-	}
+    public final String description;
 
-	public Long getId() {
-		return id;
-	}
+    public final EventStatus status;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public final LocalDateTime dateTime;
+    
+    @OneToOne(cascade = PERSIST)
+    public final VenueDo venue;
 
-	public String getName() {
-		return name;
-	}
+    private EventDo() {
+        super(null);
+        this.name = null;
+        this.description = null;
+        this.status = null;
+        this.dateTime = null;
+        this.venue = null;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public EventStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(EventStatus status) {
-		this.status = status;
-	}
-
-	@Override
-	public Long id() {
-		return id;
-	}
-
-	@Override
-	public String name() {
-		return name;
-	}
-
-	@Override
-	public String description() {
-		return description;
-	}
-
-	@Override
-	public Venue venue() {
-		return null;
-	}
-
-	@Override
-	public LocalDateTime dateTime() {
-		return dateTime;
-	}
-
-	public LocalDateTime getDateTime() {
-		return dateTime;
-	}
-
-	public void setDateTime(LocalDateTime dateTime) {
-		this.dateTime = dateTime;
-	}
-
-	@Override
-	public EventStatus status() {
-		return status;
-	}
-
-	@Override
-	public String toString() {
-		return "EventDo [id=" + id + ", name=" + name + ", description=" + description + ", status=" + status
-				+ ", dateTime=" + dateTime + "]";
-	}
-
+    private EventDo(Long id, String name, String description, EventStatus status, LocalDateTime dateTime, VenueDo venue) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.dateTime = dateTime;
+        this.venue = venue;
+    }
+    
+    //TODO should be removed later on in favor of #fromImmutable(Event) method
+    public EventDo(String name, String description, EventStatus status, LocalDateTime dateTime, VenueDo venue) {
+        this(null, name, description, status, dateTime, venue);
+    }
+    
+    public Event toImmutable() {
+        return Event.builder()
+                .withId(id)
+                .withName(name)
+                .withDescription(description)
+                .withDateTime(dateTime)
+                .withVenue(venue.toImmutable())
+                .build();
+    }
+    
+    public static EventDo fromImmutable(Event event) {
+        return new EventDo(event.id(), event.name(), event.description(), event.status(), event.dateTime(), VenueDo.fromImmutable(event.venue()));
+    }
 }

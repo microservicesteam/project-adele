@@ -7,16 +7,21 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Event {
 
-	Long id();
-	
+    Long id();
+
     String name();
-    
+
     String description();
-    
+
     Venue venue();
-    
+
     LocalDateTime dateTime();
-    
+
     EventStatus status();
     
+    static class Builder extends ImmutableEvent.Builder {}
+    
+    static Builder builder() {
+        return new Builder();
+    }
 }
