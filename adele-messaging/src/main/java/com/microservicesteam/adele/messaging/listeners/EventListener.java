@@ -22,7 +22,6 @@ abstract class EventListener<E extends Event> {
     @PostConstruct
     public void init() {
         eventBus.register(this);
-        System.out.println("Instance created");
     }
 
     public void addConsumer(Consumer<E> consumer) {
