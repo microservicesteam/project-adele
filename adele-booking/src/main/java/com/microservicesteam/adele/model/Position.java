@@ -6,5 +6,12 @@ import org.immutables.value.Value;
 public interface Position {
 
     Long id();
-    
+
+    static Builder builder() {
+        return new Builder();
+    }
+
+    class Builder extends ImmutablePosition.Builder {
+    }
+
 }
