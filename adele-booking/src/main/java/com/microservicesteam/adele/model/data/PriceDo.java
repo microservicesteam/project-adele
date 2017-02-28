@@ -38,7 +38,7 @@ public class PriceDo extends AbstractDo<Long> {
                 .build();
     }
 
-    public PriceDo fromImmutable(Price price) {
+    public static PriceDo fromImmutable(Price price) {
         return new PriceDo(price.amount(), price.currency());
     }
 }

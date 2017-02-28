@@ -16,7 +16,7 @@ public class PositionDo extends AbstractDo<Long> {
                 .build();
     }
 
-    public PositionDo fromImmutable(Position position) {
+    public static PositionDo fromImmutable(Position position) {
         return new PositionDo(position.id());
     }
 }
