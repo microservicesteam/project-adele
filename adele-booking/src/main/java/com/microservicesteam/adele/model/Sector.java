@@ -4,6 +4,8 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Sector {
+	
+	Long id();
 
     long capacity();
 

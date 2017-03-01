@@ -7,6 +7,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Booking {
 
+    Long id();
+	
     User user();
     
     List<Ticket> tickets();
@@ -16,5 +18,12 @@ public interface Booking {
     String paymentId();
     
     PaymentStatus status();
+    
+    class Builder extends ImmutableBooking.Builder {
+    }
+
+    static Builder builder() {
+        return new Builder();
+    }
     
 }

@@ -42,11 +42,6 @@ public class EventDo extends AbstractDo<Long> {
         this.venue = venue;
     }
     
-    //TODO should be removed later on in favor of #fromImmutable(Event) method
-    public EventDo(String name, String description, EventStatus status, LocalDateTime dateTime, VenueDo venue) {
-        this(null, name, description, status, dateTime, venue);
-    }
-    
     public Event toImmutable() {
         return Event.builder()
                 .withId(id)

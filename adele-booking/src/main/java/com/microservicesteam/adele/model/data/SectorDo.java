@@ -8,40 +8,32 @@ import com.microservicesteam.adele.model.Sector;
 public class SectorDo extends AbstractDo<Long> {
 
     public final long capacity;
-    public final PriceDo price;
-    public final PositionDo position;
 
+    public final PriceDo price;
+    
     public SectorDo() {
         super(null);
         capacity = 0;
         price = null;
-        position = null;
     }
 
-    public SectorDo(Long id) {
-        this(id, 0, null, null);
-    }
-
-    public SectorDo(long l, long capacity, PriceDo price, PositionDo position) {
-        super(l);
+    private SectorDo(long id, long capacity, PriceDo price) {
+        super(id);
         this.capacity = capacity;
         this.price = price;
-        this.position = position;
     }
 
-    Sector toImmutable() {
+    public Sector toImmutable() {
         return Sector.builder()
                 .withCapacity(capacity)
                 .withPrice(price.toImmutable())
-                .withPosition(position.toImmutable())
                 .build();
     }
 
-    SectorDo fromImmutable(Sector sector) {
+    public static SectorDo fromImmutable(Sector sector) {
         return new SectorDo(
-                0,
+                sector.id(),
                 sector.capacity(),
-                PriceDo.fromImmutable(sector.price()),
-                PositionDo.fromImmutable(sector.position()));
+                PriceDo.fromImmutable(sector.price()));
     }
 }

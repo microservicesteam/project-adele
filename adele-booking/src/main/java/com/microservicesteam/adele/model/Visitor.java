@@ -17,5 +17,11 @@ public interface Visitor {
     
     int discountInPercent();
     
+    class Builder extends ImmutableVisitor.Builder {
+    }
+
+    static Builder builder() {
+        return new Builder();
+    }
 
 }

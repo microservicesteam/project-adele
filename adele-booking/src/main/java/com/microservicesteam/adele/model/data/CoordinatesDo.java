@@ -23,21 +23,16 @@ public class CoordinatesDo extends AbstractDo<Long> {
         this.longitude = longitude;
     }
 
-    private CoordinatesDo(double latitude, double longitude) {
-        super(null);
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
     public Coordinates toImmutable() {
         return Coordinates.builder()
+                .withId(id)
                 .withLatitude(latitude)
                 .withLongitude(longitude)
                 .build();
     }
 
     public CoordinatesDo fromImmutable(Coordinates coordinates){
-        return new CoordinatesDo(coordinates.latitude(), coordinates.longitude());
+        return new CoordinatesDo(coordinates.id(), coordinates.latitude(), coordinates.longitude());
     }
 
 

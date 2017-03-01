@@ -6,6 +6,8 @@ import org.immutables.value.Value;
 public interface Position {
 
     Long id();
+    
+    Sector sector();
 
     static Builder builder() {
         return new Builder();
