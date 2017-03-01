@@ -1,7 +1,8 @@
 package com.microservicesteam.adele.messaging.listeners;
 
-import static com.microservicesteam.adele.messaging.events.EventType.BOOKING_CANCELLED;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+
+import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,16 +17,18 @@ import com.microservicesteam.adele.messaging.events.BookingCancelledEvent;
 public class BookingCancelledEventListenerTest {
 
     private EventBus eventBus;
-    private String result = "";
 
     @Mock
     private BookingCancelledEvent BOOKING_CANCELLED_EVENT;
+
+    @Mock
+    private Consumer<BookingCancelledEvent> consumer;
 
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
         EventListener<BookingCancelledEvent> eventListener = new BookingCancelledEventListener(eventBus);
-        eventListener.addConsumer(event -> result = BOOKING_CANCELLED.name());
+        eventListener.addConsumer(consumer);
         eventBus.register(eventListener);
     }
 
@@ -33,6 +36,6 @@ public class BookingCancelledEventListenerTest {
     public void receiveBookingCancelledEvent() throws Exception {
         eventBus.post(BOOKING_CANCELLED_EVENT);
 
-        assertThat(result).isEqualTo(BOOKING_CANCELLED.name());
+        verify(consumer).accept(BOOKING_CANCELLED_EVENT);
     }
 }
