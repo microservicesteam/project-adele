@@ -1,5 +1,6 @@
-Possible configuration of listeners
+**Possible configuration of listeners**
 
+```java
 @Configuration
 public class EventListenerConfig {
 
@@ -17,3 +18,4 @@ public class EventListenerConfig {
         bEventListener.addConsumer(e -> System.out.println(e.eventType() + " 3"));
     }
 }
+```
