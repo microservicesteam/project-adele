@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
+
 @Value.Immutable
 public interface Venue {
 
+    @Nullable
     Long id();
 
     String address();

@@ -2,16 +2,20 @@ package com.microservicesteam.adele.model;
 
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 @Value.Immutable
 public interface Sector {
-	
+
+    @Nullable
 	Long id();
 
     long capacity();
 
     Price price();
 
-    Position position();
+    List<Position> positions();
 
     static Builder builder() {
         return new Builder();

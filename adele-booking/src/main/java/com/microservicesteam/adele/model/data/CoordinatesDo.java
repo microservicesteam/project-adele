@@ -1,38 +1,38 @@
 package com.microservicesteam.adele.model.data;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 
 import com.microservicesteam.adele.model.Coordinates;
 
-@Entity
-public class CoordinatesDo extends AbstractDo<Long> {
+@Embeddable
+public class CoordinatesDo {
 
+    @Column(nullable = false)
     public final double latitude;
 
+    @Column(nullable = false)
     public final double longitude;
 
     private CoordinatesDo() {
-        super(null);
-        this.latitude = 0;
-        this.longitude = 0;
+        this(0.0, 0.0);
     }
 
-    protected CoordinatesDo(Long id, double latitude, double longitude) {
-        super(id);
+    protected CoordinatesDo(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
     public Coordinates toImmutable() {
         return Coordinates.builder()
-                .withId(id)
                 .withLatitude(latitude)
                 .withLongitude(longitude)
                 .build();
     }
 
-    public CoordinatesDo fromImmutable(Coordinates coordinates){
-        return new CoordinatesDo(coordinates.id(), coordinates.latitude(), coordinates.longitude());
+    public static CoordinatesDo fromImmutable(Coordinates coordinates){
+        return new CoordinatesDo(coordinates.latitude(), coordinates.longitude());
     }
 
 

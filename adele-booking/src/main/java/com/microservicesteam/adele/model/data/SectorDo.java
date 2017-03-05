@@ -1,8 +1,13 @@
 package com.microservicesteam.adele.model.data;
 
-import javax.persistence.Entity;
-
 import com.microservicesteam.adele.model.Sector;
+
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 public class SectorDo extends AbstractDo<Long> {
@@ -10,17 +15,19 @@ public class SectorDo extends AbstractDo<Long> {
     public final long capacity;
 
     public final PriceDo price;
-    
+
+    @OneToMany(cascade = PERSIST)
+    public final List<PositionDo> positions;
+
     public SectorDo() {
-        super(null);
-        capacity = 0;
-        price = null;
+        this(null, 0, null, null);
     }
 
-    private SectorDo(long id, long capacity, PriceDo price) {
+    private SectorDo(Long id, long capacity, PriceDo price, List<PositionDo> positions) {
         super(id);
         this.capacity = capacity;
         this.price = price;
+        this.positions = positions;
     }
 
     public Sector toImmutable() {
@@ -34,6 +41,10 @@ public class SectorDo extends AbstractDo<Long> {
         return new SectorDo(
                 sector.id(),
                 sector.capacity(),
-                PriceDo.fromImmutable(sector.price()));
+                PriceDo.fromImmutable(sector.price()),
+                sector.positions().stream()
+                        .map(PositionDo::fromImmutable)
+                        .collect(toList())
+        );
     }
 }

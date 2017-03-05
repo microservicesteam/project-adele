@@ -1,12 +1,14 @@
 package com.microservicesteam.adele.model;
 
-import java.time.LocalDateTime;
-
 import org.immutables.value.Value;
+
+import javax.annotation.Nullable;
+import java.time.LocalDateTime;
 
 @Value.Immutable
 public interface Event {
 
+    @Nullable
     Long id();
 
     String name();
