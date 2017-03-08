@@ -21,6 +21,8 @@
 		<module>adele-userprofile</module>
 		<module>adele-seating</module>
 		<module>adele-messaging</module>
+        <module>adele-ticket-master</module>
+		<module>adele-ticket-master-api</module>
 	</modules>
 
 	<name>project-adele</name>
@@ -39,6 +41,29 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- adele modules -->
+			<dependency>
+				<groupId>com.microservicesteam</groupId>
+				<artifactId>adele-booking</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microservicesteam</groupId>
+				<artifactId>adele-messaging</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microservicesteam</groupId>
+				<artifactId>adele-ticket-master</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.microservicesteam</groupId>
+				<artifactId>adele-ticket-master-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
