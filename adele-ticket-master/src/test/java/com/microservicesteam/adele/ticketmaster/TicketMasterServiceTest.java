@@ -10,8 +10,8 @@ import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.events.TicketsBookedEvent;
-import com.microservicesteam.adele.ticketmaster.events.TicketsCreatedEvent;
+import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
@@ -35,7 +35,7 @@ public class TicketMasterServiceTest {
     }
 
     @Test
-    public void testAddTickets() throws Exception {
+    public void createTicketsCommandResultsInTicketsCreatedEvent() throws Exception {
 
         createTickets(POSITION_1, POSITION_2);
 
@@ -49,13 +49,13 @@ public class TicketMasterServiceTest {
                                 .build()));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
-                .containsExactly(TicketsCreatedEvent.builder()
+                .containsExactly(TicketsCreated.builder()
                         .addPositions(POSITION_1, POSITION_2)
                         .build());
     }
 
     @Test
-    public void testBookTickets() throws Exception {
+    public void bookTicketsCommandResultsInTicketsBookEvent() throws Exception {
         createTickets(POSITION_1, POSITION_2);
         bookTickets(POSITION_1);
 
@@ -71,10 +71,10 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        TicketsCreatedEvent.builder()
+                        TicketsCreated.builder()
                                 .addPositions(POSITION_1, POSITION_2)
                                 .build(),
-                        TicketsBookedEvent.builder()
+                        TicketsBooked.builder()
                                 .bookingId(1L)
                                 .addPositions(POSITION_1)
                                 .build());

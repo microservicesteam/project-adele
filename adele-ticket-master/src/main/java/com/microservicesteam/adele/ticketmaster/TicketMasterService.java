@@ -11,8 +11,8 @@ import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.events.TicketsBookedEvent;
-import com.microservicesteam.adele.ticketmaster.events.TicketsCreatedEvent;
+import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
@@ -31,7 +31,7 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(CreateTickets command) {
         addTickets().accept(command);
-        eventBus.post(TicketsCreatedEvent.builder()
+        eventBus.post(TicketsCreated.builder()
                 .addAllPositions(command.positions())
                 .build());
     }
@@ -39,7 +39,7 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(BookTickets command) {
         bookTickets().accept(command);
-        eventBus.post(TicketsBookedEvent.builder()
+        eventBus.post(TicketsBooked.builder()
                 .bookingId(command.bookingId())
                 .addAllPositions(command.positions())
                 .build());
