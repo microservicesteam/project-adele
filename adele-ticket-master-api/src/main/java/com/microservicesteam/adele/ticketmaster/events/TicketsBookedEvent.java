@@ -4,6 +4,8 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface TicketsBookedEvent extends TicketsEvent {
+    long bookingId();
+
     static Builder builder() {
         return new Builder();
     }

@@ -1,8 +1,5 @@
 package com.microservicesteam.adele.ticketmaster;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -12,16 +9,19 @@ import org.springframework.stereotype.Service;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
+import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
+import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBookedEvent;
-import com.microservicesteam.adele.ticketmaster.events.TicketsClaimedEvent;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreatedEvent;
-import com.microservicesteam.adele.ticketmaster.model.TicketId;
-import com.microservicesteam.adele.ticketmaster.model.TicketStatus;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service
 public class TicketMasterService extends EventBasedService {
 
-    Map<TicketId, TicketStatus> ticketRepository;
+    Map<Position, Ticket> ticketRepository;
 
     TicketMasterService(EventBus eventBus) {
         super(eventBus);
@@ -29,35 +29,37 @@ public class TicketMasterService extends EventBasedService {
     }
 
     @Subscribe
-    public void handleEvent(TicketsCreatedEvent event) {
-        addTickets().accept(event);
-    }
-
-    @Subscribe
-    public void handleEvent(TicketsClaimedEvent event) {
-        bookTickets().accept(event);
-        eventBus.post(TicketsBookedEvent.builder()
-                .sectorId(event.sectorId())
-                .addAllPositions(event.positions())
+    public void handleCommand(CreateTickets command) {
+        addTickets().accept(command);
+        eventBus.post(TicketsCreatedEvent.builder()
+                .addAllPositions(command.positions())
                 .build());
     }
 
-    Consumer<TicketsCreatedEvent> addTickets() {
-        return ticketsAvailableEvent -> ticketsAvailableEvent.positions().forEach(
-                position -> ticketRepository.put(TicketId.builder()
-                        .sector(ticketsAvailableEvent.sectorId())
-                        .position(position)
-                        .build(), FREE));
+    @Subscribe
+    public void handleCommand(BookTickets command) {
+        bookTickets().accept(command);
+        eventBus.post(TicketsBookedEvent.builder()
+                .bookingId(command.bookingId())
+                .addAllPositions(command.positions())
+                .build());
     }
 
-    Consumer<TicketsClaimedEvent> bookTickets() {
-        return ticketsClaimedEvent -> ticketsClaimedEvent.positions().forEach(
-                position -> {
-                    ticketRepository.put(TicketId.builder()
-                            .sector(ticketsClaimedEvent.sectorId())
-                            .position(position)
-                            .build(), BOOKED);
-                });
+    private Consumer<CreateTickets> addTickets() {
+        return command -> command.positions().forEach(
+                position -> ticketRepository.put(position,
+                        FreeTicket.builder()
+                                .position(position)
+                                .build()));
+    }
+
+    private Consumer<BookTickets> bookTickets() {
+        return command -> command.positions().forEach(
+                position -> ticketRepository.put(position,
+                        BookedTicket.builder()
+                                .bookingId(command.bookingId())
+                                .position(position)
+                                .build()));
     }
 
 }

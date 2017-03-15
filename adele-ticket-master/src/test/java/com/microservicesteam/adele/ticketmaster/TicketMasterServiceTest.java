@@ -1,7 +1,5 @@
 package com.microservicesteam.adele.ticketmaster;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -10,12 +8,18 @@ import org.junit.Test;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
+import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
+import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBookedEvent;
-import com.microservicesteam.adele.ticketmaster.events.TicketsClaimedEvent;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreatedEvent;
-import com.microservicesteam.adele.ticketmaster.model.TicketId;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 public class TicketMasterServiceTest {
+
+    private static Position POSITION_1 = Position.builder().sectorId(1).id(1).build();
+    private static Position POSITION_2 = Position.builder().sectorId(1).id(2).build();
 
     private TicketMasterService ticketMasterService;
     private EventBus eventBus;
@@ -33,50 +37,59 @@ public class TicketMasterServiceTest {
     @Test
     public void testAddTickets() throws Exception {
 
-        ticketsCreated();
+        createTickets(POSITION_1, POSITION_2);
 
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(ticketId(1, 1), FREE),
-                        entry(ticketId(1, 3), FREE));
+                .contains(entry(POSITION_1, FreeTicket.builder()
+                                .position(POSITION_1)
+                                .build()),
+                        entry(POSITION_2, FreeTicket.builder()
+                                .position(POSITION_2)
+                                .build()));
+        assertThat(deadEventListener.deadEvents)
+                .extracting("event")
+                .containsExactly(TicketsCreatedEvent.builder()
+                        .addPositions(POSITION_1, POSITION_2)
+                        .build());
     }
 
     @Test
     public void testBookTickets() throws Exception {
-        ticketsCreated();
-        ticketBooked();
+        createTickets(POSITION_1, POSITION_2);
+        bookTickets(POSITION_1);
 
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(ticketId(1, 1), BOOKED),
-                        entry(ticketId(1, 3), FREE));
+                .contains(entry(POSITION_1, BookedTicket.builder()
+                                .bookingId(1L)
+                                .position(POSITION_1)
+                                .build()),
+                        entry(POSITION_2, FreeTicket.builder()
+                                .position(POSITION_2)
+                                .build()));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
-                .containsExactly(TicketsBookedEvent.builder()
-                        .sectorId(1)
-                        .addPositions(1)
-                        .build());
+                .containsExactly(
+                        TicketsCreatedEvent.builder()
+                                .addPositions(POSITION_1, POSITION_2)
+                                .build(),
+                        TicketsBookedEvent.builder()
+                                .bookingId(1L)
+                                .addPositions(POSITION_1)
+                                .build());
     }
 
-    private void ticketBooked() {
-        eventBus.post(TicketsClaimedEvent.builder()
-                .sectorId(1)
-                .addPositions(1)
+    private void bookTickets(Position... positions) {
+        eventBus.post(BookTickets.builder()
+                .bookingId(1L)
+                .addPositions(positions)
                 .build());
     }
 
-    private void ticketsCreated() {
-        eventBus.post(TicketsCreatedEvent.builder()
-                .sectorId(1)
-                .addPositions(1, 3)
+    private void createTickets(Position... positions) {
+        eventBus.post(CreateTickets.builder()
+                .addPositions(positions)
                 .build());
     }
-
-    private TicketId ticketId(int sectorId, int position) {
-        return TicketId.builder()
-                .sector(sectorId)
-                .position(position)
-                .build();
-    }
-
 }

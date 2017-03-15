@@ -3,8 +3,8 @@ package com.microservicesteam.adele.ticketmaster.events;
 import java.util.List;
 
 import com.microservicesteam.adele.messaging.events.Event;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 interface TicketsEvent extends Event {
-    int sectorId();
-    List<Integer> positions();
+    List<Position> positions();
 }
