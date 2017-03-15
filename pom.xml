@@ -16,10 +16,6 @@
 	<modules>
 		<module>adele-application</module>
 		<module>adele-booking</module>
-		<module>adele-payment</module>
-		<module>adele-notification</module>
-		<module>adele-userprofile</module>
-		<module>adele-seating</module>
 		<module>adele-messaging</module>
         <module>adele-ticket-master</module>
 		<module>adele-ticket-master-api</module>
