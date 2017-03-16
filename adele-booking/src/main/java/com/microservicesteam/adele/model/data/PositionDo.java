@@ -21,6 +21,7 @@ public class PositionDo extends AbstractDo<Long> {
     public Position toImmutable() {
         return Position.builder()
                 .withId(id)
+                .withLabel(label)
                 .build();
     }
 

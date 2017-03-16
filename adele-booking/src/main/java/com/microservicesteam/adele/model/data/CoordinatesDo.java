@@ -1,10 +1,9 @@
 package com.microservicesteam.adele.model.data;
 
+import com.microservicesteam.adele.model.Coordinates;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-
-import com.microservicesteam.adele.model.Coordinates;
 
 @Embeddable
 public class CoordinatesDo {

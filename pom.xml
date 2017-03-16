@@ -16,9 +16,7 @@
 	<modules>
 		<module>adele-application</module>
 		<module>adele-booking</module>
-		<module>adele-payment</module>
-		<module>adele-notification</module>
-		<module>adele-userprofile</module>
+		<module>adele-messaging</module>
 	</modules>
 
 	<name>project-adele</name>
@@ -29,7 +27,10 @@
 		<java.version>1.8</java.version>
 		<joda-time.version>2.9.7</joda-time.version>
 		<immutables.version>2.4.0</immutables.version>
-		<google-guava.version>21.0</google-guava.version>
+		<guava.version>21.0</guava.version>
+		<assertj-core.version>3.6.1</assertj-core.version>
+		<mockito-core.version>1.8.1-rc1</mockito-core.version>
+		<junit.version>4.12</junit.version>
 	</properties>
 
 	<dependencyManagement>
@@ -45,7 +46,28 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>${google-guava.version}</version>
+				<version>${guava.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.assertj</groupId>
+				<artifactId>assertj-core</artifactId>
+				<version>${assertj-core.version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito-core.version}</version>
+				<scope>test</scope>
 			</dependency>
 
 		</dependencies>
