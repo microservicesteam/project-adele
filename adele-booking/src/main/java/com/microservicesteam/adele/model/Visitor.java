@@ -1,5 +1,6 @@
 package com.microservicesteam.adele.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import org.immutables.value.Value;
@@ -15,7 +16,7 @@ public interface Visitor {
     
     String address();
     
-    int discountInPercent();
+    BigDecimal discountInPercent();
     
     class Builder extends ImmutableVisitor.Builder {
     }

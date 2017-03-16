@@ -13,7 +13,7 @@ public interface Booking {
     
     List<Ticket> tickets();
     
-    Price price();
+    Price sumPrice();
     
     String paymentId();
     
