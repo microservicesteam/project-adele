@@ -32,6 +32,7 @@ public class TicketMasterService extends EventBasedService {
     public void handleCommand(CreateTickets command) {
         addTickets().accept(command);
         eventBus.post(TicketsCreated.builder()
+                .eventId(command.eventId())
                 .addAllPositions(command.positions())
                 .build());
     }
@@ -40,6 +41,7 @@ public class TicketMasterService extends EventBasedService {
     public void handleCommand(BookTickets command) {
         bookTickets().accept(command);
         eventBus.post(TicketsBooked.builder()
+                .eventId(command.eventId())
                 .bookingId(command.bookingId())
                 .addAllPositions(command.positions())
                 .build());
@@ -49,6 +51,7 @@ public class TicketMasterService extends EventBasedService {
         return command -> command.positions().forEach(
                 position -> ticketRepository.put(position,
                         FreeTicket.builder()
+                                .eventId(command.eventId())
                                 .position(position)
                                 .build()));
     }
@@ -57,6 +60,7 @@ public class TicketMasterService extends EventBasedService {
         return command -> command.positions().forEach(
                 position -> ticketRepository.put(position,
                         BookedTicket.builder()
+                                .eventId(command.eventId())
                                 .bookingId(command.bookingId())
                                 .position(position)
                                 .build()));
