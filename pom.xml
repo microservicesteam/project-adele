@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.3.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.1.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
 
 	<groupId>com.microservicesteam</groupId>
 	<artifactId>project-adele</artifactId>
@@ -35,11 +35,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>joda-time</groupId>
-				<artifactId>joda-time</artifactId>
-				<version>${joda-time.version}</version>
-			</dependency>
 
 			<dependency>
 				<groupId>org.immutables</groupId>
@@ -124,6 +119,7 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>findbugs-filter.xml</excludeFilterFile>
 				</configuration>
 				<executions>
 					<execution>
