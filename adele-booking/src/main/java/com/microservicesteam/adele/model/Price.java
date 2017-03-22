@@ -11,4 +11,10 @@ public interface Price {
     
     String currency();
 
+    static Builder builder() {
+        return new Builder();
+    }
+
+    class Builder extends ImmutablePrice.Builder {
+    }
 }
