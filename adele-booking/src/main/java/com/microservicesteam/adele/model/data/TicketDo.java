@@ -1,13 +1,13 @@
 package com.microservicesteam.adele.model.data;
 
-import static javax.persistence.CascadeType.PERSIST;
+import com.microservicesteam.adele.model.Ticket;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import com.microservicesteam.adele.model.Ticket;
+import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 public class TicketDo extends AbstractDo<Long> {
@@ -16,9 +16,7 @@ public class TicketDo extends AbstractDo<Long> {
     @JoinColumn(name = "event_id", nullable = false)
     public final EventDo event;
 
-    @OneToOne
-    @JoinColumn(name = "position_id", nullable = false)
-    public final PositionDo position;
+    public final Integer position;
 
     public final PriceDo price;
 
@@ -39,7 +37,7 @@ public class TicketDo extends AbstractDo<Long> {
         this.booking = null;
     }
 
-    private TicketDo(Long id, EventDo event, PositionDo position, PriceDo price, VisitorDo visitor) {
+    private TicketDo(Long id, EventDo event, Integer position, PriceDo price, VisitorDo visitor) {
         super(id);
         this.event = event;
         this.position = position;
@@ -51,7 +49,7 @@ public class TicketDo extends AbstractDo<Long> {
     public Ticket toImmutable() {
         return Ticket.builder()
                 .withEvent(event.toImmutable())
-                .withPosition(position.toImmutable())
+                .withPosition(position)
                 .withPrice(price.toImmutable())
                 .withVisitor(visitor.toImmutable())
                 .build();
@@ -60,7 +58,7 @@ public class TicketDo extends AbstractDo<Long> {
     public static TicketDo fromImmutable(Ticket ticket) {
         return new TicketDo(ticket.id(),
                 EventDo.fromImmutable(ticket.event()),
-                PositionDo.fromImmutable(ticket.position()),
+                ticket.position(),
                 PriceDo.fromImmutable(ticket.price()),
                 VisitorDo.fromImmutable(ticket.visitor()));
     }

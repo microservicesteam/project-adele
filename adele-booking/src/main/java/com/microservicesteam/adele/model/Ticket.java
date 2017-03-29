@@ -9,7 +9,7 @@ public interface Ticket {
 	
     Event event();
     
-    Position position();
+    Integer position();
     
     Visitor visitor();
     
