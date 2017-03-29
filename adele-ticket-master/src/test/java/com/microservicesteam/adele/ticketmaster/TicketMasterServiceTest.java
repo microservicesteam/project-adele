@@ -18,7 +18,6 @@ import com.microservicesteam.adele.ticketmaster.model.Position;
 
 public class TicketMasterServiceTest {
 
-    private static final long EVENT_ID = 1L;
     private static final long BOOKING_ID = 1L;
     private static Position POSITION_1 = Position.builder().sectorId(1).id(1).eventId(1).build();
     private static Position POSITION_2 = Position.builder().sectorId(1).id(2).eventId(1).build();
