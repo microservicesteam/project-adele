@@ -38,8 +38,8 @@ public class EventInitializer implements CommandLineRunner {
                                         .withCurrency("HUF")
                                         .withAmount(new BigDecimal("1500"))
                                         .build())
-                                .addPositions(Position.builder().withLabel("Seat1").build())
-                                .addPositions(Position.builder().withLabel("Seat2").build())
+                                .addPositions(1)
+                                .addPositions(2)
                                 .build())
                         .build())
                 .build();

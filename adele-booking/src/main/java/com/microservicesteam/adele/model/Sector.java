@@ -15,7 +15,7 @@ public interface Sector {
 
     Price price();
 
-    List<Position> positions();
+    List<Integer> positions();
 
     static Builder builder() {
         return new Builder();
