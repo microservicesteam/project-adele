@@ -1,13 +1,11 @@
 package com.microservicesteam.adele.model.data;
 
+import com.google.common.collect.ImmutableList;
 import com.microservicesteam.adele.model.Sector;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
-import static javax.persistence.CascadeType.PERSIST;
 
 @Entity
 public class SectorDo extends AbstractDo<Long> {
@@ -16,14 +14,14 @@ public class SectorDo extends AbstractDo<Long> {
 
     public final PriceDo price;
 
-    @OneToMany(cascade = PERSIST)
-    public final List<PositionDo> positions;
+    @ElementCollection
+    public final List<Integer> positions;
 
     public SectorDo() {
         this(null, 0, null, null);
     }
 
-    private SectorDo(Long id, long capacity, PriceDo price, List<PositionDo> positions) {
+    private SectorDo(Long id, long capacity, PriceDo price, List<Integer> positions) {
         super(id);
         this.capacity = capacity;
         this.price = price;
@@ -32,6 +30,7 @@ public class SectorDo extends AbstractDo<Long> {
 
     public Sector toImmutable() {
         return Sector.builder()
+                .withId(id)
                 .withCapacity(capacity)
                 .withPrice(price.toImmutable())
                 .build();
@@ -42,9 +41,7 @@ public class SectorDo extends AbstractDo<Long> {
                 sector.id(),
                 sector.capacity(),
                 PriceDo.fromImmutable(sector.price()),
-                sector.positions().stream()
-                        .map(PositionDo::fromImmutable)
-                        .collect(toList())
+                ImmutableList.copyOf(sector.positions())
         );
     }
 }
