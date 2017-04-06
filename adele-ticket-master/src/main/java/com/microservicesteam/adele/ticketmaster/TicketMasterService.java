@@ -10,8 +10,10 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
+import com.microservicesteam.adele.ticketmaster.commands.CancelTickets;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
@@ -45,6 +47,16 @@ public class TicketMasterService extends EventBasedService {
                 .build());
     }
 
+    @Subscribe
+    public void handleCommand(CancelTickets command) {
+        cancelTickets().accept(command);
+        eventBus.post(TicketsCancelled.builder()
+                .bookingId(command.bookingId())
+                .addAllPositions(command.positions())
+                .build());
+    }
+
+
     private Consumer<CreateTickets> addTickets() {
         return command -> command.positions().forEach(
                 position -> ticketRepository.put(position,
@@ -62,4 +74,15 @@ public class TicketMasterService extends EventBasedService {
                                 .build()));
     }
 
+    private Consumer<CancelTickets> cancelTickets() {
+        return command -> command.positions().forEach(
+                position -> {
+                    if (ticketRepository.containsKey(position)) {
+                        ticketRepository.replace(position,
+                                FreeTicket.builder()
+                                        .position(position)
+                                        .build());
+                    }
+                });
+    }
 }
