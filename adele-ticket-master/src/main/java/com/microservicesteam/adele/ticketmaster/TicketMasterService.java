@@ -2,7 +2,6 @@ package com.microservicesteam.adele.ticketmaster;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
 
@@ -49,7 +48,7 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(BookTickets command) {
         if (allTicketsFree(command)) {
-            bookTickets().accept(command);
+            bookTickets(command);
             eventBus.post(TicketsBooked.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
@@ -64,7 +63,7 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(CancelTickets command) {
         if (allTicketsBooked(command)) {
-            cancelTickets().accept(command);
+            cancelTickets(command);
             eventBus.post(TicketsCancelled.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
@@ -101,8 +100,8 @@ public class TicketMasterService extends EventBasedService {
                                 .build()));
     }
 
-    private Consumer<BookTickets> bookTickets() {
-        return command -> command.positions().forEach(
+    private void bookTickets(BookTickets command) {
+        command.positions().forEach(
                 position -> ticketRepository.put(position,
                         BookedTicket.builder()
                                 .bookingId(command.bookingId())
@@ -110,8 +109,8 @@ public class TicketMasterService extends EventBasedService {
                                 .build()));
     }
 
-    private Consumer<CancelTickets> cancelTickets() {
-        return command -> command.positions().forEach(
+    private void cancelTickets(CancelTickets command) {
+        command.positions().forEach(
                 position -> {
                     if (ticketRepository.containsKey(position)) {
                         ticketRepository.replace(position,
