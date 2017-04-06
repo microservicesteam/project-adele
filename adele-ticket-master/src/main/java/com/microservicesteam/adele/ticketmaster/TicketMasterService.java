@@ -15,6 +15,7 @@ import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
+import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
@@ -32,33 +33,68 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CreateTickets command) {
-        addTickets().accept(command);
-        eventBus.post(TicketsCreated.builder()
-                .addAllPositions(command.positions())
-                .build());
+        if (ticketsNotExist(command)) {
+            addTickets(command);
+            eventBus.post(TicketsCreated.builder()
+                    .addAllPositions(command.positions())
+                    .build());
+        } else {
+            eventBus.post(NoOperation.builder()
+                    .sourceCommand(command)
+                    .build());
+        }
     }
+
 
     @Subscribe
     public void handleCommand(BookTickets command) {
-        bookTickets().accept(command);
-        eventBus.post(TicketsBooked.builder()
-                .bookingId(command.bookingId())
-                .addAllPositions(command.positions())
-                .build());
+        if (allTicketsFree(command)) {
+            bookTickets().accept(command);
+            eventBus.post(TicketsBooked.builder()
+                    .bookingId(command.bookingId())
+                    .addAllPositions(command.positions())
+                    .build());
+        } else {
+            eventBus.post(NoOperation.builder()
+                    .sourceCommand(command)
+                    .build());
+        }
     }
 
     @Subscribe
     public void handleCommand(CancelTickets command) {
-        cancelTickets().accept(command);
-        eventBus.post(TicketsCancelled.builder()
-                .bookingId(command.bookingId())
-                .addAllPositions(command.positions())
-                .build());
+        if (allTicketsBooked(command)) {
+            cancelTickets().accept(command);
+            eventBus.post(TicketsCancelled.builder()
+                    .bookingId(command.bookingId())
+                    .addAllPositions(command.positions())
+                    .build());
+        } else {
+            eventBus.post(NoOperation.builder()
+                    .sourceCommand(command)
+                    .build());
+        }
     }
 
+    private boolean ticketsNotExist(CreateTickets command) {
+        return command.positions().stream()
+                .noneMatch(position -> ticketRepository.containsKey(position));
+    }
 
-    private Consumer<CreateTickets> addTickets() {
-        return command -> command.positions().forEach(
+    private boolean allTicketsFree(BookTickets command) {
+        return command.positions().stream().allMatch(
+                position -> ticketRepository.containsKey(position) &&
+                        ticketRepository.get(position) instanceof FreeTicket);
+    }
+
+    private boolean allTicketsBooked(CancelTickets command) {
+        return command.positions().stream().allMatch(
+                position -> ticketRepository.containsKey(position) &&
+                        ticketRepository.get(position) instanceof BookedTicket);
+    }
+
+    private void addTickets(CreateTickets command) {
+        command.positions().forEach(
                 position -> ticketRepository.put(position,
                         FreeTicket.builder()
                                 .position(position)
