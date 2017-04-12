@@ -1,6 +1,7 @@
 package com.microservicesteam.adele.ticketmaster;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CreateTickets command) {
-        if (ticketsNotExist(command)) {
+        if (positionsNotExist(command.positions())) {
             addTickets(command);
             eventBus.post(TicketsCreated.builder()
                     .addAllPositions(command.positions())
@@ -47,7 +48,7 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(BookTickets command) {
-        if (allTicketsFree(command)) {
+        if (positionsFree(command.positions())) {
             bookTickets(command);
             eventBus.post(TicketsBooked.builder()
                     .bookingId(command.bookingId())
@@ -62,7 +63,7 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CancelTickets command) {
-        if (allTicketsBooked(command)) {
+        if (positionsBooked(command.positions())) {
             cancelTickets(command);
             eventBus.post(TicketsCancelled.builder()
                     .bookingId(command.bookingId())
@@ -75,19 +76,19 @@ public class TicketMasterService extends EventBasedService {
         }
     }
 
-    private boolean ticketsNotExist(CreateTickets command) {
-        return command.positions().stream()
+    private boolean positionsNotExist(List<Position> positions) {
+        return positions.stream()
                 .noneMatch(position -> ticketRepository.containsKey(position));
     }
 
-    private boolean allTicketsFree(BookTickets command) {
-        return command.positions().stream().allMatch(
+    private boolean positionsFree(List<Position> positions) {
+        return positions.stream().allMatch(
                 position -> ticketRepository.containsKey(position) &&
                         ticketRepository.get(position) instanceof FreeTicket);
     }
 
-    private boolean allTicketsBooked(CancelTickets command) {
-        return command.positions().stream().allMatch(
+    private boolean positionsBooked(List<Position> positions) {
+        return positions.stream().allMatch(
                 position -> ticketRepository.containsKey(position) &&
                         ticketRepository.get(position) instanceof BookedTicket);
     }
