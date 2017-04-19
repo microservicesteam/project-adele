@@ -7,7 +7,7 @@ public interface Ticket {
 
     Long id();
 	
-    Event event();
+    Long eventId();
     
     Integer position();
     

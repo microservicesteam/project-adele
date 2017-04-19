@@ -13,9 +13,7 @@ import static javax.persistence.CascadeType.PERSIST;
 @Entity
 public class TicketDo extends AbstractDo<Long> {
 
-    @ManyToOne(cascade = PERSIST)
-    @JoinColumn(name = "event_id", nullable = false)
-    public final EventDo event;
+    public final Long eventId;
 
     public final Integer position;
 
@@ -31,16 +29,16 @@ public class TicketDo extends AbstractDo<Long> {
 
     private TicketDo() {
         super(null);
-        this.event = null;
+        this.eventId = null;
         this.position = null;
         this.price = null;
         this.visitor = null;
         this.booking = null;
     }
 
-    private TicketDo(Long id, EventDo event, Integer position, PriceDo price, VisitorDo visitor) {
+    private TicketDo(Long id, Long eventId, Integer position, PriceDo price, VisitorDo visitor) {
         super(id);
-        this.event = event;
+        this.eventId = eventId;
         this.position = position;
         this.price = price;
         this.visitor = visitor;
@@ -49,7 +47,7 @@ public class TicketDo extends AbstractDo<Long> {
 
     public Ticket toImmutable() {
         return Ticket.builder()
-                .withEvent(event.toImmutable())
+                .withEventId(eventId)
                 .withPosition(position)
                 .withPrice(price.toImmutable())
                 .withVisitor(visitor.toImmutable())
@@ -58,7 +56,7 @@ public class TicketDo extends AbstractDo<Long> {
 
     public static TicketDo fromImmutable(Ticket ticket) {
         return new TicketDo(ticket.id(),
-                EventDo.fromImmutable(ticket.event()),
+                ticket.eventId(),
                 ticket.position(),
                 PriceDo.fromImmutable(ticket.price()),
                 VisitorDo.fromImmutable(ticket.visitor()));

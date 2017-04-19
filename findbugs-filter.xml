@@ -2,7 +2,7 @@
 <FindBugsFilter>
     <Match>
         <Class name="~com.microservicesteam.adele.booking.domain.Immutable.*" />
-        <!--<Class name="~com.microservices.adele.event.domain.Immutable.*" />-->
+        <!--<Class namcom.microservicesteam.adeventIdvent.domain.domainmain.Immutable.*" />-->
     </Match>
 </FindBugsFilter>
 
