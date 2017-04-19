@@ -16,6 +16,7 @@
     <modules>
         <module>adele-application</module>
         <module>adele-booking</module>
+        <module>adele-event</module>
         <module>adele-messaging</module>
         <module>adele-ticket-master</module>
         <module>adele-ticket-master-api</module>
