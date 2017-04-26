@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.event.domain.domain.data;
+package com.microservicesteam.adele.event.domain.data;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

@@ -1,7 +1,7 @@
-package com.microservicesteam.adele.event.domain.domain.data;
+package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.domain.Event;
-import com.microservicesteam.adele.event.domain.domain.EventStatus;
+import com.microservicesteam.adele.event.domain.Event;
+import com.microservicesteam.adele.event.domain.EventStatus;
 
 import static javax.persistence.CascadeType.PERSIST;
 

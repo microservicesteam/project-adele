@@ -1,6 +1,6 @@
-package com.microservicesteam.adele.event.domain.domain.data;
+package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.domain.Venue;
+import com.microservicesteam.adele.event.domain.Venue;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
