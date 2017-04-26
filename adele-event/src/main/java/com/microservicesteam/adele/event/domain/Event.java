@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.event.domain.domain;
+package com.microservicesteam.adele.event.domain;
 
 import org.immutables.value.Value;
 

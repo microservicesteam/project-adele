@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.event.domain.domain;
+package com.microservicesteam.adele.event.domain;
 
 import static java.lang.annotation.ElementType.PACKAGE;
 import static java.lang.annotation.ElementType.TYPE;

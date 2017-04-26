@@ -1,17 +1,18 @@
-package com.microservicesteam.adele.event.domain;
+package com.microservicesteam.adele.event;
 
-import com.microservicesteam.adele.event.domain.boundary.web.EventRepository;
-import com.microservicesteam.adele.event.domain.domain.*;
-import com.microservicesteam.adele.event.domain.domain.data.EventDo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import static com.microservicesteam.adele.event.domain.EventStatus.CLOSED;
+import static com.microservicesteam.adele.event.domain.EventStatus.OPEN;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import static com.microservicesteam.adele.event.domain.domain.EventStatus.CLOSED;
-import static com.microservicesteam.adele.event.domain.domain.EventStatus.OPEN;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.microservicesteam.adele.event.boundary.web.EventRepository;
+import com.microservicesteam.adele.event.domain.*;
+import com.microservicesteam.adele.event.domain.data.EventDo;
 
 @Component
 public class EventInitializer implements CommandLineRunner {

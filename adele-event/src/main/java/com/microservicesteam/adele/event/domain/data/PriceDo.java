@@ -1,6 +1,6 @@
-package com.microservicesteam.adele.event.domain.domain.data;
+package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.domain.Price;
+import com.microservicesteam.adele.event.domain.Price;
 
 import java.math.BigDecimal;
 

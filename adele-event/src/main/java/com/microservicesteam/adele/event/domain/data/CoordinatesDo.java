@@ -1,7 +1,7 @@
-package com.microservicesteam.adele.event.domain.domain.data;
+package com.microservicesteam.adele.event.domain.data;
 
 
-import com.microservicesteam.adele.event.domain.domain.Coordinates;
+import com.microservicesteam.adele.event.domain.Coordinates;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
