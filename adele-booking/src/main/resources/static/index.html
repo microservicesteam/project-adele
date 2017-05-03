@@ -3,11 +3,37 @@
 <head>
     <title>Hello WebSocket</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/main.css" rel="stylesheet">
+    <!--link href="/main.css" rel="stylesheet"-->
     <script src="/webjars/jquery/jquery.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <script src="/app.js"></script>
 </head>
 <body>
+<h1>Websocket Test page</h1>
+<div>
+    <div>
+        <span>Event source controls: </span>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+    </div>
+    <div>
+        <span>Websocket client controls: </span>
+        <button id="connect">Connect</button>
+        <button id="disconnect">Disconnect</button>
+    </div>
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>BookingId</th>
+                    <th>EventId</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody id="conversation"></tbody>
+        </table>
+    </div>
+</div>
 </body>
+</html>
