@@ -24,10 +24,12 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 @Service
 public class TicketMasterService extends EventBasedService {
 
+    private final BookingIdGenerator bookingIdGenerator;
     Map<Position, Ticket> ticketRepository;
 
-    TicketMasterService(EventBus eventBus) {
+    TicketMasterService(EventBus eventBus, BookingIdGenerator bookingIdGenerator) {
         super(eventBus);
+        this.bookingIdGenerator = bookingIdGenerator;
         ticketRepository = new HashMap<>();
     }
 
@@ -49,9 +51,11 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(BookTickets command) {
         if (positionsFree(command.positions())) {
-            bookTickets(command);
+
+            String bookingId = bookingIdGenerator.generateBookingId();
+            bookTickets(bookingId, command);
             eventBus.post(TicketsBooked.builder()
-                    .bookingId(command.bookingId())
+                    .bookingId(bookingId)
                     .addAllPositions(command.positions())
                     .build());
         } else {
@@ -101,11 +105,11 @@ public class TicketMasterService extends EventBasedService {
                                 .build()));
     }
 
-    private void bookTickets(BookTickets command) {
+    private void bookTickets(String bookingId, BookTickets command) {
         command.positions().forEach(
                 position -> ticketRepository.put(position,
                         BookedTicket.builder()
-                                .bookingId(command.bookingId())
+                                .bookingId(bookingId)
                                 .position(position)
                                 .build()));
     }

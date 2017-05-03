@@ -2,9 +2,13 @@ package com.microservicesteam.adele.ticketmaster;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
@@ -19,9 +23,10 @@ import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TicketMasterServiceTest {
 
-    private static final long BOOKING_ID = 1L;
+    private static final String BOOKING_ID = "abc-123";
     private static final Position POSITION_1 = Position.builder().sectorId(1).id(1).eventId(1).build();
     private static final Position POSITION_2 = Position.builder().sectorId(1).id(2).eventId(1).build();
 
@@ -29,13 +34,18 @@ public class TicketMasterServiceTest {
     private EventBus eventBus;
     private DeadEventListener deadEventListener;
 
+    @Mock
+    private BookingIdGenerator bookingIdGenerator;
+
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
-        ticketMasterService = new TicketMasterService(eventBus);
+        ticketMasterService = new TicketMasterService(eventBus, bookingIdGenerator);
         ticketMasterService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
+
+        when(bookingIdGenerator.generateBookingId()).thenReturn(BOOKING_ID);
     }
 
     @Test
@@ -201,7 +211,6 @@ public class TicketMasterServiceTest {
 
     private BookTickets bookTickets(Position... positions) {
         BookTickets bookTicketsCommand = BookTickets.builder()
-                .bookingId(BOOKING_ID)
                 .addPositions(positions)
                 .build();
         eventBus.post(bookTicketsCommand);
