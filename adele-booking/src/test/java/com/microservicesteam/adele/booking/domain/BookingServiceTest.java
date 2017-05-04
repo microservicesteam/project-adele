@@ -14,9 +14,7 @@ import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
-import com.microservicesteam.adele.ticketmaster.events.ImmutableTicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
-import com.microservicesteam.adele.ticketmaster.model.ImmutablePosition;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -24,12 +22,12 @@ public class BookingServiceTest {
 
     private static final long EVENT_ID = 1L;
     private static final int SECTOR_ID = 1;
-    public static final ImmutablePosition POSITION_2 = Position.builder()
+    public static final Position POSITION_2 = Position.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .id(2)
             .build();
-    public static final ImmutablePosition POSITION_1 = Position.builder()
+    public static final Position POSITION_1 = Position.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .id(1)
