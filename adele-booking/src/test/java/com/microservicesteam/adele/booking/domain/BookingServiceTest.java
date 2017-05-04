@@ -1,6 +1,7 @@
 package com.microservicesteam.adele.booking.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,7 @@ import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,14 +76,24 @@ public class BookingServiceTest {
     }
 
     @Test
-    public void onTicketsBookedEventIsPublished() throws Exception {
+    public void onTicketsBookedMapIsUpdatedAndEventIsPublished() throws Exception {
         TicketsBooked ticketsBooked = TicketsBooked.builder()
                 .bookingId(BOOKING_ID)
-                .addPositions(POSITION_1)
+                .addPositions(POSITION_1, POSITION_2)
                 .build();
 
         eventBus.post(ticketsBooked);
 
+        assertThat(bookingService.ticketRepository)
+                .containsExactly(
+                        entry(POSITION_1, BookedTicket.builder()
+                                .position(POSITION_1)
+                                .bookingId(BOOKING_ID)
+                                .build()),
+                        entry(POSITION_2, BookedTicket.builder()
+                                .position(POSITION_2)
+                                .bookingId(BOOKING_ID)
+                                .build()));
         verify(eventPublisher).publish(ticketsBooked);
     }
 }
