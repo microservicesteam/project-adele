@@ -6,7 +6,7 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface BookedTicket extends Ticket {
-    long bookingId();
+    String bookingId();
 
     @Override
     default TicketStatus status() {
