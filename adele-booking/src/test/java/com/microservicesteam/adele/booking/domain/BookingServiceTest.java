@@ -22,12 +22,12 @@ public class BookingServiceTest {
 
     private static final long EVENT_ID = 1L;
     private static final int SECTOR_ID = 1;
-    public static final Position POSITION_2 = Position.builder()
+    private static final Position POSITION_2 = Position.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .id(2)
             .build();
-    public static final Position POSITION_1 = Position.builder()
+    private static final Position POSITION_1 = Position.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .id(1)
