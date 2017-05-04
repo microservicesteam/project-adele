@@ -77,11 +77,11 @@ public class BookingServiceTest {
 
     @Test
     public void onTicketsBookedEventIsPublished() throws Exception {
-        ImmutableTicketsBooked ticketsBooked = TicketsBooked.builder()
-
+        TicketsBooked ticketsBooked = TicketsBooked.builder()
                 .bookingId(BOOKING_ID)
                 .addPositions(POSITION_1)
                 .build();
+
         eventBus.post(ticketsBooked);
 
         verify(eventPublisher).publish(ticketsBooked);
