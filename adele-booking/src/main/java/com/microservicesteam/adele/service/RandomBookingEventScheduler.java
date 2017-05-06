@@ -49,11 +49,11 @@ public class RandomBookingEventScheduler {
     private Event randomEvent() {
         Position position = Position.builder()
                 .id(new Random().nextInt(100))
+                .eventId(1)
                 .sectorId(1)
                 .build();
 
         return TicketsBooked.builder()
-                .eventId(1L)
                 .bookingId(counter.getAndIncrement())
                 .addPositions(position)
                 .build();

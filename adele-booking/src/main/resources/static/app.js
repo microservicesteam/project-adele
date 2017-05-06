@@ -32,7 +32,7 @@ function disconnect() {
 }
 
 function showEvent(event) {
-    $("#conversation").append("<tr><td>" + event.bookingId + "</td><td>" + event.eventId + "</td><td>" + event.positions[0].id + "</td></tr>");
+    $("#conversation").append("<tr><td>" + event.bookingId + "</td><td>" + event.positions[0].eventId + "</td><td>" + event.positions[0].sectorId + "/" + event.positions[0].id + "</td></tr>");
 }
 
 $(function () {
