@@ -11,12 +11,12 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ticketEvents");
+        registry.addEndpoint("/ws");
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry messageBrokerRegistry) {
-        messageBrokerRegistry.setApplicationDestinationPrefixes("/ws");
+        messageBrokerRegistry.setApplicationDestinationPrefixes("/app");
         messageBrokerRegistry.enableSimpleBroker("/topic");
     }
 }

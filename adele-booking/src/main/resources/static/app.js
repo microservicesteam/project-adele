@@ -12,7 +12,7 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new WebSocket("ws://localhost:8080/ticketEvents");
+    var socket = new WebSocket("ws://localhost:8080/ws");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);

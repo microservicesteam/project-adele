@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+/*!!! For testing purposes only !!!*/
+
 @RestController
 @RequestMapping("/rs/api")
 public class PublisherController {

@@ -1,5 +1,6 @@
 package com.microservicesteam.adele.service;
 
+import com.microservicesteam.adele.boundary.web.BookingPublisher;
 import com.microservicesteam.adele.messaging.events.Event;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.model.Position;

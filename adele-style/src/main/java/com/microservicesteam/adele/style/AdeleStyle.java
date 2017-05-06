@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.ticketmaster;
+package com.microservicesteam.adele.style;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -28,5 +28,4 @@ import static java.lang.annotation.RetentionPolicy.CLASS;
     overshadowImplementation = true,
     builderVisibility = BuilderVisibility.PUBLIC)
 public @interface AdeleStyle {
-
 }
