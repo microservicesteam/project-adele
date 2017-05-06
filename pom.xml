@@ -20,6 +20,7 @@
         <module>adele-messaging</module>
         <module>adele-ticket-master</module>
         <module>adele-ticket-master-api</module>
+        <module>adele-style</module>
     </modules>
 
     <name>project-adele</name>
@@ -57,6 +58,11 @@
             <dependency>
                 <groupId>com.microservicesteam</groupId>
                 <artifactId>adele-ticket-master-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microservicesteam</groupId>
+                <artifactId>adele-style</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

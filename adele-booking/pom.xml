@@ -12,6 +12,12 @@
 	<artifactId>adele-booking</artifactId>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.microservicesteam</groupId>
+			<artifactId>adele-ticket-master-api</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.microservicesteam</groupId>
 			<artifactId>adele-messaging</artifactId>
@@ -20,6 +26,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		
 		<dependency>
@@ -62,5 +73,33 @@
 			<artifactId>jsr305</artifactId>
 			<version>1.3.9</version>
 		</dependency>
+
+
+		<!-- Demonstration purposes only, to be removed later! -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>sockjs-client</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>stomp-websocket</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>3.3.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
 	</dependencies>
 </project>
