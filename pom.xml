@@ -16,6 +16,7 @@
     <modules>
         <module>adele-application</module>
         <module>adele-booking</module>
+        <module>adele-event</module>
         <module>adele-messaging</module>
         <module>adele-ticket-master</module>
         <module>adele-ticket-master-api</module>
@@ -140,6 +141,7 @@
 					</execution>
 				</executions>
 			</plugin>
+            <!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -158,6 +160,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 </project>

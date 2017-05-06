@@ -4,6 +4,7 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Position {
+    long eventId();
     int sectorId();
     int id();
 
