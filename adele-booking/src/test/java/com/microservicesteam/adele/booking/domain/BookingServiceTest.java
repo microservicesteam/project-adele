@@ -86,14 +86,14 @@ public class BookingServiceTest {
 
         eventBus.post(ticketsCreated);
 
-        assertThat(bookingService.ticketRepository)
+        assertThat(bookingService.getTicketsStatus())
                 .containsExactly(
-                        entry(POSITION_1, FreeTicket.builder()
+                        FreeTicket.builder()
                                 .position(POSITION_1)
-                                .build()),
-                        entry(POSITION_2, FreeTicket.builder()
+                                .build(),
+                        FreeTicket.builder()
                                 .position(POSITION_2)
-                                .build()));
+                                .build());
         verify(eventPublisher).publish(ticketsCreated);
     }
 
@@ -106,16 +106,16 @@ public class BookingServiceTest {
 
         eventBus.post(ticketsBooked);
 
-        assertThat(bookingService.ticketRepository)
+        assertThat(bookingService.getTicketsStatus())
                 .containsExactly(
-                        entry(POSITION_1, BookedTicket.builder()
+                        BookedTicket.builder()
                                 .position(POSITION_1)
                                 .bookingId(BOOKING_ID)
-                                .build()),
-                        entry(POSITION_2, BookedTicket.builder()
+                                .build(),
+                        BookedTicket.builder()
                                 .position(POSITION_2)
                                 .bookingId(BOOKING_ID)
-                                .build()));
+                                .build());
         verify(eventPublisher).publish(ticketsBooked);
     }
 
@@ -128,14 +128,14 @@ public class BookingServiceTest {
 
         eventBus.post(ticketsCancelled);
 
-        assertThat(bookingService.ticketRepository)
+        assertThat(bookingService.getTicketsStatus())
                 .containsExactly(
-                        entry(POSITION_1, FreeTicket.builder()
+                        FreeTicket.builder()
                                 .position(POSITION_1)
-                                .build()),
-                        entry(POSITION_2, FreeTicket.builder()
+                                .build(),
+                        FreeTicket.builder()
                                 .position(POSITION_2)
-                                .build()));
+                                .build());
         verify(eventPublisher).publish(ticketsCancelled);
     }
 

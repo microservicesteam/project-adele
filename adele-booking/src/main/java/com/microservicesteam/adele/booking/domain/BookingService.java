@@ -26,7 +26,7 @@ public class BookingService extends EventBasedService {
 
     private final BookingIdGenerator bookingIdGenerator;
     private final EventPublisher eventPublisher;
-    Map<Position, Ticket> ticketRepository;
+    private final Map<Position, Ticket> ticketRepository;
 
 
     BookingService(EventBus eventBus, BookingIdGenerator bookingIdGenerator, EventPublisher eventPublisher) {
