@@ -1,9 +1,10 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toList;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -36,14 +37,14 @@ public class BookingService extends EventBasedService {
         ticketRepository = new HashMap<>();
     }
 
-    public List<Ticket> getTicketsStatus() {
+    public ImmutableList<Ticket> getTicketsStatus() {
         return ImmutableList.copyOf(ticketRepository.values());
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
         String bookingId = bookingIdGenerator.generateBookingId();
 
-        List<Position> requestedPositions = toPositions(bookingRequest);
+        ImmutableList<Position> requestedPositions = toPositions(bookingRequest);
 
         eventBus.post(BookTickets.builder()
                 .bookingId(bookingId)
@@ -81,13 +82,14 @@ public class BookingService extends EventBasedService {
                         .build()));
         eventPublisher.publish(ticketsCancelledBooked);
     }
-    private List<Position> toPositions(BookingRequest bookingRequest) {
+
+    private ImmutableList<Position> toPositions(BookingRequest bookingRequest) {
         return bookingRequest.positions().stream()
                 .map(positionId -> Position.builder()
                         .eventId(bookingRequest.eventId())
                         .sectorId(bookingRequest.sectorId())
                         .id(positionId)
                         .build())
-                .collect(Collectors.toList());
+                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
     }
 }

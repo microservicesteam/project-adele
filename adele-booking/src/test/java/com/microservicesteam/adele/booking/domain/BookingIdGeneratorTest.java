@@ -15,7 +15,7 @@ public class BookingIdGeneratorTest {
     }
 
     @Test
-    public void bookingIdIsRandom() throws Exception {
+    public void bookingIdIsUnique() throws Exception {
         String bookingId_1 = bookingIdGenerator.generateBookingId();
         String bookingId_2 = bookingIdGenerator.generateBookingId();
 
