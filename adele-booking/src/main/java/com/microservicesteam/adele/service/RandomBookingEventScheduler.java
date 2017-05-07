@@ -54,7 +54,7 @@ public class RandomBookingEventScheduler {
                 .build();
 
         return TicketsBooked.builder()
-                .bookingId(counter.getAndIncrement())
+                .bookingId(String.valueOf(counter.getAndIncrement()))
                 .addPositions(position)
                 .build();
     }
