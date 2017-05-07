@@ -1,32 +1,33 @@
-package com.microservicesteam.adele.service;
-
-import com.microservicesteam.adele.boundary.web.BookingPublisher;
-import com.microservicesteam.adele.messaging.events.Event;
-import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
-import com.microservicesteam.adele.ticketmaster.model.Position;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+package com.microservicesteam.adele.booking;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
+import com.microservicesteam.adele.messaging.events.Event;
+import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.model.Position;
+
 /*!!! For testing purposes only !!!*/
 @Component
-public class RandomBookingEventScheduler {
+public class TestRandomBookingEventScheduler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RandomBookingEventScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestRandomBookingEventScheduler.class);
 
     private AtomicBoolean enabled = new AtomicBoolean(false);
 
     private AtomicInteger counter = new AtomicInteger(0);
 
-    private BookingPublisher bookingPublisher;
+    private WebSocketEventPublisher webSocketEventPublisher;
 
-    public RandomBookingEventScheduler(BookingPublisher bookingPublisher) {
-        this.bookingPublisher = bookingPublisher;
+    public TestRandomBookingEventScheduler(WebSocketEventPublisher webSocketEventPublisher) {
+        this.webSocketEventPublisher = webSocketEventPublisher;
     }
 
     public void start() {
@@ -42,7 +43,7 @@ public class RandomBookingEventScheduler {
         if (enabled.get()) {
             Event event = randomEvent();
             LOGGER.info("Publishing random event: {}", event);
-            bookingPublisher.publish(event);
+            webSocketEventPublisher.publish(event);
         }
     }
 
@@ -54,7 +55,7 @@ public class RandomBookingEventScheduler {
                 .build();
 
         return TicketsBooked.builder()
-                .bookingId(counter.getAndIncrement())
+                .bookingId(String.valueOf(counter.getAndIncrement()))
                 .addPositions(position)
                 .build();
     }
