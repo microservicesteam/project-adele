@@ -61,7 +61,6 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
                         .position(position)
                         .build()));
-        eventPublisher.publish(ticketsCreated);
     }
 
     @Subscribe

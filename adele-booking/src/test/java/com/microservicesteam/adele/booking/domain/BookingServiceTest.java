@@ -94,7 +94,6 @@ public class BookingServiceTest {
                         FreeTicket.builder()
                                 .position(POSITION_2)
                                 .build());
-        verify(eventPublisher).publish(ticketsCreated);
     }
 
     @Test
