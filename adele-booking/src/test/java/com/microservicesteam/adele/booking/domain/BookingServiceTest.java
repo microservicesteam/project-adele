@@ -27,15 +27,15 @@ public class BookingServiceTest {
 
     private static final long EVENT_ID = 1L;
     private static final int SECTOR_ID = 1;
-    private static final Position POSITION_2 = Position.builder()
-            .eventId(EVENT_ID)
-            .sectorId(SECTOR_ID)
-            .id(2)
-            .build();
     private static final Position POSITION_1 = Position.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .id(1)
+            .build();
+    private static final Position POSITION_2 = Position.builder()
+            .eventId(EVENT_ID)
+            .sectorId(SECTOR_ID)
+            .id(2)
             .build();
     private static final String BOOKING_ID = "abc-123";
 
@@ -137,5 +137,29 @@ public class BookingServiceTest {
                                 .position(POSITION_2)
                                 .build()));
         verify(eventPublisher).publish(ticketsCancelled);
+    }
+
+    @Test
+    public void getTicketsStatusReturnsListOfTickets() throws Exception {
+        TicketsCreated ticketsCreated = TicketsCreated.builder()
+                .addPositions(POSITION_1, POSITION_2)
+                .build();
+        TicketsBooked ticketsBooked = TicketsBooked.builder()
+                .bookingId(BOOKING_ID)
+                .addPositions(POSITION_1)
+                .build();
+
+        eventBus.post(ticketsCreated);
+        eventBus.post(ticketsBooked);
+
+        assertThat(bookingService.getTicketsStatus())
+                .containsExactly(
+                        BookedTicket.builder()
+                                .position(POSITION_1)
+                                .bookingId(BOOKING_ID)
+                                .build(),
+                        FreeTicket.builder()
+                                .position(POSITION_2)
+                                .build());
     }
 }

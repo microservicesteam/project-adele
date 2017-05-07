@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
@@ -33,6 +34,10 @@ public class BookingService extends EventBasedService {
         this.bookingIdGenerator = bookingIdGenerator;
         this.eventPublisher = eventPublisher;
         ticketRepository = new HashMap<>();
+    }
+
+    public List<Ticket> getTicketsStatus() {
+        return ImmutableList.copyOf(ticketRepository.values());
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
@@ -77,7 +82,6 @@ public class BookingService extends EventBasedService {
                         .build()));
         eventPublisher.publish(ticketsCancelledBooked);
     }
-
     private List<Position> toPositions(BookingRequest bookingRequest) {
         return bookingRequest.positions().stream()
                 .map(positionId -> Position.builder()
