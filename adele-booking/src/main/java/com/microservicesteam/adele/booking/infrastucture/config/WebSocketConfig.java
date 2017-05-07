@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.config;
+package com.microservicesteam.adele.booking.infrastucture.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

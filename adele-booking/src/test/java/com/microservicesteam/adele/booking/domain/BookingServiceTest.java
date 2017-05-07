@@ -1,7 +1,6 @@
 package com.microservicesteam.adele.booking.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.eventbus.EventBus;
-import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
+import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
@@ -46,13 +45,13 @@ public class BookingServiceTest {
     @Mock
     private BookingIdGenerator bookingIdGenerator;
     @Mock
-    private EventPublisher eventPublisher;
+    private WebSocketEventPublisher webSocketEventPublisher;
 
 
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
-        bookingService = new BookingService(eventBus, bookingIdGenerator, eventPublisher);
+        bookingService = new BookingService(eventBus, bookingIdGenerator, webSocketEventPublisher);
         bookingService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
@@ -115,7 +114,7 @@ public class BookingServiceTest {
                                 .position(POSITION_2)
                                 .bookingId(BOOKING_ID)
                                 .build());
-        verify(eventPublisher).publish(ticketsBooked);
+        verify(webSocketEventPublisher).publish(ticketsBooked);
     }
 
     @Test
@@ -135,7 +134,7 @@ public class BookingServiceTest {
                         FreeTicket.builder()
                                 .position(POSITION_2)
                                 .build());
-        verify(eventPublisher).publish(ticketsCancelled);
+        verify(webSocketEventPublisher).publish(ticketsCancelled);
     }
 
     @Test

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
+import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
@@ -26,14 +26,16 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 public class BookingService extends EventBasedService {
 
     private final BookingIdGenerator bookingIdGenerator;
-    private final EventPublisher eventPublisher;
+    private final WebSocketEventPublisher webSocketEventPublisher;
     private final Map<Position, Ticket> ticketRepository;
 
 
-    BookingService(EventBus eventBus, BookingIdGenerator bookingIdGenerator, EventPublisher eventPublisher) {
+    BookingService(EventBus eventBus,
+                   BookingIdGenerator bookingIdGenerator,
+                   WebSocketEventPublisher webSocketEventPublisher) {
         super(eventBus);
         this.bookingIdGenerator = bookingIdGenerator;
-        this.eventPublisher = eventPublisher;
+        this.webSocketEventPublisher = webSocketEventPublisher;
         ticketRepository = new HashMap<>();
     }
 
@@ -71,7 +73,7 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
-        eventPublisher.publish(ticketsBooked);
+        webSocketEventPublisher.publish(ticketsBooked);
     }
 
     @Subscribe
@@ -80,7 +82,7 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
                         .position(position)
                         .build()));
-        eventPublisher.publish(ticketsCancelledBooked);
+        webSocketEventPublisher.publish(ticketsCancelledBooked);
     }
 
     private ImmutableList<Position> toPositions(BookingRequest bookingRequest) {
