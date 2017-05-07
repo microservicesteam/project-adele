@@ -13,7 +13,10 @@ import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
@@ -48,6 +51,15 @@ public class BookingService extends EventBasedService {
     }
 
     @Subscribe
+    public void handleEvent(TicketsCreated ticketsCreated) {
+        ticketsCreated.positions()
+                .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
+                        .position(position)
+                        .build()));
+        eventPublisher.publish(ticketsCreated);
+    }
+
+    @Subscribe
     public void handleEvent(TicketsBooked ticketsBooked) {
         ticketsBooked.positions()
                 .forEach(position -> ticketRepository.put(position, BookedTicket.builder()
@@ -55,6 +67,15 @@ public class BookingService extends EventBasedService {
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
         eventPublisher.publish(ticketsBooked);
+    }
+
+    @Subscribe
+    public void handleEvent(TicketsCancelled ticketsCancelledBooked) {
+        ticketsCancelledBooked.positions()
+                .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
+                        .position(position)
+                        .build()));
+        eventPublisher.publish(ticketsCancelledBooked);
     }
 
     private List<Position> toPositions(BookingRequest bookingRequest) {

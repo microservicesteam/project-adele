@@ -16,7 +16,10 @@ import com.microservicesteam.adele.booking.boundary.web.EventPublisher;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
+import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -76,6 +79,25 @@ public class BookingServiceTest {
     }
 
     @Test
+    public void onTicketsCreatedMapIsUpdatedAndEventIsPublished() throws Exception {
+        TicketsCreated ticketsCreated = TicketsCreated.builder()
+                .addPositions(POSITION_1, POSITION_2)
+                .build();
+
+        eventBus.post(ticketsCreated);
+
+        assertThat(bookingService.ticketRepository)
+                .containsExactly(
+                        entry(POSITION_1, FreeTicket.builder()
+                                .position(POSITION_1)
+                                .build()),
+                        entry(POSITION_2, FreeTicket.builder()
+                                .position(POSITION_2)
+                                .build()));
+        verify(eventPublisher).publish(ticketsCreated);
+    }
+
+    @Test
     public void onTicketsBookedMapIsUpdatedAndEventIsPublished() throws Exception {
         TicketsBooked ticketsBooked = TicketsBooked.builder()
                 .bookingId(BOOKING_ID)
@@ -95,5 +117,25 @@ public class BookingServiceTest {
                                 .bookingId(BOOKING_ID)
                                 .build()));
         verify(eventPublisher).publish(ticketsBooked);
+    }
+
+    @Test
+    public void onTicketsCancelledMapIsUpdatedAndEventIsPublished() throws Exception {
+        TicketsCancelled ticketsticketsCancelled = TicketsCancelled.builder()
+                .bookingId(BOOKING_ID)
+                .addPositions(POSITION_1, POSITION_2)
+                .build();
+
+        eventBus.post(ticketsticketsCancelled);
+
+        assertThat(bookingService.ticketRepository)
+                .containsExactly(
+                        entry(POSITION_1, FreeTicket.builder()
+                                .position(POSITION_1)
+                                .build()),
+                        entry(POSITION_2, FreeTicket.builder()
+                                .position(POSITION_2)
+                                .build()));
+        verify(eventPublisher).publish(ticketsticketsCancelled);
     }
 }
