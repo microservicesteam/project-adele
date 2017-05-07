@@ -121,12 +121,12 @@ public class BookingServiceTest {
 
     @Test
     public void onTicketsCancelledMapIsUpdatedAndEventIsPublished() throws Exception {
-        TicketsCancelled ticketsticketsCancelled = TicketsCancelled.builder()
+        TicketsCancelled ticketsCancelled = TicketsCancelled.builder()
                 .bookingId(BOOKING_ID)
                 .addPositions(POSITION_1, POSITION_2)
                 .build();
 
-        eventBus.post(ticketsticketsCancelled);
+        eventBus.post(ticketsCancelled);
 
         assertThat(bookingService.ticketRepository)
                 .containsExactly(
@@ -136,6 +136,6 @@ public class BookingServiceTest {
                         entry(POSITION_2, FreeTicket.builder()
                                 .position(POSITION_2)
                                 .build()));
-        verify(eventPublisher).publish(ticketsticketsCancelled);
+        verify(eventPublisher).publish(ticketsCancelled);
     }
 }
