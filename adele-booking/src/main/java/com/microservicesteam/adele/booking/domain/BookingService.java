@@ -29,7 +29,6 @@ public class BookingService extends EventBasedService {
     private final WebSocketEventPublisher webSocketEventPublisher;
     private final Map<Position, Ticket> ticketRepository;
 
-
     BookingService(EventBus eventBus,
                    BookingIdGenerator bookingIdGenerator,
                    WebSocketEventPublisher webSocketEventPublisher) {
@@ -54,7 +53,7 @@ public class BookingService extends EventBasedService {
                 .build());
 
         return BookingResponse.builder()
-                .withBookingId(bookingId)
+                .bookingId(bookingId)
                 .build();
     }
 

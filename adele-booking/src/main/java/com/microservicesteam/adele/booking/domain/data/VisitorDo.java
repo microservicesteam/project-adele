@@ -35,10 +35,10 @@ public class VisitorDo extends AbstractDo<Long> {
 	
 	public Visitor toImmutable() {
 		return Visitor.builder()
-				.withName(name)
-				.withBirthDate(birthDate)
-				.withAddress(address)
-				.withDiscountInPercent(discountInPercent)
+				.name(name)
+				.birthDate(birthDate)
+				.address(address)
+				.discountInPercent(discountInPercent)
 				.build();
 	}
 	

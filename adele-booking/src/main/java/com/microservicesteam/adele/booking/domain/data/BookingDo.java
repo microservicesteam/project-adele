@@ -49,14 +49,14 @@ public class BookingDo extends AbstractDo<Long> {
 
     public Booking toImmutable() {
         return Booking.builder()
-                .withId(id)
-                .withPaymentId(paymentId)
-                .withSumPrice(sumPrice.toImmutable())
-                .withStatus(status)
+                .id(id)
+                .paymentId(paymentId)
+                .sumPrice(sumPrice.toImmutable())
+                .status(status)
                 .addAllTickets(tickets.stream()
                         .map(TicketDo::toImmutable)
                         .collect(toList()))
-                .withUser(user.toImmutable())
+                .user(user.toImmutable())
                 .build();
     }
 

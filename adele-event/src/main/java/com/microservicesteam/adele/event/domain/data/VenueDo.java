@@ -32,9 +32,9 @@ public class VenueDo extends AbstractDo<Long> {
 
     public Venue toImmutable() {
         return Venue.builder()
-                .withId(id)
-                .withAddress(address)
-                .withCoordinates(coordinates.toImmutable())
+                .id(id)
+                .address(address)
+                .coordinates(coordinates.toImmutable())
                 .build();
     }
 

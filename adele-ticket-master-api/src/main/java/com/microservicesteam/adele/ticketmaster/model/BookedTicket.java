@@ -9,6 +9,7 @@ public interface BookedTicket extends Ticket {
     String bookingId();
 
     @Override
+    @Value.Default
     default TicketStatus status() {
         return BOOKED;
     }

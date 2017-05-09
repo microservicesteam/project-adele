@@ -62,8 +62,8 @@ public class BookingServiceTest {
     @Test
     public void onBookingRequestBookTicketsCommandCreatedAndSent() throws Exception {
         BookingResponse bookingResponse = bookingService.bookTickets(BookingRequest.builder()
-                .withEventId(1L)
-                .withSectorId(1)
+                .eventId(1L)
+                .sectorId(1)
                 .addPositions(1, 2)
                 .build());
 

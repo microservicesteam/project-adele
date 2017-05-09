@@ -21,6 +21,7 @@
         <module>adele-ticket-master</module>
         <module>adele-ticket-master-api</module>
         <module>adele-style</module>
+        <module>adele-init</module>
     </modules>
 
     <name>project-adele</name>
@@ -63,6 +64,17 @@
             <dependency>
                 <groupId>com.microservicesteam</groupId>
                 <artifactId>adele-style</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microservicesteam</groupId>
+                <artifactId>adele-init</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.microservicesteam</groupId>
+                <artifactId>adele-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

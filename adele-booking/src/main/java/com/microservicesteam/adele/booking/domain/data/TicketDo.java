@@ -47,10 +47,10 @@ public class TicketDo extends AbstractDo<Long> {
 
     public Ticket toImmutable() {
         return Ticket.builder()
-                .withEventId(eventId)
-                .withPosition(position)
-                .withPrice(price.toImmutable())
-                .withVisitor(visitor.toImmutable())
+                .eventId(eventId)
+                .position(position)
+                .price(price.toImmutable())
+                .visitor(visitor.toImmutable())
                 .build();
     }
 

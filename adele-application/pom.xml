@@ -14,8 +14,18 @@
 		<dependency>
 			<groupId>com.microservicesteam</groupId>
 			<artifactId>adele-booking</artifactId>
-			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.microservicesteam</groupId>
+			<artifactId>adele-init</artifactId>
+		</dependency>
+
+        <dependency>
+            <groupId>com.microservicesteam</groupId>
+            <artifactId>adele-ticket-master</artifactId>
+        </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>

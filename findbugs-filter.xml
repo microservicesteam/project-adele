@@ -3,5 +3,8 @@
     <Match>
         <Class name="~com\.microservicesteam\.adele\..+\.domain\.Immutable.*" />
     </Match>
+    <Match>
+        <Class name="~com\.microservicesteam\.adele\..+\.model\.Immutable.*" />
+    </Match>
 </FindBugsFilter>
 

@@ -18,7 +18,8 @@ function connect() {
         setConnected(true);
         console.log('Connected: ' + frame);
         stompClient.subscribe('/topic/tickets', function (ticketEvent) {
-            showEvent(JSON.parse(ticketEvent.body));
+            updateTicketStatus(JSON.parse(ticketEvent.body));
+            showEvent(ticketEvent.body);
         });
     });
 }
@@ -31,15 +32,43 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function showEvent(event) {
-    $("#conversation").append("<tr><td>" + event.bookingId + "</td><td>" + event.positions[0].eventId + "</td><td>" + event.positions[0].sectorId + "/" + event.positions[0].id + "</td></tr>");
+function bookTickets() {
+    $.ajax({
+      type: "POST",
+      url: "/rs/api/bookTickets",
+      data: "{\"eventId\":1,\"sectorId\":1,\"positions\":[" + $("#seats").val() + "]}",
+      success: function(data) {console.log("BookingId: " + JSON.stringify(data))},
+      dataType: "json",
+      contentType: "application/json;charset=UTF-8"
+    });
+}
+
+function showEvent(eventText) {
+    $("#conversation").append("<p>" + eventText + "</p>");
+}
+
+function updateTicketStatus(event) {
+    $.each(event.positions, function(i, obj) {
+        $("#p-" + obj.id + " > td:nth-child(2)").text("BOOKED");
+    });
+}
+
+function refreshMapStatus() {
+    $("#map").empty();
+    $.get("/rs/api/mapStatus", function(data) {
+        $.each(data, function(i, obj){
+            $("#map").append("<tr id=\"p-" + obj.position.id + "\"><td>" + obj.position.id + "</td><td>" + obj.status + "</td></tr>");
+        });
+    })
 }
 
 $(function () {
-    $("#disconnect").prop("disabled", "true");
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#start" ).click(function() { $.post('/rs/api/triggerTicketsBooked/start') });
-    $( "#stop" ).click(function() { $.post('/rs/api/triggerTicketsBooked/stop') });
+    $("form").on('submit', function (e) {
+        e.preventDefault();
+    });
+    $("#refresh").click(function() { refreshMapStatus(); });
+    $("#book").click(function() { bookTickets(); });
+    refreshMapStatus();
+    connect();
 });
 
