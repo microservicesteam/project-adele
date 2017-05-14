@@ -1,5 +1,6 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
@@ -39,7 +40,9 @@ public class BookingService extends EventBasedService {
     }
 
     public ImmutableList<Ticket> getTicketsStatus() {
-        return ImmutableList.copyOf(ticketRepository.values());
+        return ticketRepository.values().stream()
+                .sorted(comparingInt(t -> t.position().id()))
+                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
