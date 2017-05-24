@@ -29,7 +29,7 @@ public class BookingController {
     }
 
     @PostMapping("/book-tickets")
-    public BookingResponse bookTickets(@RequestBody BookingRequest bookingRequest) {
+    public BookingResponse bookTickets(@PathVariable long eventId, @RequestBody BookingRequest bookingRequest) {
         return bookingService.bookTickets(bookingRequest);
     }
 
