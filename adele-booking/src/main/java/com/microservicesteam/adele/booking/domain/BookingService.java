@@ -77,12 +77,12 @@ public class BookingService extends EventBasedService {
     }
 
     @Subscribe
-    public void handleEvent(TicketsCancelled ticketsCancelledBooked) {
-        ticketsCancelledBooked.positions()
+    public void handleEvent(TicketsCancelled ticketsCancelled) {
+        ticketsCancelled.positions()
                 .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
                         .position(position)
                         .build()));
-        webSocketEventPublisher.publish(ticketsCancelledBooked);
+        webSocketEventPublisher.publish(ticketsCancelled);
     }
 
     private ImmutableList<Position> toPositions(BookingRequest bookingRequest) {
