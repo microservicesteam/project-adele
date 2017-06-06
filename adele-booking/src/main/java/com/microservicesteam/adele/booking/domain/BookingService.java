@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.microservicesteam.adele.ticketmaster.events.TicketsWereAlreadyBooked;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -83,6 +84,11 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .build()));
         webSocketEventPublisher.publish(ticketsCancelled);
+    }
+
+    @Subscribe
+    public void handleEvent(TicketsWereAlreadyBooked ticketsWereAlreadyBooked) {
+        webSocketEventPublisher.publish(ticketsWereAlreadyBooked);
     }
 
     private ImmutableList<Position> toPositions(BookingRequest bookingRequest) {
