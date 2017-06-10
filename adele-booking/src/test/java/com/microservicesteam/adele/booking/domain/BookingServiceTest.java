@@ -1,6 +1,8 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
+import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
@@ -43,6 +46,8 @@ public class BookingServiceTest {
     private EventBus eventBus;
 
     @Mock
+    private BookingRequestValidator validator;
+    @Mock
     private BookingIdGenerator bookingIdGenerator;
     @Mock
     private WebSocketEventPublisher webSocketEventPublisher;
@@ -51,11 +56,12 @@ public class BookingServiceTest {
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
-        bookingService = new BookingService(eventBus, bookingIdGenerator, webSocketEventPublisher);
+        bookingService = new BookingService(eventBus, validator, bookingIdGenerator, webSocketEventPublisher);
         bookingService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
 
+        when(validator.validate(any(BookingRequest.class))).thenReturn(VALID_REQUEST);
         when(bookingIdGenerator.generateBookingId()).thenReturn(BOOKING_ID);
     }
 
@@ -67,7 +73,10 @@ public class BookingServiceTest {
                 .addPositions(1, 2)
                 .build());
 
-        assertThat(bookingResponse.bookingId())
+        assertThat(bookingResponse).isInstanceOf(BookingRequested.class);
+        BookingRequested bookingRequested = (BookingRequested) bookingResponse;
+
+        assertThat(bookingRequested.bookingId())
                 .isEqualTo(BOOKING_ID);
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")

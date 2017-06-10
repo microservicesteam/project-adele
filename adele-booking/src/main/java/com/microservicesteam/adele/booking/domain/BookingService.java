@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
+import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
+import com.microservicesteam.adele.booking.domain.validator.ValidationResult;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
@@ -25,15 +27,17 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 @Service
 public class BookingService extends EventBasedService {
 
+    private final BookingRequestValidator validator;
     private final BookingIdGenerator bookingIdGenerator;
     private final WebSocketEventPublisher webSocketEventPublisher;
     private final Map<Position, Ticket> ticketRepository;
 
-
     BookingService(EventBus eventBus,
+                   BookingRequestValidator validator,
                    BookingIdGenerator bookingIdGenerator,
                    WebSocketEventPublisher webSocketEventPublisher) {
         super(eventBus);
+        this.validator = validator;
         this.bookingIdGenerator = bookingIdGenerator;
         this.webSocketEventPublisher = webSocketEventPublisher;
         ticketRepository = new HashMap<>();
@@ -44,6 +48,12 @@ public class BookingService extends EventBasedService {
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
+        ValidationResult validationResult = validator.validate(bookingRequest);
+
+        if (!validationResult.valid()) {
+            return BookingRejected.fromValidationResult(validationResult);
+        }
+
         String bookingId = bookingIdGenerator.generateBookingId();
 
         ImmutableList<Position> requestedPositions = toPositions(bookingRequest);
@@ -53,7 +63,7 @@ public class BookingService extends EventBasedService {
                 .addAllPositions(requestedPositions)
                 .build());
 
-        return BookingResponse.builder()
+        return BookingRequested.builder()
                 .withBookingId(bookingId)
                 .build();
     }
