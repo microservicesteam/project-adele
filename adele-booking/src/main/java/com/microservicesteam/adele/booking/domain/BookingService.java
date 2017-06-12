@@ -3,9 +3,6 @@ package com.microservicesteam.adele.booking.domain;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -30,21 +27,22 @@ public class BookingService extends EventBasedService {
     private final BookingRequestValidator validator;
     private final BookingIdGenerator bookingIdGenerator;
     private final WebSocketEventPublisher webSocketEventPublisher;
-    private final Map<Position, Ticket> ticketRepository;
+    private final TicketRepository ticketRepository;
 
     BookingService(EventBus eventBus,
                    BookingRequestValidator validator,
                    BookingIdGenerator bookingIdGenerator,
-                   WebSocketEventPublisher webSocketEventPublisher) {
+                   WebSocketEventPublisher webSocketEventPublisher,
+                   TicketRepository ticketRepository) {
         super(eventBus);
         this.validator = validator;
         this.bookingIdGenerator = bookingIdGenerator;
         this.webSocketEventPublisher = webSocketEventPublisher;
-        ticketRepository = new HashMap<>();
+        this.ticketRepository = ticketRepository;
     }
 
     public ImmutableList<Ticket> getTicketsStatus() {
-        return ImmutableList.copyOf(ticketRepository.values());
+        return ticketRepository.getTicketsStatus();
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {

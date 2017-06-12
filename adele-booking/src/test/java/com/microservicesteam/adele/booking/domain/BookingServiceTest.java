@@ -52,11 +52,11 @@ public class BookingServiceTest {
     @Mock
     private WebSocketEventPublisher webSocketEventPublisher;
 
-
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
-        bookingService = new BookingService(eventBus, validator, bookingIdGenerator, webSocketEventPublisher);
+        bookingService = new BookingService(
+                eventBus, validator, bookingIdGenerator, webSocketEventPublisher, new TicketRepository());
         bookingService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
