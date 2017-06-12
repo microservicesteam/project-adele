@@ -1,27 +1,31 @@
 package com.microservicesteam.adele.booking.domain.validator;
 
-import org.immutables.value.Value;
+public enum ValidationResult {
 
-@Value.Immutable
-public interface ValidationResult {
+    VALID_REQUEST(true, "000", "Valid request"),
+    INVALID_POSITIONS_EMPTY(false, "001", "At least one position must be requested"),
+    INVALID_POSITIONS_BOOKED(false, "002", "At least one of the positions is already booked");
 
-    ValidationResult VALID_REQUEST = ValidationResult.builder()
-            .withValid(true)
-            .withCode("000")
-            .withMessage("Valid request")
-            .build();
+    private boolean valid;
+    private String code;
+    private String message;
 
-    boolean valid();
-
-    String code();
-
-    String message();
-
-    class Builder extends ImmutableValidationResult.Builder {
+    ValidationResult(boolean valid, String code, String message) {
+        this.valid = valid;
+        this.code = code;
+        this.message = message;
     }
 
-    static Builder builder() {
-        return new Builder();
+    public boolean valid() {
+        return valid;
+    }
+
+    public String code() {
+        return code;
+    }
+
+    public String message() {
+        return message;
     }
 
 }

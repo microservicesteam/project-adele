@@ -1,8 +1,5 @@
 package com.microservicesteam.adele.booking.domain;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
-
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -54,7 +51,7 @@ public class BookingService extends EventBasedService {
 
         String bookingId = bookingIdGenerator.generateBookingId();
 
-        ImmutableList<Position> requestedPositions = toPositions(bookingRequest);
+        ImmutableList<Position> requestedPositions = bookingRequest.requestedPositions();
 
         eventBus.post(BookTickets.builder()
                 .bookingId(bookingId)
@@ -69,7 +66,7 @@ public class BookingService extends EventBasedService {
     @Subscribe
     public void handleEvent(TicketsCreated ticketsCreated) {
         ticketsCreated.positions()
-                .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
+                .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
     }
@@ -77,7 +74,7 @@ public class BookingService extends EventBasedService {
     @Subscribe
     public void handleEvent(TicketsBooked ticketsBooked) {
         ticketsBooked.positions()
-                .forEach(position -> ticketRepository.put(position, BookedTicket.builder()
+                .forEach(position -> ticketRepository.put(BookedTicket.builder()
                         .position(position)
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
@@ -87,19 +84,9 @@ public class BookingService extends EventBasedService {
     @Subscribe
     public void handleEvent(TicketsCancelled ticketsCancelledBooked) {
         ticketsCancelledBooked.positions()
-                .forEach(position -> ticketRepository.put(position, FreeTicket.builder()
+                .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
         webSocketEventPublisher.publish(ticketsCancelledBooked);
-    }
-
-    private ImmutableList<Position> toPositions(BookingRequest bookingRequest) {
-        return bookingRequest.positions().stream()
-                .map(positionId -> Position.builder()
-                        .eventId(bookingRequest.eventId())
-                        .sectorId(bookingRequest.sectorId())
-                        .id(positionId)
-                        .build())
-                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
     }
 }

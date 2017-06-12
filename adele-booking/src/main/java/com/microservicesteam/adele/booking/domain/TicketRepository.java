@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
-import com.microservicesteam.adele.ticketmaster.model.*;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 public class TicketRepository {
@@ -15,11 +15,15 @@ public class TicketRepository {
         this.tickets = new HashMap<>();
     }
 
-    public void put(Position position, Ticket ticket) {
-        tickets.put(position, ticket);
+    public void put(Ticket ticket) {
+        tickets.put(ticket.position(), ticket);
     }
 
-    public ImmutableList<Ticket> getTicketsStatus() {
+    public Ticket get(Position position) {
+        return tickets.get(position);
+    }
+
+    ImmutableList<Ticket> getTicketsStatus() {
         return ImmutableList.copyOf(tickets.values());
     }
 }
