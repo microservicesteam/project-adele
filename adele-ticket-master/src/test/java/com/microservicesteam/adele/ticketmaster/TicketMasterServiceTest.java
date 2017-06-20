@@ -3,6 +3,7 @@ package com.microservicesteam.adele.ticketmaster;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
+import com.microservicesteam.adele.ticketmaster.events.TicketsWereAlreadyBooked;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,7 +114,7 @@ public class TicketMasterServiceTest {
     public void bookTicketsCommandResultsInNoOperationException() throws Exception {
         createTickets(POSITION_1, POSITION_2);
         bookTickets(POSITION_1);
-        BookTickets bookTicketsCommand = bookTickets(POSITION_1);
+        bookTickets(POSITION_1);
 
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
@@ -134,8 +135,8 @@ public class TicketMasterServiceTest {
                                 .bookingId(BOOKING_ID)
                                 .addPositions(POSITION_1)
                                 .build(),
-                        NoOperation.builder()
-                                .sourceCommand(bookTicketsCommand)
+                        TicketsWereAlreadyBooked.builder()
+                                .bookingId(BOOKING_ID)
                                 .build());
     }
 
