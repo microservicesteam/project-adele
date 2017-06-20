@@ -1,12 +1,12 @@
 package com.microservicesteam.adele.ticketmaster.events;
 
-import com.microservicesteam.adele.ticketmaster.commands.TicketsCommand;
+import com.microservicesteam.adele.messaging.events.Event;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface TicketsWereAlreadyBooked extends TicketsEvent{
+public interface TicketsWereAlreadyBooked extends Event {
 
-    TicketsCommand sourceCommand();
+    String bookingId();
 
     static Builder builder() {
         return new Builder();
@@ -14,4 +14,5 @@ public interface TicketsWereAlreadyBooked extends TicketsEvent{
 
     class Builder extends ImmutableTicketsWereAlreadyBooked.Builder {
     }
+
 }
