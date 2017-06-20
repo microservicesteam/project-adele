@@ -1,8 +1,7 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.Comparator.comparingInt;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +36,6 @@ public class TicketRepository {
     ImmutableList<Ticket> getTicketsStatus() {
         return tickets.values().stream()
                 .sorted(comparingInt(t -> t.position().id()))
-                .collect(collectingAndThen(toList(), ImmutableList::copyOf));
+                .collect(toImmutableList());
     }
 }
