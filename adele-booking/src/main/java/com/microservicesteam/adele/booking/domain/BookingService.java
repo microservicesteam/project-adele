@@ -59,7 +59,7 @@ public class BookingService extends EventBasedService {
                 .build());
 
         return BookingRequested.builder()
-                .withBookingId(bookingId)
+                .bookingId(bookingId)
                 .build();
     }
 

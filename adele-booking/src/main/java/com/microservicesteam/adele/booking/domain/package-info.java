@@ -1,2 +1,2 @@
-@com.microservicesteam.adele.booking.domain.AdeleStyle
+@com.microservicesteam.adele.style.AdeleStyle
 package com.microservicesteam.adele.booking.domain;

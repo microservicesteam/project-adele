@@ -30,9 +30,9 @@ public class SectorDo extends AbstractDo<Long> {
 
     public Sector toImmutable() {
         return Sector.builder()
-                .withId(id)
-                .withCapacity(capacity)
-                .withPrice(price.toImmutable())
+                .id(id)
+                .capacity(capacity)
+                .price(price.toImmutable())
                 .build();
     }
 

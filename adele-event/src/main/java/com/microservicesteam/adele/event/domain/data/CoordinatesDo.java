@@ -26,8 +26,8 @@ public class CoordinatesDo {
 
     public Coordinates toImmutable() {
         return Coordinates.builder()
-                .withLatitude(latitude)
-                .withLongitude(longitude)
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
     }
 

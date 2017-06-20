@@ -18,7 +18,7 @@ public class UserDo extends AbstractDo<Long> {
 
     public User toImmutable() {
         return User.builder()
-                .withId(id)
+                .id(id)
                 .build();
     }
 

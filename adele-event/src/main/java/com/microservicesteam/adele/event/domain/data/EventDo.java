@@ -44,12 +44,12 @@ public class EventDo extends AbstractDo<Long> {
     
     public Event toImmutable() {
         return Event.builder()
-                .withId(id)
-                .withName(name)
-                .withDescription(description)
-                .withStatus(status)
-                .withDateTime(dateTime)
-                .withVenue(venue.toImmutable())
+                .id(id)
+                .name(name)
+                .description(description)
+                .status(status)
+                .dateTime(dateTime)
+                .venue(venue.toImmutable())
                 .build();
     }
     

@@ -24,8 +24,8 @@ public class PriceDo {
 
     public Price toImmutable() {
         return Price.builder()
-                .withAmount(amount)
-                .withCurrency(currency)
+                .amount(amount)
+                .currency(currency)
                 .build();
     }
 
