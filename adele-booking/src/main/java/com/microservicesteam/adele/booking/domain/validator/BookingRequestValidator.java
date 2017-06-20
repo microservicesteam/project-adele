@@ -2,15 +2,11 @@ package com.microservicesteam.adele.booking.domain.validator;
 
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.*;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.microservicesteam.adele.booking.domain.BookingRequest;
 import com.microservicesteam.adele.booking.domain.TicketRepository;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @Service
 public class BookingRequestValidator {
@@ -26,19 +22,25 @@ public class BookingRequestValidator {
             return INVALID_POSITIONS_EMPTY;
         }
 
-        if (hasAlreadyBookedPosition(request)) {
+        if (!allPositionsAreValid(request)) {
+            return INVALID_POSITIONS_OUT_OF_SECTOR;
+        }
+
+        if (!allPositionsAreFree(request)) {
             return INVALID_POSITIONS_BOOKED;
         }
 
         return VALID_REQUEST;
     }
 
-    private boolean hasAlreadyBookedPosition(BookingRequest request) {
-        List<Position> bookedPositions = request.requestedPositions().stream()
-                .filter(position -> ticketRepository.get(position).status() != FREE)
-                .collect(toList());
+    private boolean allPositionsAreValid(BookingRequest request) {
+        return request.requestedPositions().stream()
+                .allMatch(ticketRepository::has);
+    }
 
-        return !bookedPositions.isEmpty();
+    private boolean allPositionsAreFree(BookingRequest request) {
+        return request.requestedPositions().stream()
+                .allMatch(position -> ticketRepository.get(position).status() == FREE);
     }
 
 }

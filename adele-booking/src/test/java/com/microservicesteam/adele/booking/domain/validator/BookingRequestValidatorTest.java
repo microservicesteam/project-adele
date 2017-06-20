@@ -73,6 +73,23 @@ public class BookingRequestValidatorTest {
         assertThat(actual).isEqualTo(INVALID_POSITIONS_EMPTY);
     }
 
+
+    @Test
+    public void invalidWhenHasPositionOutOfSector() throws Exception {
+        //given
+        BookingRequest bookingRequest = BookingRequest.builder()
+                .eventId(1)
+                .sectorId(1)
+                .addPositions(1, 7)
+                .build();
+
+        //when
+        ValidationResult actual = validator.validate(bookingRequest);
+
+        //then
+        assertThat(actual).isEqualTo(INVALID_POSITIONS_OUT_OF_SECTOR);
+    }
+
     @Test
     public void invalidWhenHasBookedPosition() throws Exception {
         //given

@@ -1,10 +1,10 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +63,26 @@ public class BookingServiceTest {
 
         when(validator.validate(any(BookingRequest.class))).thenReturn(VALID_REQUEST);
         when(bookingIdGenerator.generateBookingId()).thenReturn(BOOKING_ID);
+    }
+
+    @Test
+    public void onBookingRequestRequestIsValidated() throws Exception {
+        //given
+        BookingRequest bookingRequest = BookingRequest.builder()
+                .eventId(1L)
+                .sectorId(1)
+                .build();
+        when(validator.validate(bookingRequest)).thenReturn(INVALID_POSITIONS_EMPTY);
+
+        //when
+        BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
+
+        //then
+        verify(validator, times(1)).validate(bookingRequest);
+        assertThat(bookingResponse).isInstanceOf(BookingRejected.class);
+        BookingRejected bookingRejected = (BookingRejected) bookingResponse;
+        assertThat(bookingRejected.code()).isEqualTo(INVALID_POSITIONS_EMPTY.code());
+        assertThat(bookingRejected.reason()).isEqualTo(INVALID_POSITIONS_EMPTY.message());
     }
 
     @Test

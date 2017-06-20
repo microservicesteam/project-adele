@@ -45,7 +45,7 @@ public class BookingService extends EventBasedService {
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
         ValidationResult validationResult = validator.validate(bookingRequest);
 
-        if (!validationResult.valid()) {
+        if (!validationResult.isValid()) {
             return BookingRejected.fromValidationResult(validationResult);
         }
 

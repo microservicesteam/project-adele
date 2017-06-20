@@ -26,6 +26,10 @@ public class TicketRepository {
         tickets.put(ticket.position(), ticket);
     }
 
+    public boolean has(Position position) {
+        return tickets.containsKey(position);
+    }
+
     public Ticket get(Position position) {
         return tickets.get(position);
     }
