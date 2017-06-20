@@ -9,6 +9,7 @@ public interface PaidTicket extends Ticket {
     String bookingId();
 
     @Override
+    @Value.Default
     default TicketStatus status() {
         return PAID;
     }
