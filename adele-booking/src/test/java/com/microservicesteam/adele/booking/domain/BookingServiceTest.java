@@ -87,12 +87,14 @@ public class BookingServiceTest {
 
     @Test
     public void onBookingRequestBookTicketsCommandCreatedAndSent() throws Exception {
-        BookingResponse bookingResponse = bookingService.bookTickets(BookingRequest.builder()
+        BookingRequest bookingRequest = BookingRequest.builder()
                 .eventId(1L)
                 .sectorId(1)
                 .addPositions(1, 2)
-                .build());
+                .build();
+        BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
 
+        verify(validator, times(1)).validate(bookingRequest);
         assertThat(bookingResponse).isInstanceOf(BookingRequested.class);
         BookingRequested bookingRequested = (BookingRequested) bookingResponse;
 
