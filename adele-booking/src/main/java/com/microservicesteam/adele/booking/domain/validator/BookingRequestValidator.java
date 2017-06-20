@@ -6,10 +6,13 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.microservicesteam.adele.booking.domain.BookingRequest;
 import com.microservicesteam.adele.booking.domain.TicketRepository;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
+@Service
 public class BookingRequestValidator {
 
     private final TicketRepository ticketRepository;

@@ -1,12 +1,20 @@
 package com.microservicesteam.adele.booking.boundary.web;
 
-import com.google.common.collect.ImmutableList;
-import com.microservicesteam.adele.booking.domain.BookingRequest;
-import com.microservicesteam.adele.booking.domain.BookingResponse;
-import com.microservicesteam.adele.booking.domain.BookingService;
-import com.microservicesteam.adele.booking.infrastucture.config.GuavaModuleConfig;
-import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
-import com.microservicesteam.adele.ticketmaster.model.Position;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +29,13 @@ import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.google.common.collect.ImmutableList;
+import com.microservicesteam.adele.booking.domain.BookingRequest;
+import com.microservicesteam.adele.booking.domain.BookingRequested;
+import com.microservicesteam.adele.booking.domain.BookingService;
+import com.microservicesteam.adele.booking.infrastucture.config.GuavaModuleConfig;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookingController.class)
@@ -92,7 +93,7 @@ public class BookingControllerTest {
     @Test
     public void bookTicketsShouldReturnWithBookingId() throws Exception {
         when(bookingService.bookTickets(any()))
-                .thenReturn(BookingResponse.builder()
+                .thenReturn(BookingRequested.builder()
                         .bookingId("randomBookingId")
                         .build());
         String requestBody = json(BookingRequest.builder()

@@ -46,8 +46,8 @@ public class BookingRequestValidatorTest {
     public void validWhenTicketsAreFree() throws Exception {
         //given
         BookingRequest bookingRequest = BookingRequest.builder()
-                .withEventId(1)
-                .withSectorId(1)
+                .eventId(1)
+                .sectorId(1)
                 .addPositions(1, 2, 3)
                 .build();
 
@@ -62,8 +62,8 @@ public class BookingRequestValidatorTest {
     public void invalidWhenPositionsIsEmpty() throws Exception {
         //given
         BookingRequest bookingRequest = BookingRequest.builder()
-                .withEventId(1)
-                .withSectorId(1)
+                .eventId(1)
+                .sectorId(1)
                 .build();
 
         //when
@@ -77,8 +77,8 @@ public class BookingRequestValidatorTest {
     public void invalidWhenHasBookedPosition() throws Exception {
         //given
         BookingRequest bookingRequest = BookingRequest.builder()
-                .withEventId(1)
-                .withSectorId(1)
+                .eventId(1)
+                .sectorId(1)
                 .addPositions(1, 4)
                 .build();
 
@@ -93,8 +93,8 @@ public class BookingRequestValidatorTest {
     public void invalidWhenHasPaidPosition() throws Exception {
         //given
         BookingRequest bookingRequest = BookingRequest.builder()
-                .withEventId(1)
-                .withSectorId(1)
+                .eventId(1)
+                .sectorId(1)
                 .addPositions(1, 5)
                 .build();
 

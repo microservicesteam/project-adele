@@ -20,8 +20,8 @@ public interface BookingRejected extends BookingResponse {
 
     static BookingRejected fromValidationResult(ValidationResult result) {
         return BookingRejected.builder()
-                .withCode(result.code())
-                .withReason(result.message())
+                .code(result.code())
+                .reason(result.message())
                 .build();
     }
 }
