@@ -5,12 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 
-import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
 import com.microservicesteam.adele.ticketmaster.events.TicketsPaid;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
-public class TicketsPaidSerializationTest extends AbstractSerializationTest{
+public class TicketsPaidSerializationTest extends AbstractSerializationTest {
 
     @Test
     public void serialize() throws Exception {
@@ -24,6 +23,7 @@ public class TicketsPaidSerializationTest extends AbstractSerializationTest{
                 .build();
 
         JsonContent<TicketsEvent> serializedJson = json.write(ticketsPaid);
+        assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("TicketsPaid");
         assertThat(serializedJson).extractingJsonPathStringValue("bookingId").isEqualTo("abc-123");
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].eventId").isEqualTo(1);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].sectorId").isEqualTo(1);

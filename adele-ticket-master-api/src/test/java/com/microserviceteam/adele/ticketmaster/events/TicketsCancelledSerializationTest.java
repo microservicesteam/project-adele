@@ -24,6 +24,7 @@ public class TicketsCancelledSerializationTest extends AbstractSerializationTest
                 .build();
 
         JsonContent<TicketsEvent> serializedJson = json.write(ticketsCancelled);
+        assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("TicketsCancelled");
         assertThat(serializedJson).extractingJsonPathStringValue("bookingId").isEqualTo("abc-123");
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].eventId").isEqualTo(1);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].sectorId").isEqualTo(1);

@@ -9,7 +9,7 @@ import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
-public class TicketsBookedSerializationTest extends AbstractSerializationTest{
+public class TicketsBookedSerializationTest extends AbstractSerializationTest {
 
     @Test
     public void serialize() throws Exception {
@@ -23,6 +23,7 @@ public class TicketsBookedSerializationTest extends AbstractSerializationTest{
                 .build();
 
         JsonContent<TicketsEvent> serializedJson = json.write(ticketsBooked);
+        assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("TicketsBooked");
         assertThat(serializedJson).extractingJsonPathStringValue("bookingId").isEqualTo("abc-123");
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].eventId").isEqualTo(1);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.positions[0].sectorId").isEqualTo(1);
