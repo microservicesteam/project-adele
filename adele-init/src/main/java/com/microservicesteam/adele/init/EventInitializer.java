@@ -1,28 +1,22 @@
 package com.microservicesteam.adele.init;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-import com.microservicesteam.adele.event.boundary.web.EventRepository;
-import com.microservicesteam.adele.event.domain.Coordinates;
-import com.microservicesteam.adele.event.domain.Event;
-import com.microservicesteam.adele.event.domain.EventStatus;
-import com.microservicesteam.adele.event.domain.Price;
-import com.microservicesteam.adele.event.domain.Sector;
-import com.microservicesteam.adele.event.domain.Venue;
-import com.microservicesteam.adele.event.domain.data.EventDo;
-import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.model.Position;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import com.google.common.eventbus.EventBus;
+import com.microservicesteam.adele.event.boundary.web.EventRepository;
+import com.microservicesteam.adele.event.domain.*;
+import com.microservicesteam.adele.event.domain.data.EventDo;
+import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @Component
 public class EventInitializer implements CommandLineRunner {
@@ -90,7 +84,7 @@ public class EventInitializer implements CommandLineRunner {
         CreateTickets createTicketsCommand = CreateTickets.builder()
                 .addAllPositions(IntStream.rangeClosed(1, 5)
                         .mapToObj(EventInitializer::createPositionWithId)
-                        .collect(collectingAndThen(toList(), ImmutableList::copyOf)))
+                        .collect(toImmutableList()))
                 .build();
         eventBus.post(createTicketsCommand);
     }

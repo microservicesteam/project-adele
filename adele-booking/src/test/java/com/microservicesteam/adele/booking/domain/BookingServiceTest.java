@@ -1,8 +1,10 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
+import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
@@ -43,31 +46,59 @@ public class BookingServiceTest {
     private EventBus eventBus;
 
     @Mock
+    private BookingRequestValidator validator;
+    @Mock
     private BookingIdGenerator bookingIdGenerator;
     @Mock
     private WebSocketEventPublisher webSocketEventPublisher;
 
-
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
-        bookingService = new BookingService(eventBus, bookingIdGenerator, webSocketEventPublisher);
+        bookingService = new BookingService(
+                eventBus, validator, bookingIdGenerator, webSocketEventPublisher, new TicketRepository());
         bookingService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
 
+        when(validator.validate(any(BookingRequest.class))).thenReturn(VALID_REQUEST);
         when(bookingIdGenerator.generateBookingId()).thenReturn(BOOKING_ID);
     }
 
     @Test
+    public void onBookingRequestRequestIsValidated() throws Exception {
+        //given
+        BookingRequest bookingRequest = BookingRequest.builder()
+                .eventId(1L)
+                .sectorId(1)
+                .build();
+        when(validator.validate(bookingRequest)).thenReturn(INVALID_POSITIONS_EMPTY);
+
+        //when
+        BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
+
+        //then
+        verify(validator, times(1)).validate(bookingRequest);
+        assertThat(bookingResponse).isInstanceOf(BookingRejected.class);
+        BookingRejected bookingRejected = (BookingRejected) bookingResponse;
+        assertThat(bookingRejected.code()).isEqualTo(INVALID_POSITIONS_EMPTY.code());
+        assertThat(bookingRejected.reason()).isEqualTo(INVALID_POSITIONS_EMPTY.message());
+    }
+
+    @Test
     public void onBookingRequestBookTicketsCommandCreatedAndSent() throws Exception {
-        BookingResponse bookingResponse = bookingService.bookTickets(BookingRequest.builder()
+        BookingRequest bookingRequest = BookingRequest.builder()
                 .eventId(1L)
                 .sectorId(1)
                 .addPositions(1, 2)
-                .build());
+                .build();
+        BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
 
-        assertThat(bookingResponse.bookingId())
+        verify(validator, times(1)).validate(bookingRequest);
+        assertThat(bookingResponse).isInstanceOf(BookingRequested.class);
+        BookingRequested bookingRequested = (BookingRequested) bookingResponse;
+
+        assertThat(bookingRequested.bookingId())
                 .isEqualTo(BOOKING_ID);
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")

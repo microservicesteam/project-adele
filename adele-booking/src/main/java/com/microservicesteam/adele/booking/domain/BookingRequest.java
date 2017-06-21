@@ -1,10 +1,15 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import java.util.List;
+
+import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.immutables.value.Value;
+import com.google.common.collect.ImmutableList;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @Value.Immutable
 @JsonSerialize(as = ImmutableBookingRequest.class)
@@ -16,6 +21,16 @@ public interface BookingRequest {
     int sectorId();
 
     List<Integer> positions();
+
+    default ImmutableList<Position> requestedPositions() {
+        return positions().stream()
+                .map(positionId -> Position.builder()
+                        .eventId(eventId())
+                        .sectorId(sectorId())
+                        .id(positionId)
+                        .build())
+                .collect(toImmutableList());
+    }
 
     class Builder extends ImmutableBookingRequest.Builder {
     }
