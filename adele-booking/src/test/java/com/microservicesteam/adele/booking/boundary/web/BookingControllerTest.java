@@ -4,6 +4,7 @@ import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,12 +67,20 @@ public class BookingControllerTest {
 
     @Test
     public void getTicketsStatusShouldReturnWithStatusAndPositionWhenStatusIsPresent() throws Exception {
-        when(bookingService.getTicketsStatus()).thenReturn(
+        when(bookingService.getTicketsStatus(1)).thenReturn(
                 ImmutableList.of(FreeTicket.builder()
                         .position(Position.builder()
                                 .id(1)
                                 .sectorId(2)
-                                .eventId(3)
+                                .eventId(1)
+                                .build())
+                        .build()));
+        when(bookingService.getTicketsStatus(2)).thenReturn(
+                ImmutableList.of(FreeTicket.builder()
+                        .position(Position.builder()
+                                .id(2)
+                                .sectorId(2)
+                                .eventId(2)
                                 .build())
                         .build()));
         mockMvc.perform(get("/events/1/tickets").accept(APPLICATION_JSON))
@@ -79,12 +88,20 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$[0].status", equalTo(FREE.name())))
                 .andExpect(jsonPath("$[0].position.id", equalTo(1)))
                 .andExpect(jsonPath("$[0].position.sectorId", equalTo(2)))
-                .andExpect(jsonPath("$[0].position.eventId", equalTo(3)));
+                .andExpect(jsonPath("$[0].position.eventId", equalTo(1)));
     }
 
     @Test
     public void getTicketsStatusShouldReturnWithEmptyArrayWhenThereAreNoTickets() throws Exception {
-        when(bookingService.getTicketsStatus()).thenReturn(ImmutableList.of());
+        when(bookingService.getTicketsStatus(1)).thenReturn(ImmutableList.of());
+        when(bookingService.getTicketsStatus(2)).thenReturn(
+                ImmutableList.of(FreeTicket.builder()
+                        .position(Position.builder()
+                                .id(2)
+                                .sectorId(2)
+                                .eventId(2)
+                                .build())
+                        .build()));
         mockMvc.perform(get("/events/1/tickets").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());

@@ -25,7 +25,7 @@ public class BookingController {
 
     @GetMapping("/tickets")
     public List<Ticket> getTicketsStatus(@PathVariable long eventId) {
-        return bookingService.getTicketsStatus();
+        return bookingService.getTicketsStatus(eventId);
     }
 
     @PostMapping("/book-tickets")
