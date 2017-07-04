@@ -1,9 +1,9 @@
 package com.microservicesteam.adele.booking.domain.data;
 
-import com.microservicesteam.adele.booking.domain.Price;
-
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+
+import com.microservicesteam.adele.booking.domain.Price;
 
 @Embeddable
 public class PriceDo {

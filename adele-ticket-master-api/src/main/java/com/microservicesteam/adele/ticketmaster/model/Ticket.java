@@ -1,8 +1,8 @@
 package com.microservicesteam.adele.ticketmaster.model;
 
-import org.immutables.value.Value;
-
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+
+import org.immutables.value.Value;
 
 public interface Ticket {
     Position position();
