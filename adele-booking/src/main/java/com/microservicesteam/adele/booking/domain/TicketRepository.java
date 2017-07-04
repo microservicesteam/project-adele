@@ -33,8 +33,9 @@ public class TicketRepository {
         return tickets.get(position);
     }
 
-    ImmutableList<Ticket> getTicketsStatus() {
+    ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
         return tickets.values().stream()
+                .filter(t -> t.position().eventId() == eventId)
                 .sorted(comparingInt(t -> t.position().id()))
                 .collect(toImmutableList());
     }

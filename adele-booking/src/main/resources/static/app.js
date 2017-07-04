@@ -35,7 +35,7 @@ function disconnect() {
 function bookTickets() {
     $.ajax({
       type: "POST",
-      url: "/events/1/book-tickets",
+      url: "/bookings",
       data: "{\"eventId\":1,\"sectorId\":1,\"positions\":[" + $("#seats").val() + "]}",
       success: function(data) {console.log("BookingId: " + JSON.stringify(data))},
       dataType: "json",
@@ -55,7 +55,7 @@ function refreshTicketStatusTable(event) {
 
 function getTickets() {
     $("#map").empty();
-    $.get("/events/1/tickets", function(data) {
+    $.get("/bookings?eventId=1", function(data) {
         $.each(data, function(i, obj){
             $("#map").append("<tr id=\"p-" + obj.position.id + "\"><td>" + obj.position.id + "</td><td>" + obj.status + "</td></tr>");
         });
