@@ -9,9 +9,6 @@ import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
-/**
- * Created by BP on 04/07/2017.
- */
 public class TicketsAlreadyBookedSerializationTest extends AbstractSerializationTest {
 
     @Test
