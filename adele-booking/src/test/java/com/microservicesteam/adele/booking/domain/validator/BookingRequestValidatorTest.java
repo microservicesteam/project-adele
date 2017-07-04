@@ -1,6 +1,9 @@
 package com.microservicesteam.adele.booking.domain.validator;
 
-import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.*;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_BOOKED;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_OUT_OF_SECTOR;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;

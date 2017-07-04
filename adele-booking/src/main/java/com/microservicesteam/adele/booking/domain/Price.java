@@ -1,8 +1,8 @@
 package com.microservicesteam.adele.booking.domain;
 
-import org.immutables.value.Value;
-
 import java.math.BigDecimal;
+
+import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Price {

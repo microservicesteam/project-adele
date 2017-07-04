@@ -1,9 +1,9 @@
 package com.microservicesteam.adele.event.domain;
 
-import org.immutables.value.Value;
-
 import javax.annotation.Nullable;
 import java.util.List;
+
+import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Sector {

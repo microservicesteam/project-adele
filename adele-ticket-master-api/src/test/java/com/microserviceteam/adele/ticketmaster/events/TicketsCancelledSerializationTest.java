@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
-import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
