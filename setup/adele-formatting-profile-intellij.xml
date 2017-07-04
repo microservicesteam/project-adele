@@ -1,4 +1,6 @@
-<code_scheme name="formatting-profile">
+<code_scheme name="formatting-profile copy1">
+  <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
+  <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="100" />
   <option name="IMPORT_LAYOUT_TABLE">
     <value>
       <package name="" withSubpackages="true" static="true" />
@@ -38,8 +40,5 @@
     <option name="METHOD_ANNOTATION_WRAP" value="0" />
     <option name="CLASS_ANNOTATION_WRAP" value="0" />
     <option name="FIELD_ANNOTATION_WRAP" value="0" />
-    <indentOptions>
-      <option name="INDENT_SIZE" value="4" />
-    </indentOptions>
   </codeStyleSettings>
 </code_scheme>
