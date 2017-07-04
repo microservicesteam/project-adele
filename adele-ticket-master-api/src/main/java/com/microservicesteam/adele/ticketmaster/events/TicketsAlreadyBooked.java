@@ -3,7 +3,7 @@ package com.microservicesteam.adele.ticketmaster.events;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface TicketsWereAlreadyBooked extends TicketsEvent {
+public interface TicketsAlreadyBooked extends TicketsEvent {
 
     String bookingId();
 
@@ -11,7 +11,7 @@ public interface TicketsWereAlreadyBooked extends TicketsEvent {
         return new Builder();
     }
 
-    class Builder extends ImmutableTicketsWereAlreadyBooked.Builder {
+    class Builder extends ImmutableTicketsAlreadyBooked.Builder {
     }
 
 }

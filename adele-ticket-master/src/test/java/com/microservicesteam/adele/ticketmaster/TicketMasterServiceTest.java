@@ -3,7 +3,7 @@ package com.microservicesteam.adele.ticketmaster;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
-import com.microservicesteam.adele.ticketmaster.events.TicketsWereAlreadyBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -135,7 +135,7 @@ public class TicketMasterServiceTest {
                                 .bookingId(BOOKING_ID)
                                 .addPositions(POSITION_1)
                                 .build(),
-                        TicketsWereAlreadyBooked.builder()
+                        TicketsAlreadyBooked.builder()
                                 .bookingId(BOOKING_ID)
                                 .addPositions(POSITION_1)
                                 .build());

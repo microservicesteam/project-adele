@@ -6,7 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-import com.microservicesteam.adele.ticketmaster.events.TicketsWereAlreadyBooked;
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -171,13 +172,13 @@ public class BookingServiceTest {
 
     @Test
     public void onTicketsWereAlreadyBookedEventIsPublished() {
-        TicketsWereAlreadyBooked ticketsWereAlreadyBooked = TicketsWereAlreadyBooked.builder()
+        TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
                 .bookingId(BOOKING_ID)
                 .build();
 
-        eventBus.post(ticketsWereAlreadyBooked);
+        eventBus.post(ticketsAlreadyBooked);
 
-        verify(webSocketEventPublisher).publish(ticketsWereAlreadyBooked);
+        verify(webSocketEventPublisher).publish(ticketsAlreadyBooked);
     }
 
     @Test

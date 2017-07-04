@@ -10,10 +10,10 @@ import com.microservicesteam.adele.booking.domain.validator.BookingRequestValida
 import com.microservicesteam.adele.booking.domain.validator.ValidationResult;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
-import com.microservicesteam.adele.ticketmaster.events.TicketsWereAlreadyBooked;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
@@ -92,7 +92,7 @@ public class BookingService extends EventBasedService {
     }
 
     @Subscribe
-    public void handleEvent(TicketsWereAlreadyBooked ticketsWereAlreadyBooked) {
-        webSocketEventPublisher.publish(ticketsWereAlreadyBooked);
+    public void handleEvent(TicketsAlreadyBooked ticketsAlreadyBooked) {
+        webSocketEventPublisher.publish(ticketsAlreadyBooked);
     }
 }
