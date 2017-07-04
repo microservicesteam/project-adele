@@ -1,6 +1,9 @@
 package com.microservicesteam.adele.booking.domain.validator;
 
-import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.*;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_BOOKED;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.INVALID_POSITIONS_OUT_OF_SECTOR;
+import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 
 import org.springframework.stereotype.Service;

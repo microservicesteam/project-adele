@@ -1,9 +1,8 @@
 package com.microservicesteam.adele.booking.domain.data;
 
+import javax.persistence.Entity;
 
 import com.microservicesteam.adele.booking.domain.User;
-
-import javax.persistence.Entity;
 
 @Entity
 public class UserDo extends AbstractDo<Long> {

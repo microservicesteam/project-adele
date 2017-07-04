@@ -1,17 +1,18 @@
 package com.microservicesteam.adele.style;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.immutables.value.Value;
-import org.immutables.value.Value.Style.BuilderVisibility;
-import org.immutables.value.Value.Style.ImplementationVisibility;
+import static java.lang.annotation.ElementType.PACKAGE;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.CLASS;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.PACKAGE;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.CLASS;
+import org.immutables.value.Value;
+import org.immutables.value.Value.Style.BuilderVisibility;
+import org.immutables.value.Value.Style.ImplementationVisibility;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Target({PACKAGE, TYPE})
 @Retention(CLASS)

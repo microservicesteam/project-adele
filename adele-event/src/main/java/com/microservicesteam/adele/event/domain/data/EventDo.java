@@ -1,14 +1,13 @@
 package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.Event;
-import com.microservicesteam.adele.event.domain.EventStatus;
-
 import static javax.persistence.CascadeType.PERSIST;
-
-import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import java.time.LocalDateTime;
+
+import com.microservicesteam.adele.event.domain.Event;
+import com.microservicesteam.adele.event.domain.EventStatus;
 
 @Entity
 public class EventDo extends AbstractDo<Long> {

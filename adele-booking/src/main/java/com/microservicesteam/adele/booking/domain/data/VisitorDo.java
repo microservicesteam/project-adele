@@ -1,10 +1,10 @@
 package com.microservicesteam.adele.booking.domain.data;
 
-import com.microservicesteam.adele.booking.domain.Visitor;
-
 import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import com.microservicesteam.adele.booking.domain.Visitor;
 
 @Entity
 public class VisitorDo extends AbstractDo<Long> {

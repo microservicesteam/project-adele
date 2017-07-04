@@ -1,13 +1,13 @@
 package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.Venue;
+import static java.util.stream.Collectors.toList;
+import static javax.persistence.CascadeType.PERSIST;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static javax.persistence.CascadeType.PERSIST;
+import com.microservicesteam.adele.event.domain.Venue;
 
 @Entity
 public class VenueDo extends AbstractDo<Long> {

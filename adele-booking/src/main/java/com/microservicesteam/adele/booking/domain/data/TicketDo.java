@@ -1,14 +1,13 @@
 package com.microservicesteam.adele.booking.domain.data;
 
-
-import com.microservicesteam.adele.booking.domain.Ticket;
+import static javax.persistence.CascadeType.PERSIST;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
-import static javax.persistence.CascadeType.PERSIST;
+import com.microservicesteam.adele.booking.domain.Ticket;
 
 @Entity
 public class TicketDo extends AbstractDo<Long> {

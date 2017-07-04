@@ -1,11 +1,11 @@
 package com.microservicesteam.adele.event.domain.data;
 
-import com.google.common.collect.ImmutableList;
-import com.microservicesteam.adele.event.domain.Sector;
-
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+import com.microservicesteam.adele.event.domain.Sector;
 
 @Entity
 public class SectorDo extends AbstractDo<Long> {
