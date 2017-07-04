@@ -58,6 +58,7 @@ public class TicketMasterService extends EventBasedService {
         } else {
             eventBus.post(TicketsWereAlreadyBooked.builder()
                     .bookingId(command.bookingId())
+                    .addAllPositions(command.positions())
                     .build());
         }
     }

@@ -137,6 +137,7 @@ public class TicketMasterServiceTest {
                                 .build(),
                         TicketsWereAlreadyBooked.builder()
                                 .bookingId(BOOKING_ID)
+                                .addPositions(POSITION_1)
                                 .build());
     }
 
