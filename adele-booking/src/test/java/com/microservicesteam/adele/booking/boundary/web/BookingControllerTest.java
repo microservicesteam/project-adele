@@ -83,7 +83,7 @@ public class BookingControllerTest {
                                 .eventId(2)
                                 .build())
                         .build()));
-        mockMvc.perform(get("/events/1/tickets").accept(APPLICATION_JSON))
+        mockMvc.perform(get("/bookings?eventId=1").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status", equalTo(FREE.name())))
                 .andExpect(jsonPath("$[0].position.id", equalTo(1)))
@@ -102,7 +102,7 @@ public class BookingControllerTest {
                                 .eventId(2)
                                 .build())
                         .build()));
-        mockMvc.perform(get("/events/1/tickets").accept(APPLICATION_JSON))
+        mockMvc.perform(get("/bookings?eventId=1").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
@@ -118,7 +118,7 @@ public class BookingControllerTest {
                 .sectorId(2)
                 .addPositions(3)
                 .build());
-        mockMvc.perform(post("/events/1/book-tickets").accept(APPLICATION_JSON).content(requestBody).contentType(contentType))
+        mockMvc.perform(post("/bookings").accept(APPLICATION_JSON).content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookingId", equalTo("randomBookingId")));
     }

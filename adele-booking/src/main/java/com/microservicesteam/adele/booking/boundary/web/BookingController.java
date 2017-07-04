@@ -4,17 +4,12 @@ import com.microservicesteam.adele.booking.domain.BookingRequest;
 import com.microservicesteam.adele.booking.domain.BookingResponse;
 import com.microservicesteam.adele.booking.domain.BookingService;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/events/{eventId}")
+@RequestMapping("bookings")
 public class BookingController {
 
     private final BookingService bookingService;
@@ -23,13 +18,13 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping("/tickets")
-    public List<Ticket> getTicketsStatus(@PathVariable long eventId) {
+    @GetMapping
+    public List<Ticket> getBookings(@RequestParam long eventId) {
         return bookingService.getTicketsStatus(eventId);
     }
 
-    @PostMapping("/book-tickets")
-    public BookingResponse bookTickets(@PathVariable long eventId, @RequestBody BookingRequest bookingRequest) {
+    @PostMapping
+    public BookingResponse bookTickets(@RequestBody BookingRequest bookingRequest) {
         return bookingService.bookTickets(bookingRequest);
     }
 
