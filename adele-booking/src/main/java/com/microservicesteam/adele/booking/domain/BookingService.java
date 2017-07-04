@@ -39,7 +39,7 @@ public class BookingService extends EventBasedService {
     }
 
     public ImmutableList<Ticket> getTicketsStatus(long eventId) {
-        return ticketRepository.getTicketsStatus(eventId);
+        return ticketRepository.getTicketsStatusByEvent(eventId);
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {

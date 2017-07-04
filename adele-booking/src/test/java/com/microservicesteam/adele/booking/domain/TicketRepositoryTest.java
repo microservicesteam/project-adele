@@ -108,7 +108,7 @@ public class TicketRepositoryTest {
 
     @Test
     public void getTicketsStatusShouldReturnEmptyListOnEmptyRepository() {
-        assertThat(underTest.getTicketsStatus(EVENT_ID)).isEmpty();
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).isEmpty();
     }
 
     @Test
@@ -122,6 +122,6 @@ public class TicketRepositoryTest {
                 .build();
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherEvent);
-        assertThat(underTest.getTicketsStatus(EVENT_ID)).containsExactly(FREE_TICKET);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET);
     }
 }

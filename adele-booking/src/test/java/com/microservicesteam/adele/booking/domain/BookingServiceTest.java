@@ -4,17 +4,16 @@ import static com.microservicesteam.adele.booking.domain.validator.ValidationRes
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import com.google.common.collect.ImmutableList;
-import com.microservicesteam.adele.ticketmaster.model.*;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
 import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
@@ -23,6 +22,10 @@ import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookingServiceTest {
@@ -175,8 +178,7 @@ public class BookingServiceTest {
 
     @Test
     public void getTicketsStatusReturnsListOfTickets() throws Exception {
-        //given
-        ImmutableList<com.microservicesteam.adele.ticketmaster.model.Ticket> ticketsInRepository = ImmutableList.of(
+        ImmutableList<Ticket> ticketsInRepository = ImmutableList.of(
                 BookedTicket.builder()
                         .position(POSITION_1)
                         .bookingId(BOOKING_ID)
@@ -184,7 +186,7 @@ public class BookingServiceTest {
                 FreeTicket.builder()
                         .position(POSITION_2)
                         .build());
-        when(ticketRepository.getTicketsStatus(1)).thenReturn(ticketsInRepository);
+        when(ticketRepository.getTicketsStatusByEvent(1)).thenReturn(ticketsInRepository);
         assertThat(bookingService.getTicketsStatus(1))
                 .isEqualTo(ticketsInRepository);
     }
