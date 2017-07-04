@@ -1,9 +1,9 @@
 package com.microservicesteam.adele.event.domain;
 
-import org.immutables.value.Value;
-
 import javax.annotation.Nullable;
 import java.time.LocalDateTime;
+
+import org.immutables.value.Value;
 
 @Value.Immutable
 public interface Event {

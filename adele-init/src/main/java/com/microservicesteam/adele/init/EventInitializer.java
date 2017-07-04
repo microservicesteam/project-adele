@@ -13,7 +13,12 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.event.boundary.web.EventRepository;
-import com.microservicesteam.adele.event.domain.*;
+import com.microservicesteam.adele.event.domain.Coordinates;
+import com.microservicesteam.adele.event.domain.Event;
+import com.microservicesteam.adele.event.domain.EventStatus;
+import com.microservicesteam.adele.event.domain.Price;
+import com.microservicesteam.adele.event.domain.Sector;
+import com.microservicesteam.adele.event.domain.Venue;
 import com.microservicesteam.adele.event.domain.data.EventDo;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.model.Position;

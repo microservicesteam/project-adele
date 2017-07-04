@@ -1,10 +1,9 @@
 package com.microservicesteam.adele.event.domain.data;
 
-import com.microservicesteam.adele.event.domain.Price;
-
+import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
-import javax.persistence.Embeddable;
+import com.microservicesteam.adele.event.domain.Price;
 
 @Embeddable
 public class PriceDo {

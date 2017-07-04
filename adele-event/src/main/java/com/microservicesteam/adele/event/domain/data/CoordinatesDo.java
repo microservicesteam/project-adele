@@ -1,10 +1,9 @@
 package com.microservicesteam.adele.event.domain.data;
 
-
-import com.microservicesteam.adele.event.domain.Coordinates;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+
+import com.microservicesteam.adele.event.domain.Coordinates;
 
 @Embeddable
 public class CoordinatesDo {

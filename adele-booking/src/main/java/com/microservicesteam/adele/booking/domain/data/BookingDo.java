@@ -1,8 +1,7 @@
 package com.microservicesteam.adele.booking.domain.data;
 
-
-import com.microservicesteam.adele.booking.domain.Booking;
-import com.microservicesteam.adele.booking.domain.PaymentStatus;
+import static java.util.stream.Collectors.toList;
+import static javax.persistence.CascadeType.PERSIST;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -10,8 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.List;
 
-import static java.util.stream.Collectors.toList;
-import static javax.persistence.CascadeType.PERSIST;
+import com.microservicesteam.adele.booking.domain.Booking;
+import com.microservicesteam.adele.booking.domain.PaymentStatus;
 
 @Entity
 public class BookingDo extends AbstractDo<Long> {

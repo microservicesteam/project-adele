@@ -4,7 +4,9 @@ import static com.microservicesteam.adele.booking.domain.validator.ValidationRes
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 

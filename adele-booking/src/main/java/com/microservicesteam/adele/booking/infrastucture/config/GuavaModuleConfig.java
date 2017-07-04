@@ -1,9 +1,10 @@
 package com.microservicesteam.adele.booking.infrastucture.config;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
 @Configuration
 public class GuavaModuleConfig {
