@@ -4,7 +4,6 @@ import static com.microservicesteam.adele.booking.domain.validator.ValidationRes
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
 import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
@@ -27,6 +27,7 @@ import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BookingServiceTest {
@@ -55,12 +56,14 @@ public class BookingServiceTest {
     private BookingIdGenerator bookingIdGenerator;
     @Mock
     private WebSocketEventPublisher webSocketEventPublisher;
+    @Mock
+    private TicketRepository ticketRepository;
 
     @Before
     public void setUp() throws Exception {
         eventBus = new EventBus();
         bookingService = new BookingService(
-                eventBus, validator, bookingIdGenerator, webSocketEventPublisher, new TicketRepository());
+                eventBus, validator, bookingIdGenerator, webSocketEventPublisher, ticketRepository);
         bookingService.init();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
@@ -82,7 +85,7 @@ public class BookingServiceTest {
         BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
 
         //then
-        verify(validator, times(1)).validate(bookingRequest);
+        verify(validator).validate(bookingRequest);
         assertThat(bookingResponse).isInstanceOf(BookingRejected.class);
         BookingRejected bookingRejected = (BookingRejected) bookingResponse;
         assertThat(bookingRejected.code()).isEqualTo(INVALID_POSITIONS_EMPTY.code());
@@ -91,14 +94,18 @@ public class BookingServiceTest {
 
     @Test
     public void onBookingRequestBookTicketsCommandCreatedAndSent() throws Exception {
+        //given
         BookingRequest bookingRequest = BookingRequest.builder()
                 .eventId(1L)
                 .sectorId(1)
                 .addPositions(1, 2)
                 .build();
+
+        //when
         BookingResponse bookingResponse = bookingService.bookTickets(bookingRequest);
 
-        verify(validator, times(1)).validate(bookingRequest);
+        //then
+        verify(validator).validate(bookingRequest);
         assertThat(bookingResponse).isInstanceOf(BookingRequested.class);
         BookingRequested bookingRequested = (BookingRequested) bookingResponse;
 
@@ -114,61 +121,60 @@ public class BookingServiceTest {
 
     @Test
     public void onTicketsCreatedMapIsUpdatedAndEventIsPublished() throws Exception {
+        //given
         TicketsCreated ticketsCreated = TicketsCreated.builder()
                 .addPositions(POSITION_1, POSITION_2)
                 .build();
 
+        //when
         eventBus.post(ticketsCreated);
 
-        assertThat(bookingService.getTicketsStatus())
-                .containsExactly(
-                        FreeTicket.builder()
-                                .position(POSITION_1)
-                                .build(),
-                        FreeTicket.builder()
-                                .position(POSITION_2)
-                                .build());
+        //then
+        verify(ticketRepository).put(FreeTicket.builder()
+                .position(POSITION_1)
+                .build());
+        verify(ticketRepository).put(FreeTicket.builder()
+                .position(POSITION_2)
+                .build());
     }
 
     @Test
     public void onTicketsBookedMapIsUpdatedAndEventIsPublished() throws Exception {
+        //given
         TicketsBooked ticketsBooked = TicketsBooked.builder()
                 .bookingId(BOOKING_ID)
-                .addPositions(POSITION_1, POSITION_2)
+                .addPositions(POSITION_1)
                 .build();
 
+        //when
         eventBus.post(ticketsBooked);
 
-        assertThat(bookingService.getTicketsStatus())
-                .containsExactly(
-                        BookedTicket.builder()
-                                .position(POSITION_1)
-                                .bookingId(BOOKING_ID)
-                                .build(),
-                        BookedTicket.builder()
-                                .position(POSITION_2)
-                                .bookingId(BOOKING_ID)
-                                .build());
+        //then
+        verify(ticketRepository).put(BookedTicket.builder()
+                .bookingId(BOOKING_ID)
+                .position(POSITION_1)
+                .build());
         verify(webSocketEventPublisher).publish(ticketsBooked);
     }
 
     @Test
     public void onTicketsCancelledMapIsUpdatedAndEventIsPublished() throws Exception {
+        //given
         TicketsCancelled ticketsCancelled = TicketsCancelled.builder()
                 .bookingId(BOOKING_ID)
                 .addPositions(POSITION_1, POSITION_2)
                 .build();
 
+        //when
         eventBus.post(ticketsCancelled);
 
-        assertThat(bookingService.getTicketsStatus())
-                .containsExactly(
-                        FreeTicket.builder()
-                                .position(POSITION_1)
-                                .build(),
-                        FreeTicket.builder()
-                                .position(POSITION_2)
-                                .build());
+        //then
+        verify(ticketRepository).put(FreeTicket.builder()
+                .position(POSITION_1)
+                .build());
+        verify(ticketRepository).put(FreeTicket.builder()
+                .position(POSITION_2)
+                .build());
         verify(webSocketEventPublisher).publish(ticketsCancelled);
     }
 
@@ -185,25 +191,16 @@ public class BookingServiceTest {
 
     @Test
     public void getTicketsStatusReturnsListOfTickets() throws Exception {
-        TicketsCreated ticketsCreated = TicketsCreated.builder()
-                .addPositions(POSITION_1, POSITION_2)
-                .build();
-        TicketsBooked ticketsBooked = TicketsBooked.builder()
-                .bookingId(BOOKING_ID)
-                .addPositions(POSITION_1)
-                .build();
-
-        eventBus.post(ticketsCreated);
-        eventBus.post(ticketsBooked);
-
-        assertThat(bookingService.getTicketsStatus())
-                .containsExactly(
-                        BookedTicket.builder()
-                                .position(POSITION_1)
-                                .bookingId(BOOKING_ID)
-                                .build(),
-                        FreeTicket.builder()
-                                .position(POSITION_2)
-                                .build());
+        ImmutableList<Ticket> ticketsInRepository = ImmutableList.of(
+                BookedTicket.builder()
+                        .position(POSITION_1)
+                        .bookingId(BOOKING_ID)
+                        .build(),
+                FreeTicket.builder()
+                        .position(POSITION_2)
+                        .build());
+        when(ticketRepository.getTicketsStatusByEvent(1)).thenReturn(ticketsInRepository);
+        assertThat(bookingService.getTicketsStatus(1))
+                .isEqualTo(ticketsInRepository);
     }
 }
