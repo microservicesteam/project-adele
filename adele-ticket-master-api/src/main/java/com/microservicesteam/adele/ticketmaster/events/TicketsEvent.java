@@ -15,6 +15,7 @@ import com.microservicesteam.adele.ticketmaster.model.Position;
         @JsonSubTypes.Type(value=TicketsBooked.class, name="TicketsBooked"),
         @JsonSubTypes.Type(value=TicketsCancelled.class, name="TicketsCancelled"),
         @JsonSubTypes.Type(value=TicketsPaid.class, name="TicketsPaid"),
+        @JsonSubTypes.Type(value=TicketsAlreadyBooked.class, name="TicketsAlreadyBooked")
 })
 public interface TicketsEvent extends Event {
     List<Position> positions();

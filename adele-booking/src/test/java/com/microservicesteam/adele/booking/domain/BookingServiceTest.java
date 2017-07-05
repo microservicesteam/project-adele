@@ -7,6 +7,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -174,6 +176,17 @@ public class BookingServiceTest {
                 .position(POSITION_2)
                 .build());
         verify(webSocketEventPublisher).publish(ticketsCancelled);
+    }
+
+    @Test
+    public void onTicketsWereAlreadyBookedEventIsPublished() {
+        TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
+                .bookingId(BOOKING_ID)
+                .build();
+
+        eventBus.post(ticketsAlreadyBooked);
+
+        verify(webSocketEventPublisher).publish(ticketsAlreadyBooked);
     }
 
     @Test

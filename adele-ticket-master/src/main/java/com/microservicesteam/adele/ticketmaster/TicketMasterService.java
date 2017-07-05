@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.EventBus;
@@ -55,8 +56,9 @@ public class TicketMasterService extends EventBasedService {
                     .addAllPositions(command.positions())
                     .build());
         } else {
-            eventBus.post(NoOperation.builder()
-                    .sourceCommand(command)
+            eventBus.post(TicketsAlreadyBooked.builder()
+                    .bookingId(command.bookingId())
+                    .addAllPositions(command.positions())
                     .build());
         }
     }
