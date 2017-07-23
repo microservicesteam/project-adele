@@ -10,6 +10,10 @@
 
     <artifactId>adele-application</artifactId>
 
+    <properties>
+        <artifact>${project.build.finalName}.jar</artifact>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.microservicesteam</groupId>
@@ -49,10 +53,45 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/docker</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>Dockerfile</include>
+                </includes>
+                <targetPath>${project.build.directory}</targetPath>
+            </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <!--phase>install</phase-->
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repository>microservicesteam/adele</repository>
+                    <tag>${project.version}</tag>
+                    <contextDirectory>${project.build.directory}</contextDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>
