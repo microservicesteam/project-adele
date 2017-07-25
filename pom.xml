@@ -170,4 +170,23 @@
 
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>AdeleRepo.read</id>
+            <url>https://mymavenrepo.com/repo/aDLxMpH1VytemfR3sNNV/</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>AdeleRepo.write</id>
+            <url>https://mymavenrepo.com/repo/oPSkM52xmRJt1uaLEe5I/</url>
+        </repository>
+        <snapshotRepository>
+            <id>AdeleRepo.write</id>
+            <url>https://mymavenrepo.com/repo/oPSkM52xmRJt1uaLEe5I/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
