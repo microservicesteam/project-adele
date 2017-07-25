@@ -1,5 +1,7 @@
 package com.microservicesteam.adele.booking.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -21,7 +23,7 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service
 public class BookingService extends EventBasedService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
     private final BookingRequestValidator validator;
     private final BookingIdGenerator bookingIdGenerator;
     private final WebSocketEventPublisher webSocketEventPublisher;
@@ -51,13 +53,16 @@ public class BookingService extends EventBasedService {
         }
 
         String bookingId = bookingIdGenerator.generateBookingId();
+        LOGGER.debug("BookingId {} gereate4d to request {}", bookingId, bookingRequest);
 
         ImmutableList<Position> requestedPositions = bookingRequest.requestedPositions();
 
-        eventBus.post(BookTickets.builder()
+        BookTickets bookTickets = BookTickets.builder()
                 .bookingId(bookingId)
                 .addAllPositions(requestedPositions)
-                .build());
+                .build();
+        LOGGER.debug("Command was posted {}", bookTickets);
+        eventBus.post(bookTickets);
 
         return BookingRequested.builder()
                 .bookingId(bookingId)
@@ -70,6 +75,7 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
+        LOGGER.debug("Event was processed {}", ticketsCreated);
     }
 
     @Subscribe
@@ -79,6 +85,7 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
+        LOGGER.debug("Event published on websocket {}", ticketsBooked);
         webSocketEventPublisher.publish(ticketsBooked);
     }
 
@@ -88,11 +95,13 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
+        LOGGER.debug("Event published on websocket {}", ticketsCancelled);
         webSocketEventPublisher.publish(ticketsCancelled);
     }
 
     @Subscribe
     public void handleEvent(TicketsAlreadyBooked ticketsAlreadyBooked) {
+        LOGGER.debug("Event published on websocket {}", ticketsAlreadyBooked);
         webSocketEventPublisher.publish(ticketsAlreadyBooked);
     }
 }
