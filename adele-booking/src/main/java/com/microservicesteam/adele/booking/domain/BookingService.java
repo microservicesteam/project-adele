@@ -53,7 +53,7 @@ public class BookingService extends EventBasedService {
         }
 
         String bookingId = bookingIdGenerator.generateBookingId();
-        LOGGER.debug("BookingId {} gereate4d to request {}", bookingId, bookingRequest);
+        LOGGER.debug("BookingId {} generated to request {}", bookingId, bookingRequest);
 
         ImmutableList<Position> requestedPositions = bookingRequest.requestedPositions();
 
@@ -61,8 +61,8 @@ public class BookingService extends EventBasedService {
                 .bookingId(bookingId)
                 .addAllPositions(requestedPositions)
                 .build();
-        LOGGER.debug("Command was posted {}", bookTickets);
         eventBus.post(bookTickets);
+        LOGGER.debug("Command was posted {}", bookTickets);
 
         return BookingRequested.builder()
                 .bookingId(bookingId)
@@ -85,8 +85,9 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
-        LOGGER.debug("Event published on websocket {}", ticketsBooked);
         webSocketEventPublisher.publish(ticketsBooked);
+        LOGGER.debug("Event published on websocket {}", ticketsBooked);
+
     }
 
     @Subscribe
@@ -95,13 +96,14 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
-        LOGGER.debug("Event published on websocket {}", ticketsCancelled);
         webSocketEventPublisher.publish(ticketsCancelled);
+        LOGGER.debug("Event published on websocket {}", ticketsCancelled);
+
     }
 
     @Subscribe
     public void handleEvent(TicketsAlreadyBooked ticketsAlreadyBooked) {
-        LOGGER.debug("Event published on websocket {}", ticketsAlreadyBooked);
         webSocketEventPublisher.publish(ticketsAlreadyBooked);
+        LOGGER.debug("Event published on websocket {}", ticketsAlreadyBooked);
     }
 }

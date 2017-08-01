@@ -45,13 +45,12 @@ public class TicketMasterService extends EventBasedService {
             TicketsCreated ticketsCreated = TicketsCreated.builder()
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.debug("Event created: {}", ticketsCreated);
+            LOGGER.info("Tickets created: {}", ticketsCreated);
             eventBus.post(ticketsCreated);
         } else {
             NoOperation noOperation = NoOperation.builder()
                     .sourceCommand(command)
                     .build();
-            LOGGER.debug("Event created: {}", noOperation);
             eventBus.post(noOperation);
         }
     }
@@ -66,14 +65,13 @@ public class TicketMasterService extends EventBasedService {
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.debug("Event created: {}", ticketsBooked);
+            LOGGER.info("Tickets booked: {}", ticketsBooked);
             eventBus.post(ticketsBooked);
         } else {
             TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.debug("Event created: {}", ticketsAlreadyBooked);
             eventBus.post(ticketsAlreadyBooked);
         }
     }
@@ -87,13 +85,12 @@ public class TicketMasterService extends EventBasedService {
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.debug("Event created: {}", ticketsCancelled);
+            LOGGER.info("Tickets canceled: {}", ticketsCancelled);
             eventBus.post(ticketsCancelled);
         } else {
             NoOperation noOperation = NoOperation.builder()
                     .sourceCommand(command)
                     .build();
-            LOGGER.debug("Event created: {}", noOperation);
             eventBus.post(noOperation);
         }
     }

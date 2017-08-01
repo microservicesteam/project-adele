@@ -26,7 +26,7 @@ public class DeadEventListener {
 
     @Subscribe
     public void handleEvent(DeadEvent event) {
-        LOGGER.debug("Dead event: {}", event);
+        LOGGER.warn("Dead event: {}", event);
         deadEvents.add(event);
     }
 
