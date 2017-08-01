@@ -19,7 +19,7 @@ public class WebSocketEventPublisher {
     }
 
     public void publish(Event event) {
-        LOGGER.debug("Event was published: {}", event);
         this.template.convertAndSend("/topic/tickets", event);
+        LOGGER.debug("Event was published: {}", event);
     }
 }

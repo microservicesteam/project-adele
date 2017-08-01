@@ -39,7 +39,6 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CreateTickets command) {
-        LOGGER.debug("Command consumed: {}", command);
         if (positionsNotExist(command.positions())) {
             addTickets(command);
             TicketsCreated ticketsCreated = TicketsCreated.builder()
@@ -58,7 +57,6 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(BookTickets command) {
-        LOGGER.debug("Command consumed: {}", command);
         if (positionsFree(command.positions())) {
             bookTickets(command);
             TicketsBooked ticketsBooked = TicketsBooked.builder()
@@ -78,14 +76,13 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CancelTickets command) {
-        LOGGER.debug("Command consumed: {}", command);
         if (positionsBooked(command.positions())) {
             cancelTickets(command);
             TicketsCancelled ticketsCancelled = TicketsCancelled.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.info("Tickets canceled: {}", ticketsCancelled);
+            LOGGER.info("Tickets cancelled: {}", ticketsCancelled);
             eventBus.post(ticketsCancelled);
         } else {
             NoOperation noOperation = NoOperation.builder()

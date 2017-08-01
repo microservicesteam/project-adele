@@ -62,7 +62,7 @@ public class BookingService extends EventBasedService {
                 .addAllPositions(requestedPositions)
                 .build();
         eventBus.post(bookTickets);
-        LOGGER.debug("Command was posted {}", bookTickets);
+        LOGGER.debug("Booking initiated: {}", bookTickets);
 
         return BookingRequested.builder()
                 .bookingId(bookingId)
@@ -75,7 +75,6 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
-        LOGGER.debug("Event was processed {}", ticketsCreated);
     }
 
     @Subscribe
@@ -86,8 +85,6 @@ public class BookingService extends EventBasedService {
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
         webSocketEventPublisher.publish(ticketsBooked);
-        LOGGER.debug("Event published on websocket {}", ticketsBooked);
-
     }
 
     @Subscribe
@@ -97,13 +94,10 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .build()));
         webSocketEventPublisher.publish(ticketsCancelled);
-        LOGGER.debug("Event published on websocket {}", ticketsCancelled);
-
     }
 
     @Subscribe
     public void handleEvent(TicketsAlreadyBooked ticketsAlreadyBooked) {
         webSocketEventPublisher.publish(ticketsAlreadyBooked);
-        LOGGER.debug("Event published on websocket {}", ticketsAlreadyBooked);
     }
 }
