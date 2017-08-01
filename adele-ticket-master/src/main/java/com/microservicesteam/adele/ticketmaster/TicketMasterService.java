@@ -47,10 +47,9 @@ public class TicketMasterService extends EventBasedService {
             LOGGER.info("Tickets created: {}", ticketsCreated);
             eventBus.post(ticketsCreated);
         } else {
-            NoOperation noOperation = NoOperation.builder()
+            eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
-                    .build();
-            eventBus.post(noOperation);
+                    .build());
         }
     }
 
@@ -70,6 +69,7 @@ public class TicketMasterService extends EventBasedService {
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
+            LOGGER.debug("Unsuccessful booking attempt: {}", ticketsAlreadyBooked);
             eventBus.post(ticketsAlreadyBooked);
         }
     }
@@ -85,10 +85,9 @@ public class TicketMasterService extends EventBasedService {
             LOGGER.info("Tickets cancelled: {}", ticketsCancelled);
             eventBus.post(ticketsCancelled);
         } else {
-            NoOperation noOperation = NoOperation.builder()
+            eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
-                    .build();
-            eventBus.post(noOperation);
+                    .build());
         }
     }
 

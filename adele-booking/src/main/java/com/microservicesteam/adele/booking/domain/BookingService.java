@@ -61,8 +61,8 @@ public class BookingService extends EventBasedService {
                 .bookingId(bookingId)
                 .addAllPositions(requestedPositions)
                 .build();
-        eventBus.post(bookTickets);
         LOGGER.debug("Booking initiated: {}", bookTickets);
+        eventBus.post(bookTickets);
 
         return BookingRequested.builder()
                 .bookingId(bookingId)
