@@ -11,7 +11,7 @@ before_deploy:
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./mvnw deploy
+  script: ./mvnw deploy -DskipTests
   on:
     tags: true
 after_success:
