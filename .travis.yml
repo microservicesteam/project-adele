@@ -6,5 +6,13 @@ jdk:
   oraclejdk8
 script:
   - ./mvnw clean install
+before_deploy:
+  docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: ./mvnw deploy
+  on:
+    tags: true
 after_success:
   - bash <(curl -s https://codecov.io/bash)
