@@ -11,7 +11,7 @@ before_deploy:
 deploy:
   skip_cleanup: true
   provider: script
-  script: ./mvnw deploy -DskipTests
+  script: ./mvnw deploy -DskipTests -Pdocker
   on:
     tags: true
 after_success:
