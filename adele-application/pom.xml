@@ -3,7 +3,7 @@
     <parent>
         <artifactId>project-adele</artifactId>
         <groupId>com.microservicesteam</groupId>
-        <version>2017-08-22</version>
+        <version>2017-08-23-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

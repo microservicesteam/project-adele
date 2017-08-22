@@ -4,7 +4,7 @@
     <scm>
         <connection>scm:git:https://github.com/microservicesteam/project-adele.git</connection>
         <developerConnection>scm:git:https://github.com/microservicesteam/project-adele.git</developerConnection>
-      <tag>adele-2017-08-22</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <parent>
@@ -17,7 +17,7 @@
     <groupId>com.microservicesteam</groupId>
     <artifactId>project-adele</artifactId>
     <packaging>pom</packaging>
-    <version>2017-08-22</version>
+    <version>2017-08-23-SNAPSHOT</version>
     <modules>
         <module>adele-application</module>
         <module>adele-booking</module>
