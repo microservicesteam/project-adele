@@ -4,7 +4,8 @@
     <scm>
         <connection>scm:git:https://github.com/microservicesteam/project-adele.git</connection>
         <developerConnection>scm:git:https://github.com/microservicesteam/project-adele.git</developerConnection>
-    </scm>
+      <tag>adele-2017-08-22</tag>
+  </scm>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -16,7 +17,7 @@
     <groupId>com.microservicesteam</groupId>
     <artifactId>project-adele</artifactId>
     <packaging>pom</packaging>
-    <version>2017-08-22-SNAPSHOT</version>
+    <version>2017-08-22</version>
     <modules>
         <module>adele-application</module>
         <module>adele-booking</module>
