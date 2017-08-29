@@ -1,18 +1,24 @@
 package com.microservicesteam.adele.booking.domain;
 
-import org.immutables.value.Value;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-@Value.Immutable
-public interface User {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
-    Long id();
-    
-    class Builder extends ImmutableUser.Builder {
-    }
+@Value
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Entity
+public class User {
 
-    static Builder builder() {
-        return new Builder();
-    }
+    @Id
+    @GeneratedValue
+    Long id;
 
-    
 }

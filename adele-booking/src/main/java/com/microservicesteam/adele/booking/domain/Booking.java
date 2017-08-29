@@ -1,29 +1,44 @@
 package com.microservicesteam.adele.booking.domain;
 
+import static javax.persistence.CascadeType.PERSIST;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Id;
 import java.util.List;
 
-import org.immutables.value.Value;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Singular;
+import lombok.Value;
 
-@Value.Immutable
-public interface Booking {
+@Entity
+@Value
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+public class Booking {
 
-    Long id();
-	
-    User user();
-    
-    List<Ticket> tickets();
-    
-    Price sumPrice();
-    
-    String paymentId();
-    
-    PaymentStatus status();
-    
-    class Builder extends ImmutableBooking.Builder {
-    }
+    @Id
+    @GeneratedValue
+    Long id;
 
-    static Builder builder() {
-        return new Builder();
-    }
-    
+    String paymentId;
+
+    Price sumPrice;
+
+    PaymentStatus status;
+
+    @Singular
+    @OneToMany(cascade = PERSIST)
+    List<Ticket> tickets;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
 }
