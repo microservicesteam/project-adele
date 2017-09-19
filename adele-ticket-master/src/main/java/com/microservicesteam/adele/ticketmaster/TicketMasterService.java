@@ -6,8 +6,7 @@ import java.util.Map;
 
 import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.EventBus;
@@ -26,9 +25,8 @@ import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service
+@Slf4j
 public class TicketMasterService extends EventBasedService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketMasterService.class);
 
     Map<Position, Ticket> ticketRepository;
 
@@ -44,7 +42,7 @@ public class TicketMasterService extends EventBasedService {
             TicketsCreated ticketsCreated = TicketsCreated.builder()
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.info("Tickets created: {}", ticketsCreated);
+            log.info("Tickets created: {}", ticketsCreated);
             eventBus.post(ticketsCreated);
         } else {
             eventBus.post(NoOperation.builder()
@@ -62,14 +60,14 @@ public class TicketMasterService extends EventBasedService {
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.info("Tickets booked: {}", ticketsBooked);
+            log.info("Tickets booked: {}", ticketsBooked);
             eventBus.post(ticketsBooked);
         } else {
             TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.debug("Unsuccessful booking attempt: {}", ticketsAlreadyBooked);
+            log.debug("Unsuccessful booking attempt: {}", ticketsAlreadyBooked);
             eventBus.post(ticketsAlreadyBooked);
         }
     }
@@ -82,7 +80,7 @@ public class TicketMasterService extends EventBasedService {
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
                     .build();
-            LOGGER.info("Tickets cancelled: {}", ticketsCancelled);
+            log.info("Tickets cancelled: {}", ticketsCancelled);
             eventBus.post(ticketsCancelled);
         } else {
             eventBus.post(NoOperation.builder()

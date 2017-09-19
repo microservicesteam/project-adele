@@ -6,8 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +23,8 @@ import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
 @Component
+@Slf4j
 public class EventInitializer implements CommandLineRunner {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventInitializer.class);
 
     private final EventRepository eventRepository;
 
@@ -45,7 +43,7 @@ public class EventInitializer implements CommandLineRunner {
     }
 
     private void initEventRepository() {
-        LOGGER.info("Initializing event repository with data...");
+        log.info("Initializing event repository with data...");
         Event event1 = Event.builder()
                 .name("Init test event")
                 .description("Lorem ipsum dolor met")
@@ -85,7 +83,7 @@ public class EventInitializer implements CommandLineRunner {
     }
 
     private void emitTicketCreatedEvents() {
-        LOGGER.info("Creating new tickets for TicketMaster...");
+        log.info("Creating new tickets for TicketMaster...");
         CreateTickets createTicketsCommand = CreateTickets.builder()
                 .addAllPositions(IntStream.rangeClosed(1, 5)
                         .mapToObj(EventInitializer::createPositionWithId)
