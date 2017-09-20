@@ -19,6 +19,8 @@ function help {
     ;;
     *)
       echo "Usage: $0 help [command]"
+      echo "where \"command\" can be: cleanup, release, version, help"
+      echo "For more information use: $0 help [command]"
     ;;
   esac
 }
@@ -56,6 +58,6 @@ case $1 in
     help $2
   ;;
   *)
-    echo don\'t know
+    help
   ;;
 esac
