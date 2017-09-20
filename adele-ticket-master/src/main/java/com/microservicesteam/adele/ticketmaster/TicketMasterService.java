@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.EventBus;
@@ -25,6 +28,8 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 @Service
 public class TicketMasterService extends EventBasedService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketMasterService.class);
+
     Map<Position, Ticket> ticketRepository;
 
     TicketMasterService(EventBus eventBus) {
@@ -36,9 +41,11 @@ public class TicketMasterService extends EventBasedService {
     public void handleCommand(CreateTickets command) {
         if (positionsNotExist(command.positions())) {
             addTickets(command);
-            eventBus.post(TicketsCreated.builder()
+            TicketsCreated ticketsCreated = TicketsCreated.builder()
                     .addAllPositions(command.positions())
-                    .build());
+                    .build();
+            LOGGER.info("Tickets created: {}", ticketsCreated);
+            eventBus.post(ticketsCreated);
         } else {
             eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
@@ -51,15 +58,19 @@ public class TicketMasterService extends EventBasedService {
     public void handleCommand(BookTickets command) {
         if (positionsFree(command.positions())) {
             bookTickets(command);
-            eventBus.post(TicketsBooked.builder()
+            TicketsBooked ticketsBooked = TicketsBooked.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
-                    .build());
+                    .build();
+            LOGGER.info("Tickets booked: {}", ticketsBooked);
+            eventBus.post(ticketsBooked);
         } else {
-            eventBus.post(TicketsAlreadyBooked.builder()
+            TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
-                    .build());
+                    .build();
+            LOGGER.debug("Unsuccessful booking attempt: {}", ticketsAlreadyBooked);
+            eventBus.post(ticketsAlreadyBooked);
         }
     }
 
@@ -67,10 +78,12 @@ public class TicketMasterService extends EventBasedService {
     public void handleCommand(CancelTickets command) {
         if (positionsBooked(command.positions())) {
             cancelTickets(command);
-            eventBus.post(TicketsCancelled.builder()
+            TicketsCancelled ticketsCancelled = TicketsCancelled.builder()
                     .bookingId(command.bookingId())
                     .addAllPositions(command.positions())
-                    .build());
+                    .build();
+            LOGGER.info("Tickets cancelled: {}", ticketsCancelled);
+            eventBus.post(ticketsCancelled);
         } else {
             eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
