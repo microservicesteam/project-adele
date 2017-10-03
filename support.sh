@@ -25,6 +25,12 @@ function help {
   esac
 }
 
+function prepare_release {
+  TODAY=`date +%Y-%m-%d`
+  TOMORROW=`date --date='tomorrow' +%Y-%m-%d`
+  $MVN_CMD -Dtag=adele-$TODAY -DreleaseVersion=$TODAY -DdevelopmentVersion=$TOMORROW-SNAPSHOT release:prepare -B
+}
+
 if [ $# -ne 1 ] && [ $# -ne 2 ]; then
   echo "usage: $0 command [params]"
   echo "where \"command\" can be: cleanup, release, version, help"
@@ -45,7 +51,7 @@ case $1 in
     $MVN_CMD release:clean
     ;;
   release)
-    $MVN_CMD -Dtag=adele-`date +%Y-%m-%d` -DreleaseVersion=`date +%Y-%m-%d` -DdevelopmentVersion=`date --date='tomorrow' +%Y-%m-%d`-SNAPSHOT release:prepare -B
+    prepare_release
   ;;
   version)
     if [ $# -eq 2 ]; then
