@@ -1,7 +1,6 @@
 package com.microservicesteam.adele.booking.domain;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -22,8 +21,8 @@ import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service
+@Slf4j
 public class BookingService extends EventBasedService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BookingService.class);
     private final BookingRequestValidator validator;
     private final BookingIdGenerator bookingIdGenerator;
     private final WebSocketEventPublisher webSocketEventPublisher;
@@ -53,7 +52,7 @@ public class BookingService extends EventBasedService {
         }
 
         String bookingId = bookingIdGenerator.generateBookingId();
-        LOGGER.debug("BookingId {} generated to request {}", bookingId, bookingRequest);
+        log.debug("BookingId {} generated to request {}", bookingId, bookingRequest);
 
         ImmutableList<Position> requestedPositions = bookingRequest.requestedPositions();
 
@@ -61,7 +60,7 @@ public class BookingService extends EventBasedService {
                 .bookingId(bookingId)
                 .addAllPositions(requestedPositions)
                 .build();
-        LOGGER.debug("Booking initiated: {}", bookTickets);
+        log.debug("Booking initiated: {}", bookTickets);
         eventBus.post(bookTickets);
 
         return BookingRequested.builder()

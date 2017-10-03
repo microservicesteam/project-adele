@@ -1,28 +1,38 @@
 package com.microservicesteam.adele.booking.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import org.immutables.value.Value;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import lombok.experimental.FieldDefaults;
 
-@Value.Immutable
-public interface Visitor {
-    
-    Long id();
-    
-    String name();
-    
-    LocalDate birthDate();
-    
-    String address();
-    
-    BigDecimal discountInPercent();
-    
-    class Builder extends ImmutableVisitor.Builder {
-    }
+@Value
+@Getter(AccessLevel.NONE)
+@FieldDefaults(level = AccessLevel.PUBLIC)
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Entity
+public class Visitor {
 
-    static Builder builder() {
-        return new Builder();
-    }
+	@Id
+	@GeneratedValue
+	Long id;
+
+	String name;
+	
+	LocalDate birthDate;
+
+	String address;
+
+	BigDecimal discountInPercent;
 
 }
