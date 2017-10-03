@@ -19,13 +19,13 @@ import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-@Entity
 @Value
 @Getter(AccessLevel.NONE)
 @FieldDefaults(level = AccessLevel.PUBLIC)
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Entity
 public class Booking {
 
     @Id
