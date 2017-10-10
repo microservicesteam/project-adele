@@ -1,26 +1,40 @@
 package com.microservicesteam.adele.event.domain;
 
-import javax.annotation.Nullable;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 import java.util.List;
 
-import org.immutables.value.Value;
+import org.hibernate.annotations.Immutable;
 
-@Value.Immutable
-public interface Sector {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import lombok.experimental.FieldDefaults;
 
-    @Nullable
-	Long id();
+@Value
+@Getter(AccessLevel.NONE)
+@FieldDefaults(level = AccessLevel.PUBLIC)
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Entity
+public class Sector {
 
-    long capacity();
+    @Id
+    @GeneratedValue
+    Long id;
 
-    Price price();
+    long capacity;
 
-    List<Integer> positions();
+    Price price;
 
-    static Builder builder() {
-        return new Builder();
-    }
-
-    class Builder extends ImmutableSector.Builder {
-    }
+    @ElementCollection
+    @Immutable
+    List<Integer> positions;
 }

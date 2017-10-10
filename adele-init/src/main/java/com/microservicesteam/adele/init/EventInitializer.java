@@ -4,8 +4,10 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -18,23 +20,17 @@ import com.microservicesteam.adele.event.domain.EventStatus;
 import com.microservicesteam.adele.event.domain.Price;
 import com.microservicesteam.adele.event.domain.Sector;
 import com.microservicesteam.adele.event.domain.Venue;
-import com.microservicesteam.adele.event.domain.data.EventDo;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
-@Component
 @Slf4j
+@AllArgsConstructor
+@Component
 public class EventInitializer implements CommandLineRunner {
 
     private final EventRepository eventRepository;
 
     private final EventBus eventBus;
-
-    public EventInitializer(EventRepository eventRepository, EventBus eventBus) {
-        this.eventRepository = eventRepository;
-        this.eventBus = eventBus;
-    }
-
 
     @Override
     public void run(String... arg0) throws Exception {
@@ -55,13 +51,13 @@ public class EventInitializer implements CommandLineRunner {
                                 .latitude(1.0)
                                 .longitude(2.1)
                                 .build())
-                        .addSectors(Sector.builder()
+                        .sector(Sector.builder()
                                 .capacity(5)
                                 .price(Price.builder()
                                         .currency("HUF")
                                         .amount(new BigDecimal("1500"))
                                         .build())
-                                .addPositions(1, 2, 3, 4, 5)
+                                .positions(Arrays.asList(1, 2, 3, 4, 5))
                                 .build())
                         .build())
                 .build();
@@ -78,8 +74,8 @@ public class EventInitializer implements CommandLineRunner {
                                 .build())
                         .build())
                 .build();
-        eventRepository.save(EventDo.fromImmutable(event1));
-        eventRepository.save(EventDo.fromImmutable(event2));
+        eventRepository.save(event1);
+        eventRepository.save(event2);
     }
 
     private void emitTicketCreatedEvents() {

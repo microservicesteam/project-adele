@@ -1,20 +1,27 @@
 package com.microservicesteam.adele.event.domain;
 
+import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
-import org.immutables.value.Value;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import lombok.experimental.FieldDefaults;
 
-@Value.Immutable
-public interface Price {
-    
-    BigDecimal amount();
-    
-    String currency();
+@Value
+@Getter(AccessLevel.NONE)
+@FieldDefaults(level = AccessLevel.PUBLIC)
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Embeddable
+public class Price {
 
-    static Builder builder() {
-        return new Builder();
-    }
+    BigDecimal amount;
 
-    class Builder extends ImmutablePrice.Builder {
-    }
+    String currency;
+
 }
