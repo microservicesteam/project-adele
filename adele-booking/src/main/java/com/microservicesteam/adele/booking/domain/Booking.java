@@ -8,8 +8,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Id;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,7 +39,7 @@ public class Booking {
 
     @Singular
     @OneToMany(cascade = PERSIST)
-    List<Ticket> tickets;
+    ImmutableList<Ticket> tickets;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
