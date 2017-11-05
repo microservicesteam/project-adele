@@ -1,6 +1,7 @@
 package com.microservicesteam.adele.booking.boundary.web;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,8 +26,8 @@ public class BookingController {
     }
 
     @GetMapping
-    public List<Ticket> getBookings(@RequestParam long eventId) {
-        return bookingService.getTicketsStatus(eventId);
+    public List<Ticket> getBookings(@RequestParam long eventId, @RequestParam(required = false) Integer sectorId) {
+        return bookingService.getTicketsStatus(eventId, Optional.ofNullable(sectorId));
     }
 
     @PostMapping

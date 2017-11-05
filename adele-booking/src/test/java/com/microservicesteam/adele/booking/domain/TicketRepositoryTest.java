@@ -8,6 +8,8 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Optional;
+
 public class TicketRepositoryTest {
 
     private static final int ID_1 = 0;
@@ -108,11 +110,11 @@ public class TicketRepositoryTest {
 
     @Test
     public void getTicketsStatusShouldReturnEmptyListOnEmptyRepository() {
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).isEmpty();
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.empty())).isEmpty();
     }
 
     @Test
-    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventId() {
+    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventIdAndSector() {
         FreeTicket freeTicketOnOtherEvent = FreeTicket.builder()
                 .position(Position.builder()
                         .id(ID_1)
@@ -122,6 +124,20 @@ public class TicketRepositoryTest {
                 .build();
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherEvent);
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.of(SECTOR_ID))).containsExactly(FREE_TICKET);
+    }
+
+    @Test
+    public void getTicketsStatusShouldReturnAllTicketsForTheGivenEventId() {
+        FreeTicket freeTicketOnOtherSector = FreeTicket.builder()
+                .position(Position.builder()
+                        .id(ID_1)
+                        .eventId(EVENT_ID)
+                        .sectorId(3)
+                        .build())
+                .build();
+        underTest.put(FREE_TICKET);
+        underTest.put(freeTicketOnOtherSector);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.empty())).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
     }
 }

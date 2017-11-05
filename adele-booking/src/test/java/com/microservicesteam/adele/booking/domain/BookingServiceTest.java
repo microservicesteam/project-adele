@@ -7,6 +7,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 
 import org.junit.Before;
@@ -155,6 +157,7 @@ public class BookingServiceTest {
                 .position(POSITION_1)
                 .build());
         verify(webSocketEventPublisher).publish(ticketsBooked);
+        verify(webSocketEventPublisher).publishToSector(ticketsBooked);
     }
 
     @Test
@@ -176,6 +179,7 @@ public class BookingServiceTest {
                 .position(POSITION_2)
                 .build());
         verify(webSocketEventPublisher).publish(ticketsCancelled);
+        verify(webSocketEventPublisher).publishToSector(ticketsCancelled);
     }
 
     @Test
@@ -187,6 +191,7 @@ public class BookingServiceTest {
         eventBus.post(ticketsAlreadyBooked);
 
         verify(webSocketEventPublisher).publish(ticketsAlreadyBooked);
+        verify(webSocketEventPublisher).publishToSector(ticketsAlreadyBooked);
     }
 
     @Test
@@ -199,8 +204,8 @@ public class BookingServiceTest {
                 FreeTicket.builder()
                         .position(POSITION_2)
                         .build());
-        when(ticketRepository.getTicketsStatusByEvent(1)).thenReturn(ticketsInRepository);
-        assertThat(bookingService.getTicketsStatus(1))
+        when(ticketRepository.getTicketsStatusByEvent(1, Optional.of(SECTOR_ID))).thenReturn(ticketsInRepository);
+        assertThat(bookingService.getTicketsStatus(1, Optional.of(SECTOR_ID)))
                 .isEqualTo(ticketsInRepository);
     }
 }

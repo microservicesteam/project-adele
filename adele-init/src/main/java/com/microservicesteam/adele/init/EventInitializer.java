@@ -62,6 +62,14 @@ public class EventInitializer implements CommandLineRunner {
                                         .amount(new BigDecimal("1500"))
                                         .build())
                                 .addPositions(1, 2, 3, 4, 5)
+                                .build(),
+                                Sector.builder()
+                                .capacity(6)
+                                .price(Price.builder()
+                                        .currency("HUF")
+                                        .amount(new BigDecimal("2000"))
+                                        .build())
+                                .addPositions(1, 2, 3, 4, 5, 6)
                                 .build())
                         .build())
                 .build();
@@ -84,18 +92,24 @@ public class EventInitializer implements CommandLineRunner {
 
     private void emitTicketCreatedEvents() {
         log.info("Creating new tickets for TicketMaster...");
-        CreateTickets createTicketsCommand = CreateTickets.builder()
+        CreateTickets createTicketsCommandForSector1 = CreateTickets.builder()
                 .addAllPositions(IntStream.rangeClosed(1, 5)
-                        .mapToObj(EventInitializer::createPositionWithId)
+                        .mapToObj(id -> createPositionWithSectorAndId(1, id))
                         .collect(toImmutableList()))
                 .build();
-        eventBus.post(createTicketsCommand);
+        CreateTickets createTicketsCommandForSector2 = CreateTickets.builder()
+                .addAllPositions(IntStream.rangeClosed(1, 6)
+                        .mapToObj(id -> createPositionWithSectorAndId(2, id))
+                        .collect(toImmutableList()))
+                .build();
+        eventBus.post(createTicketsCommandForSector1);
+        eventBus.post(createTicketsCommandForSector2);
     }
 
-    private static Position createPositionWithId(int id) {
+    private static Position createPositionWithSectorAndId(int sector, int id) {
         return Position.builder()
                 .eventId(1)
-                .sectorId(1)
+                .sectorId(sector)
                 .id(id)
                 .build();
     }

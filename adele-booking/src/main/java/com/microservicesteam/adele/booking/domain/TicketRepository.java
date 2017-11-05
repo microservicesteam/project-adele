@@ -5,6 +5,7 @@ import static java.util.Comparator.comparingInt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,9 @@ public class TicketRepository {
         return tickets.get(position);
     }
 
-    ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
+    ImmutableList<Ticket> getTicketsStatusByEvent(long eventId, Optional<Integer> sector) {
         return tickets.values().stream()
-                .filter(t -> t.position().eventId() == eventId)
+                .filter(t -> t.position().eventId() == eventId && (!sector.isPresent() || t.position().sectorId() == sector.get()))
                 .sorted(comparingInt(t -> t.position().id()))
                 .collect(toImmutableList());
     }
