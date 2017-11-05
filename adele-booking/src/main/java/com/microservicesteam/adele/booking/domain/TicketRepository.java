@@ -5,7 +5,7 @@ import static java.util.Comparator.comparingInt;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.springframework.stereotype.Service;
 
@@ -34,10 +34,27 @@ public class TicketRepository {
         return tickets.get(position);
     }
 
-    ImmutableList<Ticket> getTicketsStatusByEvent(long eventId, Optional<Integer> sector) {
+    public ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
+        return filterTicketsBy(matchingEventId(eventId));
+    }
+
+    public ImmutableList<Ticket> getTicketsStatusByEventAndSector(long eventId, int sector) {
+        return filterTicketsBy(matchingEventIdAndSector(eventId, sector));
+    }
+
+    private ImmutableList<Ticket> filterTicketsBy(Predicate<Ticket> predicate) {
         return tickets.values().stream()
-                .filter(t -> t.position().eventId() == eventId && (!sector.isPresent() || t.position().sectorId() == sector.get()))
+                .filter(predicate)
                 .sorted(comparingInt(t -> t.position().id()))
                 .collect(toImmutableList());
+    }
+
+    private Predicate<Ticket> matchingEventId(long eventId) {
+        return ticket -> ticket.position().eventId() == eventId;
+    }
+
+    private Predicate<Ticket> matchingEventIdAndSector(long eventId, int sector) {
+        return matchingEventId(eventId)
+                .and(ticket -> ticket.position().sectorId() == sector);
     }
 }

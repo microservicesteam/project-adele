@@ -1,14 +1,13 @@
 package com.microservicesteam.adele.booking.domain;
 
-import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
-import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
-import com.microservicesteam.adele.ticketmaster.model.Position;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Optional;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 public class TicketRepositoryTest {
 
@@ -110,7 +109,7 @@ public class TicketRepositoryTest {
 
     @Test
     public void getTicketsStatusShouldReturnEmptyListOnEmptyRepository() {
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.empty())).isEmpty();
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).isEmpty();
     }
 
     @Test
@@ -124,7 +123,7 @@ public class TicketRepositoryTest {
                 .build();
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherEvent);
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.of(SECTOR_ID))).containsExactly(FREE_TICKET);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET);
     }
 
     @Test
@@ -138,6 +137,6 @@ public class TicketRepositoryTest {
                 .build();
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherSector);
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID, Optional.empty())).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
     }
 }

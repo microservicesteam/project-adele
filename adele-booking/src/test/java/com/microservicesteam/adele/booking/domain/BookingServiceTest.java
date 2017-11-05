@@ -7,10 +7,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
-import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +19,7 @@ import com.microservicesteam.adele.booking.boundary.web.WebSocketEventPublisher;
 import com.microservicesteam.adele.booking.domain.validator.BookingRequestValidator;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
+import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
@@ -204,8 +201,8 @@ public class BookingServiceTest {
                 FreeTicket.builder()
                         .position(POSITION_2)
                         .build());
-        when(ticketRepository.getTicketsStatusByEvent(1, Optional.of(SECTOR_ID))).thenReturn(ticketsInRepository);
-        assertThat(bookingService.getTicketsStatus(1, Optional.of(SECTOR_ID)))
+        when(ticketRepository.getTicketsStatusByEventAndSector(1, SECTOR_ID)).thenReturn(ticketsInRepository);
+        assertThat(bookingService.getTicketsStatusByEventAndSector(1, SECTOR_ID))
                 .isEqualTo(ticketsInRepository);
     }
 }

@@ -25,11 +25,12 @@ function disconnect() {
 
 function bookTickets() {
     var currentSector = getCurrentSector();
+    var $seats = $("#seats");
     $.ajax({
       type: "POST",
       url: "/bookings",
-      data: "{\"eventId\":1,\"sectorId\":" + currentSector + ",\"positions\":[" + $("#seats").val() + "]}",
-      success: function(data) {console.log("BookingId: " + JSON.stringify(data))},
+      data: "{\"eventId\":1,\"sectorId\":" + currentSector + ",\"positions\":[" + $seats.val() + "]}",
+      success: function(data) {console.log("BookingId: " + JSON.stringify(data)); $seats.val('');},
       dataType: "json",
       contentType: "application/json;charset=UTF-8"
     });

@@ -1,8 +1,5 @@
 package com.microservicesteam.adele.booking.domain;
 
-import java.util.Optional;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
@@ -21,6 +18,7 @@ import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
 import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -42,8 +40,12 @@ public class BookingService extends EventBasedService {
         this.ticketRepository = ticketRepository;
     }
 
-    public ImmutableList<Ticket> getTicketsStatus(long eventId, Optional<Integer> sector) {
-        return ticketRepository.getTicketsStatusByEvent(eventId, sector);
+    public ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
+        return ticketRepository.getTicketsStatusByEvent(eventId);
+    }
+
+    public ImmutableList<Ticket> getTicketsStatusByEventAndSector(long eventId, int sector) {
+        return ticketRepository.getTicketsStatusByEventAndSector(eventId, sector);
     }
 
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
