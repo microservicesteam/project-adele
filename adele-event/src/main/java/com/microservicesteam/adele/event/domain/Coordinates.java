@@ -1,19 +1,28 @@
 package com.microservicesteam.adele.event.domain;
 
-import org.immutables.value.Value;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-@Value.Immutable
-public interface Coordinates {
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+import lombok.experimental.FieldDefaults;
+
+@Value
+@Getter(AccessLevel.NONE)
+@FieldDefaults(level = AccessLevel.PUBLIC)
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Embeddable
+public class Coordinates {
     
-    double latitude();
+    @Column(nullable = false)
+    double latitude;
 
-    double longitude();
-
-    class Builder extends ImmutableCoordinates.Builder {
-    }
-
-    static Builder builder() {
-        return new Builder();
-    }
-
+    @Column(nullable = false)
+    double longitude;
 }

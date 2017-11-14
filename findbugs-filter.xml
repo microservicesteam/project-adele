@@ -3,5 +3,9 @@
     <Match>
         <Class name="~com\.microservicesteam\.adele\..*Immutable.*" />
     </Match>
+    <Match>
+        <Class name="com.microservicesteam.adele.event.domain.Price"/>
+        <Bug pattern="URF_UNREAD_FIELD"/>
+    </Match>
 </FindBugsFilter>
 
