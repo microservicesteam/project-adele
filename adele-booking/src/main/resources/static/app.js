@@ -2,7 +2,7 @@ var stompClient = null;
 
 function connect() {
     var currentSector = getCurrentSector();
-    var topic = "/topic/tickets/sector/" + currentSector;
+    var topic = "/topic/sectors/" + currentSector + "/tickets";
     var socket = new WebSocket("ws://localhost:8080/ws");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {

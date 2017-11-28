@@ -153,7 +153,6 @@ public class BookingServiceTest {
                 .bookingId(BOOKING_ID)
                 .position(POSITION_1)
                 .build());
-        verify(webSocketEventPublisher).publish(ticketsBooked);
         verify(webSocketEventPublisher).publishToSector(ticketsBooked);
     }
 
@@ -175,7 +174,6 @@ public class BookingServiceTest {
         verify(ticketRepository).put(FreeTicket.builder()
                 .position(POSITION_2)
                 .build());
-        verify(webSocketEventPublisher).publish(ticketsCancelled);
         verify(webSocketEventPublisher).publishToSector(ticketsCancelled);
     }
 
@@ -187,7 +185,6 @@ public class BookingServiceTest {
 
         eventBus.post(ticketsAlreadyBooked);
 
-        verify(webSocketEventPublisher).publish(ticketsAlreadyBooked);
         verify(webSocketEventPublisher).publishToSector(ticketsAlreadyBooked);
     }
 

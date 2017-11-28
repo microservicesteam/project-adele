@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +20,7 @@ import com.microservicesteam.adele.event.domain.Venue;
 import com.microservicesteam.adele.event.domain.data.EventDo;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.model.Position;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j

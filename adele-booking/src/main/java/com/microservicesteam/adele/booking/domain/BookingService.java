@@ -87,7 +87,6 @@ public class BookingService extends EventBasedService {
                         .position(position)
                         .bookingId(ticketsBooked.bookingId())
                         .build()));
-        webSocketEventPublisher.publish(ticketsBooked);
         webSocketEventPublisher.publishToSector(ticketsBooked);
     }
 
@@ -97,13 +96,11 @@ public class BookingService extends EventBasedService {
                 .forEach(position -> ticketRepository.put(FreeTicket.builder()
                         .position(position)
                         .build()));
-        webSocketEventPublisher.publish(ticketsCancelled);
         webSocketEventPublisher.publishToSector(ticketsCancelled);
     }
 
     @Subscribe
     public void handleEvent(TicketsAlreadyBooked ticketsAlreadyBooked) {
-        webSocketEventPublisher.publish(ticketsAlreadyBooked);
         webSocketEventPublisher.publishToSector(ticketsAlreadyBooked);
     }
 }

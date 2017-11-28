@@ -1,14 +1,13 @@
 package com.microservicesteam.adele.booking.boundary.web;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.ImmutableSet;
 import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
+
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
 @Component
 @Slf4j
@@ -18,11 +17,6 @@ public class WebSocketEventPublisher {
 
     public WebSocketEventPublisher(SimpMessagingTemplate template) {
         this.template = template;
-    }
-
-    public void publish(TicketsEvent event) {
-        this.template.convertAndSend("/topic/tickets", event);
-        log.debug("Event was published: {}", event);
     }
 
     public void publishToSector(TicketsEvent event) {
@@ -37,7 +31,7 @@ public class WebSocketEventPublisher {
     }
 
     private void publishToSector(Integer sector, TicketsEvent event) {
-        this.template.convertAndSend("/topic/tickets/sector/" + sector, event);
+        this.template.convertAndSend("/topic/sectors/" + sector + "/tickets", event);
         log.debug("Event was published: {}", event);
     }
 }
