@@ -13,8 +13,8 @@
 <h1>Websocket Test page</h1>
 <div>
     <div>
-        <div>
-            <span>Refresh map status:</span> <button id="refresh">Refresh</button>
+        <div class="sectors">
+            <span>Sectors: </span> <button data-sector-id="1">1</button> <button data-sector-id="2">2</button>
         </div>
     </div>
     <div>
@@ -25,10 +25,11 @@
         </form>
     </div>
     <div>
-        <h3>Map</h3>
+        <h3>Map of sector #<span id="sectorId">1</span></h3>
         <table>
             <thead>
                 <tr>
+                	<th>Sector</th>
                     <th>Position</th>
                     <th>Status</th>
                 </tr>

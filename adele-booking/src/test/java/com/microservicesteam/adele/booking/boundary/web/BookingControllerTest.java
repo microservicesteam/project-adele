@@ -4,7 +4,6 @@ import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,7 +55,7 @@ public class BookingControllerTest {
 
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        this.mappingJackson2HttpMessageConverter = Arrays.stream(converters)
                 .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
                 .findAny()
                 .orElse(null);
@@ -67,7 +66,7 @@ public class BookingControllerTest {
 
     @Test
     public void getTicketsStatusShouldReturnWithStatusAndPositionWhenStatusIsPresent() throws Exception {
-        when(bookingService.getTicketsStatus(1)).thenReturn(
+        when(bookingService.getTicketsStatusByEvent(1)).thenReturn(
                 ImmutableList.of(FreeTicket.builder()
                         .position(Position.builder()
                                 .id(1)
@@ -75,7 +74,7 @@ public class BookingControllerTest {
                                 .eventId(1)
                                 .build())
                         .build()));
-        when(bookingService.getTicketsStatus(2)).thenReturn(
+        when(bookingService.getTicketsStatusByEvent(2)).thenReturn(
                 ImmutableList.of(FreeTicket.builder()
                         .position(Position.builder()
                                 .id(2)
@@ -93,18 +92,36 @@ public class BookingControllerTest {
 
     @Test
     public void getTicketsStatusShouldReturnWithEmptyArrayWhenThereAreNoTickets() throws Exception {
-        when(bookingService.getTicketsStatus(1)).thenReturn(ImmutableList.of());
-        when(bookingService.getTicketsStatus(2)).thenReturn(
+        when(bookingService.getTicketsStatusByEvent(1)).thenReturn(ImmutableList.of());
+        mockMvc.perform(get("/bookings?eventId=1").accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    public void getTicketsStatusShouldAcceptOptionalSectorIdParameter() throws Exception {
+        when(bookingService.getTicketsStatusByEventAndSector(1, 1)).thenReturn(
+                ImmutableList.of(FreeTicket.builder()
+                        .position(Position.builder()
+                                .id(1)
+                                .sectorId(1)
+                                .eventId(1)
+                                .build())
+                        .build()));
+        when(bookingService.getTicketsStatusByEventAndSector(1, 2)).thenReturn(
                 ImmutableList.of(FreeTicket.builder()
                         .position(Position.builder()
                                 .id(2)
                                 .sectorId(2)
-                                .eventId(2)
+                                .eventId(1)
                                 .build())
                         .build()));
-        mockMvc.perform(get("/bookings?eventId=1").accept(APPLICATION_JSON))
+        mockMvc.perform(get("/bookings?eventId=1&sectorId=2").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isEmpty());
+                .andExpect(jsonPath("$[0].status", equalTo(FREE.name())))
+                .andExpect(jsonPath("$[0].position.id", equalTo(2)))
+                .andExpect(jsonPath("$[0].position.sectorId", equalTo(2)))
+                .andExpect(jsonPath("$[0].position.eventId", equalTo(1)));
     }
 
     @Test

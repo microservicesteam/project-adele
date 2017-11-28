@@ -24,9 +24,14 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping
+    @GetMapping(params = {"eventId"})
     public List<Ticket> getBookings(@RequestParam long eventId) {
-        return bookingService.getTicketsStatus(eventId);
+        return bookingService.getTicketsStatusByEvent(eventId);
+    }
+
+    @GetMapping(params = {"eventId", "sectorId"})
+    public List<Ticket> getBookings(@RequestParam long eventId, @RequestParam int sectorId) {
+        return bookingService.getTicketsStatusByEventAndSector(eventId, sectorId);
     }
 
     @PostMapping

@@ -1,12 +1,13 @@
 package com.microservicesteam.adele.booking.domain;
 
-import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
-import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
-import com.microservicesteam.adele.ticketmaster.model.Position;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
+import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 
 public class TicketRepositoryTest {
 
@@ -112,7 +113,7 @@ public class TicketRepositoryTest {
     }
 
     @Test
-    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventId() {
+    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventIdAndSector() {
         FreeTicket freeTicketOnOtherEvent = FreeTicket.builder()
                 .position(Position.builder()
                         .id(ID_1)
@@ -123,5 +124,19 @@ public class TicketRepositoryTest {
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherEvent);
         assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET);
+    }
+
+    @Test
+    public void getTicketsStatusShouldReturnAllTicketsForTheGivenEventId() {
+        FreeTicket freeTicketOnOtherSector = FreeTicket.builder()
+                .position(Position.builder()
+                        .id(ID_1)
+                        .eventId(EVENT_ID)
+                        .sectorId(3)
+                        .build())
+                .build();
+        underTest.put(FREE_TICKET);
+        underTest.put(freeTicketOnOtherSector);
+        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
     }
 }
