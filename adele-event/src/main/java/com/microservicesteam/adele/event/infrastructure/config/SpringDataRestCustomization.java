@@ -15,6 +15,11 @@ public class SpringDataRestCustomization extends RepositoryRestConfigurerAdapter
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
 
         config.exposeIdsFor(Event.class, Venue.class, Sector.class);
+        config.getCorsRegistry()
+                .addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("GET")
+                .allowedHeaders("*");
 
     }
 }
