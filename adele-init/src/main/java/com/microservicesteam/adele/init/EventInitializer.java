@@ -107,11 +107,11 @@ public class EventInitializer implements CommandLineRunner {
 
     private static List<Position> createPositions(int sectorId) {
         return IntStream.rangeClosed(1, SECTOR_CAPACITY)
-                .mapToObj(id -> createPositionWithId(EVENT_ID, sectorId, id))
+                .mapToObj(id -> createPosition(EVENT_ID, sectorId, id))
                 .collect(toImmutableList());
     }
 
-    private static Position createPositionWithId(int eventId, int sectorId, int id) {
+    private static Position createPosition(int eventId, int sectorId, int id) {
         return Position.builder()
                 .eventId(eventId)
                 .sectorId(sectorId)
