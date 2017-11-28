@@ -42,7 +42,7 @@ public class TicketMasterService extends EventBasedService {
             TicketsCreated ticketsCreated = TicketsCreated.builder()
                     .addAllPositions(command.positions())
                     .build();
-            log.info("Tickets created: {}", ticketsCreated);
+            log.info("{} tickets created", ticketsCreated.positions().size());
             eventBus.post(ticketsCreated);
         } else {
             eventBus.post(NoOperation.builder()

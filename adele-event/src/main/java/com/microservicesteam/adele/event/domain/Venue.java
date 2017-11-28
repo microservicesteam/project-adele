@@ -1,27 +1,41 @@
 package com.microservicesteam.adele.event.domain;
 
-import javax.annotation.Nullable;
+import static javax.persistence.CascadeType.PERSIST;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
 import java.util.List;
 
-import org.immutables.value.Value;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Singular;
+import lombok.Value;
+import lombok.experimental.FieldDefaults;
 
-@Value.Immutable
-public interface Venue {
+@Value
+@Getter(AccessLevel.NONE)
+@FieldDefaults(level = AccessLevel.PUBLIC)
+@NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+@Entity
+public class Venue {
 
-    @Nullable
-    Long id();
+    @Id
+    @GeneratedValue
+    Long id;
 
-    String address();
+    String address;
 
-    Coordinates coordinates();
+    Coordinates coordinates;
 
-    List<Sector> sectors();
-
-    class Builder extends ImmutableVenue.Builder {
-    }
-
-    static Builder builder() {
-        return new Builder();
-    }
-
+    @Singular
+    @OneToMany(cascade = PERSIST)
+    List<Sector> sectors;
 }
