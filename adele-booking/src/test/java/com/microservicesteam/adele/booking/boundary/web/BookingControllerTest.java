@@ -47,22 +47,9 @@ public class BookingControllerTest {
     @MockBean
     private BookingService bookingService;
 
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
-
     private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
             APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
-
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-        this.mappingJackson2HttpMessageConverter = Arrays.stream(converters)
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .orElse(null);
-
-        assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
-    }
 
     @Test
     public void getTicketsStatusShouldReturnWithStatusAndPositionWhenStatusIsPresent() throws Exception {
@@ -130,20 +117,11 @@ public class BookingControllerTest {
                 .thenReturn(BookingRequested.builder()
                         .bookingId("randomBookingId")
                         .build());
-        String requestBody = json(BookingRequest.builder()
-                .eventId(1)
-                .sectorId(2)
-                .addPositions(3)
-                .build());
+        String requestBody = "{\"eventId\":1,\"sectorId\":2,\"positions\":[3]}";
+        System.out.println(requestBody);
         mockMvc.perform(post("/bookings").accept(APPLICATION_JSON).content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bookingId", equalTo("randomBookingId")));
-    }
-
-    private String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
     }
 
     @Import(GuavaModuleConfig.class)

@@ -29,6 +29,7 @@ public class BookingController {
         return bookingService.getTicketsStatusByEvent(eventId);
     }
 
+    //TODO Ticket should not contain bookingId at all - move it to separate reservation object
     @GetMapping(params = {"eventId", "sectorId"})
     public List<Ticket> getBookings(@RequestParam long eventId, @RequestParam int sectorId) {
         return bookingService.getTicketsStatusByEventAndSector(eventId, sectorId);
