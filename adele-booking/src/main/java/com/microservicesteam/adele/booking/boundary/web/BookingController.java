@@ -35,6 +35,7 @@ public class BookingController {
         return bookingService.getTicketsStatusByEventAndSector(eventId, sectorId);
     }
 
+    //TODO move to ReservationController
     @PostMapping
     public BookingResponse bookTickets(@RequestBody BookingRequest bookingRequest) {
         return bookingService.bookTickets(bookingRequest);

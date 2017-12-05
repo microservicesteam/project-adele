@@ -11,10 +11,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableList;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 
+//TODO rename to ReservationRequest
 @Value.Immutable
 @JsonSerialize(as = ImmutableBookingRequest.class)
 @JsonDeserialize(as = ImmutableBookingRequest.class)
 public interface BookingRequest {
+
+    //TODO contains only list of Tickets
 
     long eventId();
 

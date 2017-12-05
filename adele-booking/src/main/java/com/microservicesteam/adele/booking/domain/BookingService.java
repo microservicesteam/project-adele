@@ -20,6 +20,7 @@ import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 import lombok.extern.slf4j.Slf4j;
 
+//TODO rename to TicketsService
 @Service
 @Slf4j
 public class BookingService extends EventBasedService {
@@ -48,6 +49,7 @@ public class BookingService extends EventBasedService {
         return ticketRepository.getTicketsStatusByEventAndSector(eventId, sector);
     }
 
+    //TODO move out to a reservation service
     public BookingResponse bookTickets(BookingRequest bookingRequest) {
         ValidationResult validationResult = validator.validate(bookingRequest);
 
