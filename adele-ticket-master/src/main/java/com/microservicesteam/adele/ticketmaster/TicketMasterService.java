@@ -12,16 +12,11 @@ import org.springframework.stereotype.Service;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
-import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
-import com.microservicesteam.adele.ticketmaster.commands.CancelTickets;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
-import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
-import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service

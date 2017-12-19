@@ -5,11 +5,11 @@ import org.springframework.boot.test.json.JacksonTester;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.microservicesteam.adele.ticketmaster.events.TicketsEvent;
+import com.microservicesteam.adele.ticketmaster.events.Event;
 
 public class AbstractSerializationTest {
 
-    JacksonTester<TicketsEvent> json;
+    JacksonTester<Event> json;
 
     @Before
     public void setUp() throws Exception {

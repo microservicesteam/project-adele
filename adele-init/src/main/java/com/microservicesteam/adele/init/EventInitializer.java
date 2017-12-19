@@ -20,7 +20,6 @@ import com.microservicesteam.adele.event.domain.Price;
 import com.microservicesteam.adele.event.domain.Sector;
 import com.microservicesteam.adele.event.domain.Venue;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
