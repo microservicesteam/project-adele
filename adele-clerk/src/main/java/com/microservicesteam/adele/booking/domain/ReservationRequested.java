@@ -3,15 +3,14 @@ package com.microservicesteam.adele.booking.domain;
 import org.immutables.value.Value;
 
 @Value.Immutable
-public interface BookingRequested extends BookingResponse {
+public interface ReservationRequested extends ReservationResponse {
 
-    String bookingId();
+    String reservationId();
 
-    class Builder extends ImmutableBookingRequested.Builder {
+    class Builder extends ImmutableReservationRequested.Builder {
     }
 
     static Builder builder() {
         return new Builder();
     }
-
 }

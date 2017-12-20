@@ -5,21 +5,21 @@ import org.immutables.value.Value;
 import com.microservicesteam.adele.booking.domain.validator.ValidationResult;
 
 @Value.Immutable
-public interface BookingRejected extends BookingResponse {
+public interface ReservationRejected extends ReservationResponse {
 
     String code();
 
     String reason();
 
-    class Builder extends ImmutableBookingRejected.Builder {
+    class Builder extends ImmutableReservationRejected.Builder {
     }
 
-    static BookingRejected.Builder builder() {
-        return new BookingRejected.Builder();
+    static Builder builder() {
+        return new Builder();
     }
 
-    static BookingRejected fromValidationResult(ValidationResult result) {
-        return BookingRejected.builder()
+    static ReservationRejected fromValidationResult(ValidationResult result) {
+        return ReservationRejected.builder()
                 .code(result.code())
                 .reason(result.message())
                 .build();

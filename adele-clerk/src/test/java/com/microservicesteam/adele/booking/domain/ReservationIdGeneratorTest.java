@@ -10,12 +10,12 @@ public class ReservationIdGeneratorTest {
     private ReservationIdGenerator reservationIdGenerator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         reservationIdGenerator = new ReservationIdGenerator();
     }
 
     @Test
-    public void bookingIdIsUnique() throws Exception {
+    public void bookingIdIsUnique() {
         String bookingId_1 = reservationIdGenerator.generateReservationId();
         String bookingId_2 = reservationIdGenerator.generateReservationId();
 

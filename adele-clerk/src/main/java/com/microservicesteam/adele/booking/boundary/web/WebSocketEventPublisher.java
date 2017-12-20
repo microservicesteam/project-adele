@@ -1,34 +1,35 @@
 package com.microservicesteam.adele.booking.boundary.web;
 
-import com.google.common.collect.ImmutableSet;
-import lombok.extern.slf4j.Slf4j;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import com.google.common.collect.ImmutableSet;
+import com.microservicesteam.adele.ticketmaster.events.ReservationEvent;
+import com.microservicesteam.adele.ticketmaster.model.Position;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@AllArgsConstructor
 public class WebSocketEventPublisher {
 
     private SimpMessagingTemplate template;
 
-    public WebSocketEventPublisher(SimpMessagingTemplate template) {
-        this.template = template;
-    }
-
-    public void publishToSector(TicketsEvent event) {
+    public void publishToSector(ReservationEvent event) {
         ImmutableSet<Integer> sectors = extractSectors(event);
         sectors.forEach(sector -> publishToSector(sector, event));
     }
 
-    private ImmutableSet<Integer> extractSectors(TicketsEvent event) {
-        return event.positions().stream()
+    private ImmutableSet<Integer> extractSectors(ReservationEvent event) {
+        return event.reservation().positions().stream()
                 .map(Position::sectorId)
                 .collect(toImmutableSet());
     }
 
-    private void publishToSector(Integer sector, TicketsEvent event) {
+    private void publishToSector(Integer sector, ReservationEvent event) {
         this.template.convertAndSend("/topic/sectors/" + sector + "/tickets", event);
         log.debug("Event was published: {}", event);
     }

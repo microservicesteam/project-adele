@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
+import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 @Service
@@ -44,7 +45,7 @@ public class TicketRepository {
     private ImmutableList<Ticket> filterTicketsBy(Predicate<Ticket> predicate) {
         return tickets.values().stream()
                 .filter(predicate)
-                .sorted(comparingInt(t -> t.position().id()))
+                .sorted(comparingInt(t -> t.position().seatId()))
                 .collect(toImmutableList());
     }
 

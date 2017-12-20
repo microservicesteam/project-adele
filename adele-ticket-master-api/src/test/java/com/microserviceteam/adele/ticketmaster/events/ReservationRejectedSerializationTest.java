@@ -19,24 +19,21 @@ public class ReservationRejectedSerializationTest extends AbstractSerializationT
         ReservationRejected reservationRejected = ReservationRejected.builder()
                 .reservation(Reservation.builder()
                         .reservationId("abc-123")
-                        .addTickets(Ticket.builder()
-                                .status(BOOKED)
-                                .position(Position.builder()
+                        .addPositions(
+                                Position.builder()
                                         .eventId(1L)
                                         .sectorId(2)
                                         .seatId(3)
                                         .build())
-                                .build())
                         .build())
                 .build();
 
         JsonContent<Event> serializedJson = json.write(reservationRejected);
         assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("ReservationRejected");
         assertThat(serializedJson).extractingJsonPathStringValue("$.reservation.reservationId").isEqualTo("abc-123");
-        assertThat(serializedJson).extractingJsonPathStringValue("$.reservation.tickets[0].status").isEqualTo("BOOKED");
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].position.eventId").isEqualTo(1);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].position.sectorId").isEqualTo(2);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].position.seatId").isEqualTo(3);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].eventId").isEqualTo(1);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].sectorId").isEqualTo(2);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].seatId").isEqualTo(3);
 
         assertThat(json.parse(serializedJson.getJson()))
                 .isEqualTo(reservationRejected);

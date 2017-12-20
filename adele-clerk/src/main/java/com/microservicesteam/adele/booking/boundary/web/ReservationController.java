@@ -5,23 +5,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.microservicesteam.adele.booking.domain.BookingRequest;
-import com.microservicesteam.adele.booking.domain.BookingResponse;
-import com.microservicesteam.adele.booking.domain.BookingService;
+import com.microservicesteam.adele.booking.domain.ReservationRequest;
+import com.microservicesteam.adele.booking.domain.ReservationResponse;
+import com.microservicesteam.adele.booking.domain.ReservationsService;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("reservations")
+@AllArgsConstructor
 public class ReservationController {
 
-    private final BookingService bookingService;
-
-    public ReservationController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
+    private final ReservationsService reservationsService;
 
     @PostMapping
-    public BookingResponse bookTickets(@RequestBody BookingRequest bookingRequest) {
-        return bookingService.bookTickets(bookingRequest);
+    public ReservationResponse reservePositions(@RequestBody ReservationRequest reservationRequest) {
+        return reservationsService.reservePositions(reservationRequest.positions());
     }
 
 }

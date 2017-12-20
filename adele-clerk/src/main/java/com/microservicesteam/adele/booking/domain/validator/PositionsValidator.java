@@ -6,48 +6,48 @@ import static com.microservicesteam.adele.booking.domain.validator.ValidationRes
 import static com.microservicesteam.adele.booking.domain.validator.ValidationResult.VALID_REQUEST;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import com.microservicesteam.adele.booking.domain.BookingRequest;
 import com.microservicesteam.adele.booking.domain.TicketRepository;
+import com.microservicesteam.adele.ticketmaster.model.Position;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class BookingRequestValidator {
+@AllArgsConstructor
+public class PositionsValidator {
 
     private final TicketRepository ticketRepository;
 
-    public BookingRequestValidator(TicketRepository ticketRepository) {
-        this.ticketRepository = ticketRepository;
-    }
-
-    public ValidationResult validate(BookingRequest request) {
-        if (request.positions().isEmpty()) {
-            log.warn("Empty positions in request {}", request);
+    public ValidationResult validate(List<Position> positions) {
+        if (positions.isEmpty()) {
+            log.warn("Empty positions in request");
             return INVALID_POSITIONS_EMPTY;
         }
 
-        if (!allPositionsAreValid(request)) {
-            log.warn("Positions out of sector in request {}", request);
+        if (!allPositionsAreValid(positions)) {
+            log.warn("Positions out of sector in request {}", positions);
             return INVALID_POSITIONS_OUT_OF_SECTOR;
         }
 
-        if (!allPositionsAreFree(request)) {
-            log.warn("Positions already booked in request {}", request);
+        if (!allPositionsAreFree(positions)) {
+            log.warn("Positions already booked in request {}", positions);
             return INVALID_POSITIONS_BOOKED;
         }
 
         return VALID_REQUEST;
     }
 
-    private boolean allPositionsAreValid(BookingRequest request) {
-        return request.requestedPositions().stream()
+    private boolean allPositionsAreValid(List<Position> positions) {
+        return positions.stream()
                 .allMatch(ticketRepository::has);
     }
 
-    private boolean allPositionsAreFree(BookingRequest request) {
-        return request.requestedPositions().stream()
+    private boolean allPositionsAreFree(List<Position> positions) {
+        return positions.stream()
                 .allMatch(position -> ticketRepository.get(position).status() == FREE);
     }
 

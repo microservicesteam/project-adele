@@ -14,7 +14,7 @@ public interface Reservation {
 
     String reservationId();
 
-    List<Ticket> tickets();
+    List<Position> positions();
 
     static Builder builder() {
         return new Builder();
