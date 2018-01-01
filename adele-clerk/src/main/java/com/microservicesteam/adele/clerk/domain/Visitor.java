@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
+//TODO ZM to be moved to booking-service by #51
 @Value
 @Getter(AccessLevel.NONE)
 @FieldDefaults(level = AccessLevel.PUBLIC)

@@ -1,12 +1,12 @@
 package com.microservicesteam.adele.clerk.domain.validator;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_BOOKED;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_RESERVED;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_OUT_OF_SECTOR;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.PAID;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,11 +42,11 @@ public class PositionsValidatorTest {
                 .build());
         ticketRepository.put(Ticket.builder()
                 .position(position(4))
-                .status(BOOKED)
+                .status(RESERVED)
                 .build());
         ticketRepository.put(Ticket.builder()
                 .position(position(5))
-                .status(PAID)
+                .status(SOLD)
                 .build());
 
         validator = new PositionsValidator(ticketRepository);
@@ -90,7 +90,7 @@ public class PositionsValidatorTest {
     }
 
     @Test
-    public void invalidWhenHasBookedPosition() {
+    public void invalidWhenHasReservedPosition() {
         //given
         List<Position> positions = Arrays.asList(position(1), position(4));
 
@@ -98,11 +98,11 @@ public class PositionsValidatorTest {
         ValidationResult actual = validator.validate(positions);
 
         //then
-        assertThat(actual).isEqualTo(INVALID_POSITIONS_BOOKED);
+        assertThat(actual).isEqualTo(INVALID_POSITIONS_RESERVED);
     }
 
     @Test
-    public void invalidWhenHasPaidPosition() throws Exception {
+    public void invalidWhenHasSoldPosition() {
         //given
         List<Position> positions = Arrays.asList(position(1), position(5));
 
@@ -110,7 +110,7 @@ public class PositionsValidatorTest {
         ValidationResult actual = validator.validate(positions);
 
         //then
-        assertThat(actual).isEqualTo(INVALID_POSITIONS_BOOKED);
+        assertThat(actual).isEqualTo(INVALID_POSITIONS_RESERVED);
     }
 
     private Position position(int position) {

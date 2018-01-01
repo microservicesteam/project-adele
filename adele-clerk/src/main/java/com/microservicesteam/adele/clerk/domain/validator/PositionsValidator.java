@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain.validator;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_BOOKED;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_RESERVED;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_OUT_OF_SECTOR;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
@@ -34,8 +34,8 @@ public class PositionsValidator {
         }
 
         if (!allPositionsAreFree(positions)) {
-            log.warn("Positions already booked in request {}", positions);
-            return INVALID_POSITIONS_BOOKED;
+            log.warn("Positions already reserved/sold in request {}", positions);
+            return INVALID_POSITIONS_RESERVED;
         }
 
         return VALID_REQUEST;

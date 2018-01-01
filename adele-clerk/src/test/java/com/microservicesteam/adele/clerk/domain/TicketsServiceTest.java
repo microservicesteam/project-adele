@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -84,7 +84,7 @@ public class TicketsServiceTest {
     public void getTicketsStatusReturnsListOfTickets() {
         ImmutableList<Ticket> ticketsInRepository = ImmutableList.of(
                 Ticket.builder()
-                        .status(BOOKED)
+                        .status(RESERVED)
                         .position(POSITION_1)
                         .build(),
                 Ticket.builder()

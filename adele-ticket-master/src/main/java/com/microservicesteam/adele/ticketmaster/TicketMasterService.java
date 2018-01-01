@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.ticketmaster;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 
 import java.util.HashMap;
@@ -81,7 +81,7 @@ public class TicketMasterService extends EventBasedService {
     @Subscribe
     public void handleCommand(CancelReservation command) {
         Reservation reservation = command.reservation();
-        if (positionsBooked(reservation.positions())) {
+        if (positionsReserved(reservation.positions())) {
             freePositions(reservation.positions());
             ReservationCancelled reservationCancelled = ReservationCancelled.builder()
                     .reservation(Reservation.builder()
@@ -108,8 +108,8 @@ public class TicketMasterService extends EventBasedService {
         return positionsInState(positions, FREE);
     }
 
-    private boolean positionsBooked(List<Position> positions) {
-        return positionsInState(positions, BOOKED);
+    private boolean positionsReserved(List<Position> positions) {
+        return positionsInState(positions, RESERVED);
     }
 
     private boolean positionsInState(List<Position> positions, TicketStatus status) {
@@ -123,7 +123,7 @@ public class TicketMasterService extends EventBasedService {
 
     private void reservePositions(List<Position> positions) {
         positions.forEach(
-                position -> ticketRepository.put(position, BOOKED));
+                position -> ticketRepository.put(position, RESERVED));
     }
 
     private void freePositions(List<Position> positions) {

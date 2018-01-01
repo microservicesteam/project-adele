@@ -5,10 +5,10 @@
 public class EventListenerConfig {
 
     @Autowired
-    BookingRequestedEventListener rEventListener;
+    ReservationRequestedEventListener rEventListener;
 
     @Autowired
-    BookingCancelledEventListener bEventListener;
+    ReservationCancelledEventListener bEventListener;
 
 
     @PostConstruct

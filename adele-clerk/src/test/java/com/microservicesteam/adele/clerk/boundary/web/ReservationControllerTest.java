@@ -41,7 +41,7 @@ public class ReservationControllerTest {
 
 
     @Test
-    public void reservePositionsShouldReturnWithBookingId() throws Exception {
+    public void reservePositionsShouldReturnWithReservationId() throws Exception {
         when(reservationsService.reservePositions(any()))
                 .thenReturn(ReservationRequested.builder()
                         .reservationId("someReservationId")

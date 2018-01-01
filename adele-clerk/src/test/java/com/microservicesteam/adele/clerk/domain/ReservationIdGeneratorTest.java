@@ -15,10 +15,10 @@ public class ReservationIdGeneratorTest {
     }
 
     @Test
-    public void bookingIdIsUnique() {
-        String bookingId_1 = reservationIdGenerator.generateReservationId();
-        String bookingId_2 = reservationIdGenerator.generateReservationId();
+    public void reservationIdsAreUnique() {
+        String reservationId1 = reservationIdGenerator.generateReservationId();
+        String reservationId2 = reservationIdGenerator.generateReservationId();
 
-        assertThat(bookingId_1).isNotEqualTo(bookingId_2);
+        assertThat(reservationId1).isNotEqualTo(reservationId2);
     }
 }

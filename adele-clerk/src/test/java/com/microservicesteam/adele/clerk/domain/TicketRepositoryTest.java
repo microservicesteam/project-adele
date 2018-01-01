@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -101,12 +101,12 @@ public class TicketRepositoryTest {
     @Test
     public void getShouldReturnTheLastTicketPutForTheSamePosition() {
         underTest.put(FREE_TICKET);
-        Ticket bookedTicket = Ticket.builder()
-                .status(BOOKED)
+        Ticket reservedTicket = Ticket.builder()
+                .status(RESERVED)
                 .position(FREE_TICKET.position())
                 .build();
-        underTest.put(bookedTicket);
-        assertThat(underTest.get(POSITION_1)).isEqualTo(bookedTicket);
+        underTest.put(reservedTicket);
+        assertThat(underTest.get(POSITION_1)).isEqualTo(reservedTicket);
     }
 
     @Test

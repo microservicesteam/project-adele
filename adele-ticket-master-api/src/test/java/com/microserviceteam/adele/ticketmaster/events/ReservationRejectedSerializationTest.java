@@ -1,6 +1,5 @@
 package com.microserviceteam.adele.ticketmaster.events;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -10,7 +9,6 @@ import com.microservicesteam.adele.ticketmaster.events.Event;
 import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
-import com.microservicesteam.adele.ticketmaster.model.Ticket;
 
 public class ReservationRejectedSerializationTest extends AbstractSerializationTest {
 

@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 
 import java.util.List;
@@ -72,7 +72,7 @@ public class ReservationsService extends EventBasedService {
     public void handleEvent(ReservationAccepted reservationAccepted) {
         reservationAccepted.reservation().positions()
                 .forEach(position -> ticketRepository.put(Ticket.builder()
-                        .status(BOOKED)
+                        .status(RESERVED)
                         .position(position)
                         .build()));
         webSocketEventPublisher.publishToSector(reservationAccepted);

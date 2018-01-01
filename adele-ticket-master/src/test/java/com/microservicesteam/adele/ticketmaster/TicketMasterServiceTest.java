@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.ticketmaster;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,7 +92,7 @@ public class TicketMasterServiceTest {
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, BOOKED),
+                .contains(entry(POSITION_1, RESERVED),
                         entry(POSITION_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
@@ -113,7 +113,7 @@ public class TicketMasterServiceTest {
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, BOOKED),
+                .contains(entry(POSITION_1, RESERVED),
                         entry(POSITION_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
@@ -162,7 +162,7 @@ public class TicketMasterServiceTest {
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, BOOKED),
+                .contains(entry(POSITION_1, RESERVED),
                         entry(POSITION_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")

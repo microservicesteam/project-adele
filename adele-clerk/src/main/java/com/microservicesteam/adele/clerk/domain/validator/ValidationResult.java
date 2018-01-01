@@ -5,7 +5,7 @@ public enum ValidationResult {
     VALID_REQUEST(true, "000", "Valid request"),
     INVALID_POSITIONS_EMPTY(false, "001", "At least one position must be requested"),
     INVALID_POSITIONS_OUT_OF_SECTOR(false, "002", "At least one of the positions is invalid"),
-    INVALID_POSITIONS_BOOKED(false, "003", "At least one of the positions is already booked");
+    INVALID_POSITIONS_RESERVED(false, "003", "At least one of the positions is already reserved or sold");
 
     private boolean valid;
     private String code;

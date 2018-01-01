@@ -2,7 +2,7 @@ package com.microservicesteam.adele.clerk.domain;
 
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.BOOKED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,7 +127,7 @@ public class ReservationsServiceTest {
 
         //then
         verify(ticketRepository).put(Ticket.builder()
-                .status(BOOKED)
+                .status(RESERVED)
                 .position(POSITION_1)
                 .build());
         verify(webSocketEventPublisher).publishToSector(reservationAccepted);
