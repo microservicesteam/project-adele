@@ -2,6 +2,8 @@ package com.microserviceteam.adele.ticketmaster.events;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 
@@ -13,7 +15,7 @@ import com.microservicesteam.adele.ticketmaster.model.Reservation;
 public class ReservationRejectedSerializationTest extends AbstractSerializationTest {
 
     @Test
-    public void serialize() throws Exception {
+    public void serialize() throws IOException {
         ReservationRejected reservationRejected = ReservationRejected.builder()
                 .reservation(Reservation.builder()
                         .reservationId("abc-123")

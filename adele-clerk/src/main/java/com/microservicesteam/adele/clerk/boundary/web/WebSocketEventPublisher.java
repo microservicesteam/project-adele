@@ -30,7 +30,7 @@ public class WebSocketEventPublisher {
     }
 
     private void publishToSector(Integer sector, ReservationEvent event) {
-        this.template.convertAndSend("/topic/sectors/" + sector + "/tickets", event);
+        this.template.convertAndSend("/topic/sectors/" + sector + "/reservations", event);
         log.debug("Event was published: {}", event);
     }
 }

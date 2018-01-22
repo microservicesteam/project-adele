@@ -3,6 +3,8 @@ package com.microserviceteam.adele.ticketmaster.events;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.springframework.boot.test.json.JsonContent;
 
@@ -14,7 +16,7 @@ import com.microservicesteam.adele.ticketmaster.model.Ticket;
 public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
 
     @Test
-    public void serialize() throws Exception {
+    public void serialize() throws IOException {
         TicketsCreated ticketsCreated = TicketsCreated.builder()
                 .addTickets(Ticket.builder()
                         .status(FREE)
