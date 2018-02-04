@@ -1,0 +1,92 @@
+@startuml
+User --> Frontend: checkout button
+Frontend -> OrderManager: POST /orders
+note left
+POST /orders
+{
+    name: "MZo",
+    email: "user@domain.com",
+    reservationId: "b315d65a-37b8-4ba2-8417-031592afd673"
+}
+end note
+activate OrderManager
+OrderManager --> OrderManager: generateOrderId
+OrderManager --> OrderManager: createOrder
+note right
+Order {
+    orderId: "abc123"
+    reservationId: "bcd345"
+    status: RESERVED
+    creationTimestamp: 2018/01/30
+    name: "MZo"
+    email: "user@domain.com"
+    paymentAddress: null
+    paymentId: null
+    lastUpdated: 2018/01/30
+}
+end note
+OrderManager --> DB: save Order
+OrderManager --> Frontend: orderId
+deactivate OrderManager
+Frontend --> OrderManager: GET payment
+activate OrderManager
+OrderManager --> PaymentManager: initiatePayment(PaymentRequest)
+note right
+PaymentRequest {
+    "tickets": [
+      {
+        "name": "Adele Concert 2018 Wembley",
+        "quantity": "2",
+        "price": "100",
+        "currency": "EUR"
+      }
+    ],
+    "amount": {
+        "currency": "EUR",
+        "total": "200",
+    },
+    return_url,
+    cancel_url,
+}
+end note
+activate PaymentManager
+PaymentManager --> PaymentManager: createPayment
+PaymentManager --> PaymentManager: createAPIContext
+PaymentManager --> PaypalAPI: payment.create
+activate PaypalAPI
+note right: paypal-create-request.json
+PaypalAPI --> PaymentManager: paypal-create-response.json
+deactivate PaypalAPI
+PaymentManager --> OrderManager: paymentResponse
+note right
+PaymentResponse {
+    paymentId: "PAY-3CM18082Y9532445FLJYMNTY",
+    approveUrl: "URL",
+    status: CREATED/FAILED
+}
+end note
+deactivate PaymentManager
+OrderManager --> DB: updateOrder(paymentId)
+OrderManager --> Frontend: REDIRECT /approvalUrl
+deactivate OrderManager
+Frontend --> Paypal: GET /approvalUrl
+activate Paypal
+Paypal --> Paypal: fill and submit form
+Paypal --> OrderManager: GET /return_url?payerId=123
+deactivate Paypal
+
+activate OrderManager
+OrderManager --> DB: fetchOrder(orderId)
+OrderManager --> PaymentManager: ExecutePaymentRequest
+note right: ExecutePaymentRequest: paymentId, payerId
+
+
+
+PaymentManager --> PaymentManager: createPaymentExecution
+PaymentManager --> PaypalAPI: payment.execute
+PaypalAPI --> PaymentManager: paypal-execute-response.json
+PaymentManager --> OrderManager: ExecutePaymentResponse
+OrderManager --> DB: updateOrderStatus
+OrderManager --> Frontend: REDIRECT /successfulPayment
+deactivate OrderManager
+@enduml
