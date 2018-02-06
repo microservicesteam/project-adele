@@ -77,16 +77,37 @@ deactivate Paypal
 
 activate OrderManager
 OrderManager --> DB: fetchOrder(orderId)
+OrderManager --> DB: updateOrderStatus(UNDER_PAYMENT, orderId)
+
+alt order still exists
 OrderManager --> PaymentManager: ExecutePaymentRequest
 note right: ExecutePaymentRequest: paymentId, payerId
-
-
 
 PaymentManager --> PaymentManager: createPaymentExecution
 PaymentManager --> PaypalAPI: payment.execute
 PaypalAPI --> PaymentManager: paypal-execute-response.json
 PaymentManager --> OrderManager: ExecutePaymentResponse
-OrderManager --> DB: updateOrderStatus
-OrderManager --> Frontend: REDIRECT /successfulPayment
+note right
+ExecutePaymentResponse {
+  paymentId: "PAY-0YY78928127449742LJ477NQ",
+  state: "approved"
+}
+end note
+OrderManager --> DB: updateOrderStatus(PAID, orderId)
+OrderManager --> TicketMaster: ticketSoldCommand
+
+else order already expired
+OrderManager --> PaymentManager: CancelPaymentRequest?
+PaymentManager --> PaymentManager: createPaymentCancellation?
+PaymentManager --> PaypalAPI: payment.cancel?
+OrderManager --> TicketMaster: ticketExpiredCommand
+end
+
+OrderManager --> Frontend: REDIRECT /paymentResultPage
+deactivate OrderManager
+Frontend --> OrderManager: GET /getOrderStatus
+activate OrderManager
+OrderManager --> DB: fetchOrder(orderId)
+OrderManager --> Frontend: getOrderStatusResponse
 deactivate OrderManager
 @enduml
