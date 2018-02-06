@@ -28,7 +28,7 @@ end note
 OrderManager --> DB: save Order
 OrderManager --> Frontend: orderId
 deactivate OrderManager
-Frontend --> OrderManager: GET payment
+Frontend --> OrderManager: GET /orders/{orderId}/approval
 activate OrderManager
 OrderManager --> PaymentManager: initiatePayment(PaymentRequest)
 note right
@@ -67,17 +67,18 @@ PaymentResponse {
 end note
 deactivate PaymentManager
 OrderManager --> DB: updateOrder(paymentId)
-OrderManager --> Frontend: REDIRECT /approvalUrl
+OrderManager --> Frontend: redirect url info JSON
 deactivate OrderManager
-Frontend --> Paypal: GET /approvalUrl
+Frontend --> Paypal: GET /{approvalUrl}
+note left: {approvalUrl} is the actual PayPal URL
 activate Paypal
 Paypal --> Paypal: fill and submit form
-Paypal --> OrderManager: GET /return_url?payerId=123
+Paypal --> OrderManager: GET /orders/{orderId}/approvals?status=success&PayerID=abcd1234
 deactivate Paypal
 
 activate OrderManager
 OrderManager --> DB: fetchOrder(orderId)
-OrderManager --> DB: updateOrderStatus(UNDER_PAYMENT, orderId)
+OrderManager --> DB: updateOrder(UNDER_PAYMENT, orderId, payerId)
 
 alt order still exists
 OrderManager --> PaymentManager: ExecutePaymentRequest
@@ -105,9 +106,9 @@ end
 
 OrderManager --> Frontend: REDIRECT /paymentResultPage
 deactivate OrderManager
-Frontend --> OrderManager: GET /getOrderStatus
+Frontend --> OrderManager: GET /orders/{orderId}
 activate OrderManager
 OrderManager --> DB: fetchOrder(orderId)
-OrderManager --> Frontend: getOrderStatusResponse
+OrderManager --> Frontend: order JSON
 deactivate OrderManager
 @enduml
