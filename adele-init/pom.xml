@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>com.microservicesteam</groupId>
-            <artifactId>adele-event</artifactId>
+            <artifactId>adele-admin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.microservicesteam</groupId>
