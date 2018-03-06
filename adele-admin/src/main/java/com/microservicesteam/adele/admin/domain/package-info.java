@@ -1,4 +1,4 @@
 @AdeleStyle
-package com.microservicesteam.adele.event.domain;
+package com.microservicesteam.adele.admin.domain;
 
 import com.microservicesteam.adele.style.AdeleStyle;
