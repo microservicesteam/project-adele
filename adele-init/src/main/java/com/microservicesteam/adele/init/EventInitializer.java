@@ -21,8 +21,8 @@ import com.microservicesteam.adele.admin.domain.Price;
 import com.microservicesteam.adele.admin.domain.Sector;
 import com.microservicesteam.adele.admin.domain.Venue;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,7 +94,7 @@ public class EventInitializer implements CommandLineRunner {
     }
 
     private static Sector createSector() {
-        List<Integer> positions = IntStream.rangeClosed(1, SECTOR_CAPACITY)
+        List<Integer> seats = IntStream.rangeClosed(1, SECTOR_CAPACITY)
                 .boxed()
                 .collect(toList());
         return Sector.builder()
@@ -103,21 +103,21 @@ public class EventInitializer implements CommandLineRunner {
                         .currency("HUF")
                         .amount(new BigDecimal("1500"))
                         .build())
-                .positions(positions)
+                .seats(seats)
                 .build();
     }
 
     private static List<Ticket> createTickets(int sectorId) {
         return IntStream.rangeClosed(1, SECTOR_CAPACITY)
                 .mapToObj(id -> Ticket.builder()
-                        .position(createPosition(EVENT_ID, sectorId, id))
+                        .ticketId(createTicket(EVENT_ID, sectorId, id))
                         .status(FREE)
                         .build())
                 .collect(toImmutableList());
     }
 
-    private static Position createPosition(int eventId, int sectorId, int seatId) {
-        return Position.builder()
+    private static TicketId createTicket(int eventId, int sectorId, int seatId) {
+        return TicketId.builder()
                 .eventId(eventId)
                 .sectorId(sectorId)
                 .seatId(seatId)

@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableTicket.class)
 @JsonDeserialize(as = ImmutableTicket.class)
 public interface Ticket {
-    Position position();
+    TicketId ticketId();
 
     TicketStatus status();
 

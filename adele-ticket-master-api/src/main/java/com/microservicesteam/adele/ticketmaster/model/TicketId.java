@@ -6,9 +6,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Value.Immutable
-@JsonSerialize(as = ImmutablePosition.class)
-@JsonDeserialize(as = ImmutablePosition.class)
-public interface Position {
+@JsonSerialize(as = ImmutableTicketId.class)
+@JsonDeserialize(as = ImmutableTicketId.class)
+public interface TicketId {
     long eventId();
 
     int sectorId();
@@ -19,6 +19,6 @@ public interface Position {
         return new Builder();
     }
 
-    class Builder extends ImmutablePosition.Builder {
+    class Builder extends ImmutableTicketId.Builder {
     }
 }

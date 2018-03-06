@@ -4,7 +4,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
 import java.util.List;
 
 import org.hibernate.annotations.Immutable;
@@ -36,5 +35,5 @@ public class Sector {
 
     @ElementCollection
     @Immutable
-    List<Integer> positions;
+    List<Integer> seats;
 }

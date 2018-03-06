@@ -1,14 +1,14 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 public class TicketRepositoryTest {
 
@@ -16,13 +16,13 @@ public class TicketRepositoryTest {
     private static final int ID_2 = 1;
     private static final int EVENT_ID = 1;
     private static final int SECTOR_ID = 2;
-    private static final Position POSITION_1 = Position.builder()
+    private static final TicketId TICKET_ID_1 = TicketId.builder()
             .seatId(ID_1)
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .build();
 
-    private static final Position POSITION_2 = Position.builder()
+    private static final TicketId TICKET_ID_2 = TicketId.builder()
             .seatId(ID_2)
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
@@ -30,7 +30,7 @@ public class TicketRepositoryTest {
 
     private static final Ticket FREE_TICKET = Ticket.builder()
             .status(FREE)
-            .position(POSITION_1)
+            .ticketId(TICKET_ID_1)
             .build();
 
     private TicketRepository underTest;
@@ -43,70 +43,70 @@ public class TicketRepositoryTest {
     @Test
     public void hasShouldReturnTicketPreviouslyPutIn() {
         underTest.put(FREE_TICKET);
-        assertThat(underTest.has(POSITION_1)).isTrue();
+        assertThat(underTest.has(TICKET_ID_1)).isTrue();
     }
 
     @Test
     public void hasShouldNotRelyOnObjectIdentity() {
         underTest.put(FREE_TICKET);
-        Position copyPosition = Position.builder()
+        TicketId copyTicketId = TicketId.builder()
                 .seatId(ID_1)
                 .sectorId(SECTOR_ID)
                 .eventId(EVENT_ID)
                 .build();
-        assertThat(underTest.has(copyPosition)).isTrue();
+        assertThat(underTest.has(copyTicketId)).isTrue();
     }
 
     @Test
     public void hasShouldNotReturnTicketPreviouslyNotPutIn() {
         underTest.put(FREE_TICKET);
-        assertThat(underTest.has(POSITION_2)).isFalse();
+        assertThat(underTest.has(TICKET_ID_2)).isFalse();
     }
 
     @Test
     public void hasShouldWorkOnEmptyRepository() {
-        assertThat(underTest.has(POSITION_1)).isFalse();
-        assertThat(underTest.has(POSITION_2)).isFalse();
+        assertThat(underTest.has(TICKET_ID_1)).isFalse();
+        assertThat(underTest.has(TICKET_ID_2)).isFalse();
     }
 
     @Test
     public void getShouldReturnTicketPreviouslyPutIn() {
         underTest.put(FREE_TICKET);
-        assertThat(underTest.get(POSITION_1)).isEqualTo(FREE_TICKET);
+        assertThat(underTest.get(TICKET_ID_1)).isEqualTo(FREE_TICKET);
     }
 
     @Test
     public void getShouldNotRelyOnObjectIdentity() {
         underTest.put(FREE_TICKET);
-        Position copyPosition = Position.builder()
+        TicketId copyTicketId = TicketId.builder()
                 .seatId(ID_1)
                 .sectorId(SECTOR_ID)
                 .eventId(EVENT_ID)
                 .build();
-        assertThat(underTest.get(copyPosition)).isEqualTo(FREE_TICKET);
+        assertThat(underTest.get(copyTicketId)).isEqualTo(FREE_TICKET);
     }
 
     @Test
     public void getShouldNotReturnTicketPreviouslyNotPutIn() {
         underTest.put(FREE_TICKET);
-        assertThat(underTest.get(POSITION_2)).isNull();
+        assertThat(underTest.get(TICKET_ID_2)).isNull();
     }
 
     @Test
     public void getShouldWorkOnEmptyRepository() {
-        assertThat(underTest.get(POSITION_1)).isNull();
-        assertThat(underTest.get(POSITION_2)).isNull();
+        assertThat(underTest.get(TICKET_ID_1)).isNull();
+        assertThat(underTest.get(TICKET_ID_2)).isNull();
     }
 
     @Test
-    public void getShouldReturnTheLastTicketPutForTheSamePosition() {
+    public void getShouldReturnTheLastTicketPutForTheSameTicketId() {
         underTest.put(FREE_TICKET);
         Ticket reservedTicket = Ticket.builder()
                 .status(RESERVED)
-                .position(FREE_TICKET.position())
+                .ticketId(FREE_TICKET.ticketId())
                 .build();
         underTest.put(reservedTicket);
-        assertThat(underTest.get(POSITION_1)).isEqualTo(reservedTicket);
+        assertThat(underTest.get(TICKET_ID_1)).isEqualTo(reservedTicket);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class TicketRepositoryTest {
     public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventIdAndSector() {
         Ticket freeTicketOnOtherEvent = Ticket.builder()
                 .status(FREE)
-                .position(Position.builder()
+                .ticketId(TicketId.builder()
                         .seatId(ID_1)
                         .eventId(2)
                         .sectorId(SECTOR_ID)
@@ -133,7 +133,7 @@ public class TicketRepositoryTest {
     public void getTicketsStatusShouldReturnAllTicketsForTheGivenEventId() {
         Ticket freeTicketOnOtherSector = Ticket.builder()
                 .status(FREE)
-                .position(Position.builder()
+                .ticketId(TicketId.builder()
                         .seatId(ID_1)
                         .eventId(EVENT_ID)
                         .sectorId(3)

@@ -21,8 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.google.common.collect.ImmutableList;
 import com.microservicesteam.adele.clerk.domain.TicketsService;
 import com.microservicesteam.adele.clerk.infrastucture.config.GuavaModuleConfig;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = TicketController.class)
@@ -35,11 +35,11 @@ public class TicketControllerTest {
     private TicketsService ticketsService;
 
     @Test
-    public void getTicketsStatusShouldReturnWithStatusAndPositionWhenStatusIsPresent() throws Exception {
+    public void getTicketsStatusShouldReturnWithTicketDataWhenIsPresent() throws Exception {
         when(ticketsService.getTicketsStatusByEvent(1)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
-                        .position(Position.builder()
+                        .ticketId(TicketId.builder()
                                 .seatId(1)
                                 .sectorId(2)
                                 .eventId(1)
@@ -48,7 +48,7 @@ public class TicketControllerTest {
         when(ticketsService.getTicketsStatusByEvent(2)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
-                        .position(Position.builder()
+                        .ticketId(TicketId.builder()
                                 .seatId(2)
                                 .sectorId(2)
                                 .eventId(2)
@@ -57,9 +57,9 @@ public class TicketControllerTest {
         mockMvc.perform(get("/tickets?eventId=1").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status", equalTo("FREE")))
-                .andExpect(jsonPath("$[0].position.seatId", equalTo(1)))
-                .andExpect(jsonPath("$[0].position.sectorId", equalTo(2)))
-                .andExpect(jsonPath("$[0].position.eventId", equalTo(1)));
+                .andExpect(jsonPath("$[0].ticketId.seatId", equalTo(1)))
+                .andExpect(jsonPath("$[0].ticketId.sectorId", equalTo(2)))
+                .andExpect(jsonPath("$[0].ticketId.eventId", equalTo(1)));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class TicketControllerTest {
         when(ticketsService.getTicketsStatusByEventAndSector(1, 1)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
-                        .position(Position.builder()
+                        .ticketId(TicketId.builder()
                                 .seatId(1)
                                 .sectorId(1)
                                 .eventId(1)
@@ -84,7 +84,7 @@ public class TicketControllerTest {
         when(ticketsService.getTicketsStatusByEventAndSector(1, 2)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
-                        .position(Position.builder()
+                        .ticketId(TicketId.builder()
                                 .seatId(2)
                                 .sectorId(2)
                                 .eventId(1)
@@ -93,9 +93,9 @@ public class TicketControllerTest {
         mockMvc.perform(get("/tickets?eventId=1&sectorId=2").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status", equalTo("FREE")))
-                .andExpect(jsonPath("$[0].position.seatId", equalTo(2)))
-                .andExpect(jsonPath("$[0].position.sectorId", equalTo(2)))
-                .andExpect(jsonPath("$[0].position.eventId", equalTo(1)));
+                .andExpect(jsonPath("$[0].ticketId.seatId", equalTo(2)))
+                .andExpect(jsonPath("$[0].ticketId.sectorId", equalTo(2)))
+                .andExpect(jsonPath("$[0].ticketId.eventId", equalTo(1)));
     }
 
     @Import(GuavaModuleConfig.class)
