@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adele Websocket Demo</title>
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--link href="/main.css" rel="stylesheet"-->
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <!--script src="/webjars/sockjs-client/sockjs.min.js"></script-->
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+<h1>Adele Websocket Demo</h1>
+<div>
+    <div>
+        <div class="sectors">
+            <span>Sectors: </span> <button data-sector-id="1">1</button> <button data-sector-id="2">2</button>
+        </div>
+    </div>
+    <div>
+        <form id="reservation-form">
+            <label for="seats">Seats:</label>
+            <input id="seats" type="text" />
+            <input id="reserve" type="submit" value="Reserve">
+        </form>
+    </div>
+    <div>
+        <h3>Map of sector #<span id="sectorId">1</span></h3>
+        <table>
+            <thead>
+                <tr>
+                	<th>Sector</th>
+                    <th>Position</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="map"></tbody>
+        </table>
+    </div>
+    <div>
+        <h3>Events</h3>
+        <div id="conversation"></div>
+    </div>
+</div>
+</body>
+</html>

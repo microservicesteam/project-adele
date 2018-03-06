@@ -1,14 +1,22 @@
 package com.microservicesteam.adele.ticketmaster.model;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
-
 import org.immutables.value.Value;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@Value.Immutable
+@JsonSerialize(as = ImmutableTicket.class)
+@JsonDeserialize(as = ImmutableTicket.class)
 public interface Ticket {
     Position position();
 
-    @Value.Default
-    default TicketStatus status() {
-        return FREE;
+    TicketStatus status();
+
+    static Builder builder() {
+        return new Builder();
+    }
+
+    class Builder extends ImmutableTicket.Builder {
     }
 }

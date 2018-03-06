@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.microservicesteam</groupId>
-            <artifactId>adele-booking</artifactId>
+            <artifactId>adele-clerk</artifactId>
         </dependency>
 
         <dependency>

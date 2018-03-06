@@ -13,7 +13,7 @@ public interface Position {
 
     int sectorId();
 
-    int id();
+    int seatId();
 
     static Builder builder() {
         return new Builder();
