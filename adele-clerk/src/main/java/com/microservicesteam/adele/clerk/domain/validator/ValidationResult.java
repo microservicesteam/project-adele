@@ -3,7 +3,7 @@ package com.microservicesteam.adele.clerk.domain.validator;
 public enum ValidationResult {
 
     VALID_REQUEST(true, "000", "Valid request"),
-    INVALID_TICKETS_EMPTY(false, "001", "At least one ticketId must be requested"),
+    INVALID_TICKETS_EMPTY(false, "001", "At least one ticket must be requested"),
     INVALID_TICKETS_OUT_OF_SECTOR(false, "002", "At least one of the tickets is invalid"),
     INVALID_TICKETS_RESERVED(false, "003", "At least one of the tickets is already reserved or sold");
 

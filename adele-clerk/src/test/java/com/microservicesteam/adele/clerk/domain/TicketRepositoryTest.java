@@ -99,7 +99,7 @@ public class TicketRepositoryTest {
     }
 
     @Test
-    public void getShouldReturnTheLastTicketPutForTheSameTicket() {
+    public void getShouldReturnTheLastTicketPutForTheSameTicketId() {
         underTest.put(FREE_TICKET);
         Ticket reservedTicket = Ticket.builder()
                 .status(RESERVED)

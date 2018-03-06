@@ -47,7 +47,7 @@ public class TicketMasterServiceTest {
     @Test
     public void createTicketsCommandResultsInTicketsCreatedEvent() {
         //WHEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -56,16 +56,16 @@ public class TicketMasterServiceTest {
                         entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
-                .containsExactly(ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2));
+                .containsExactly(ticketsCreated(TICKET_ID_1, TICKET_ID_2));
     }
 
     @Test
     public void createTicketsCommandForAlreadyExistingTicketResultsInNoOperationEvent() {
         //GIVEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //WHEN
-        CreateTickets ignoredCreateTicketsCommand = createTicketsForTickets(TICKET_ID_1);
+        CreateTickets ignoredCreateTicketsCommand = createTickets(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -75,7 +75,7 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
                         NoOperation.builder()
                                 .sourceCommand(ignoredCreateTicketsCommand)
                                 .build());
@@ -84,10 +84,10 @@ public class TicketMasterServiceTest {
     @Test
     public void createReservationCommandResultsInReservationCreatedEvent() {
         //GIVEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //WHEN
-        createReservationForTickets(TICKET_ID_1);
+        createReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -97,18 +97,18 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2),
-                        reservationAcceptedEventForTicket(TICKET_ID_1));
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1));
     }
 
     @Test
     public void createReservationForAlreadyReservedTicketResultsInReservationRejectedEvent() {
         //GIVEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
-        createReservationForTickets(TICKET_ID_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        createReservationForTickets(TICKET_ID_1);
+        createReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -118,19 +118,19 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2),
-                        reservationAcceptedEventForTicket(TICKET_ID_1),
-                        reservationRejectedEventForTicket(TICKET_ID_1));
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        reservationRejected(TICKET_ID_1));
     }
 
     @Test
     public void cancelReservationCommandResultsInReservationCancelledEvent() {
         //GIVEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
-        createReservationForTickets(TICKET_ID_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        cancelReservationForTickets(TICKET_ID_1);
+        cancelReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -140,8 +140,8 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2),
-                        reservationAcceptedEventForTicket(TICKET_ID_1),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
                         ReservationCancelled.builder()
                                 .reservation(Reservation.builder()
                                         .reservationId(RESERVATION_ID)
@@ -153,11 +153,11 @@ public class TicketMasterServiceTest {
     @Test
     public void cancelReservationCommandForFreeTicketResultsInNoOperationEvent() {
         //GIVEN
-        createTicketsForTickets(TICKET_ID_1, TICKET_ID_2);
-        createReservationForTickets(TICKET_ID_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        CancelReservation cancelReservationCommand = cancelReservationForTickets(TICKET_ID_2);
+        CancelReservation cancelReservationCommand = cancelReservation(TICKET_ID_2);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
@@ -167,14 +167,14 @@ public class TicketMasterServiceTest {
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForTickets(TICKET_ID_1, TICKET_ID_2),
-                        reservationAcceptedEventForTicket(TICKET_ID_1),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
                         NoOperation.builder()
                                 .sourceCommand(cancelReservationCommand)
                                 .build());
     }
 
-    private CreateReservation createReservationForTickets(TicketId... ticketIds) {
+    private CreateReservation createReservation(TicketId... ticketIds) {
         CreateReservation createReservation = CreateReservation.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
@@ -185,7 +185,7 @@ public class TicketMasterServiceTest {
         return createReservation;
     }
 
-    private ReservationAccepted reservationAcceptedEventForTicket(TicketId ticketId) {
+    private ReservationAccepted reservationAccepted(TicketId ticketId) {
         return ReservationAccepted.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
@@ -194,7 +194,7 @@ public class TicketMasterServiceTest {
                 .build();
     }
 
-    private ReservationRejected reservationRejectedEventForTicket(TicketId ticketId) {
+    private ReservationRejected reservationRejected(TicketId ticketId) {
         return ReservationRejected.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
@@ -203,7 +203,7 @@ public class TicketMasterServiceTest {
                 .build();
     }
 
-    private CreateTickets createTicketsForTickets(TicketId... ticketIds) {
+    private CreateTickets createTickets(TicketId... ticketIds) {
         CreateTickets createTicketsCommand = CreateTickets.builder()
                 .addAllTickets(Arrays.stream(ticketIds)
                         .map(this::createFreeTicket)
@@ -213,7 +213,7 @@ public class TicketMasterServiceTest {
         return createTicketsCommand;
     }
 
-    private TicketsCreated ticketsCreatedEventForTickets(TicketId... ticketIds) {
+    private TicketsCreated ticketsCreated(TicketId... ticketIds) {
         return TicketsCreated.builder()
                 .addAllTickets(Arrays.stream(ticketIds)
                         .map(this::createFreeTicket)
@@ -228,7 +228,7 @@ public class TicketMasterServiceTest {
                 .build();
     }
 
-    private CancelReservation cancelReservationForTickets(TicketId... ticketIds) {
+    private CancelReservation cancelReservation(TicketId... ticketIds) {
         CancelReservation cancelReservationCommand = CancelReservation.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
