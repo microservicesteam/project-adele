@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.event.domain;
+package com.microservicesteam.adele.admin.domain;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
