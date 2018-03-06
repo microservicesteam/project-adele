@@ -33,7 +33,7 @@ public class Program {
 
     String description;
 
-    EventStatus status;
+    ProgramStatus status;
 
     LocalDateTime dateTime;
 

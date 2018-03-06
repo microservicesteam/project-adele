@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.admin.boundary.web.ProgramRepository;
 import com.microservicesteam.adele.admin.domain.Coordinates;
-import com.microservicesteam.adele.admin.domain.Program;
-import com.microservicesteam.adele.admin.domain.EventStatus;
 import com.microservicesteam.adele.admin.domain.Price;
+import com.microservicesteam.adele.admin.domain.Program;
+import com.microservicesteam.adele.admin.domain.ProgramStatus;
 import com.microservicesteam.adele.admin.domain.Sector;
 import com.microservicesteam.adele.admin.domain.Venue;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
@@ -49,7 +49,7 @@ public class ProgramInitializer implements CommandLineRunner {
         Program program1 = Program.builder()
                 .name("Init test program")
                 .description("Lorem ipsum dolor met")
-                .status(EventStatus.OPEN)
+                .status(ProgramStatus.OPEN)
                 .dateTime(LocalDateTime.now())
                 .venue(Venue.builder()
                         .address("Test venue address")
@@ -63,7 +63,7 @@ public class ProgramInitializer implements CommandLineRunner {
         Program program2 = Program.builder()
                 .name("Another program")
                 .description("Closed program description")
-                .status(EventStatus.CLOSED)
+                .status(ProgramStatus.CLOSED)
                 .dateTime(LocalDateTime.now())
                 .venue(Venue.builder()
                         .address("Another test venue address")
