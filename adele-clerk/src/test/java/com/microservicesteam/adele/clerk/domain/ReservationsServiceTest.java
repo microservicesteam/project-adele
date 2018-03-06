@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_EMPTY;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_NO_TICKET;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
@@ -75,7 +75,7 @@ public class ReservationsServiceTest {
     @Test
     public void reserveTicketsShouldReturnReservationRejectionWhenValidationFails() {
         //given
-        when(validator.validate(emptyList())).thenReturn(INVALID_TICKETS_EMPTY);
+        when(validator.validate(emptyList())).thenReturn(INVALID_NO_TICKET);
 
         //when
         ReservationResponse reservationResponse = underTest.reserveTickets(emptyList());
@@ -83,8 +83,8 @@ public class ReservationsServiceTest {
         //then
         assertThat(reservationResponse).isInstanceOf(ReservationRejected.class);
         ReservationRejected reservationRejected = (ReservationRejected) reservationResponse;
-        assertThat(reservationRejected.code()).isEqualTo(INVALID_TICKETS_EMPTY.code());
-        assertThat(reservationRejected.reason()).isEqualTo(INVALID_TICKETS_EMPTY.message());
+        assertThat(reservationRejected.code()).isEqualTo(INVALID_NO_TICKET.code());
+        assertThat(reservationRejected.reason()).isEqualTo(INVALID_NO_TICKET.message());
     }
 
     @Test

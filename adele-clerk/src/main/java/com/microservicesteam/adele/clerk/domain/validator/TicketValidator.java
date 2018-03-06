@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain.validator;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_EMPTY;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_NO_TICKET;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_OUT_OF_SECTOR;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_RESERVED;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
@@ -25,7 +25,7 @@ public class TicketValidator {
     public ValidationResult validate(List<TicketId> tickets) {
         if (tickets.isEmpty()) {
             log.warn("Empty tickets in request");
-            return INVALID_TICKETS_EMPTY;
+            return INVALID_NO_TICKET;
         }
 
         if (!allTicketsAreValid(tickets)) {

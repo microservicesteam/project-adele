@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.clerk.domain.validator;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_EMPTY;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_NO_TICKET;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_OUT_OF_SECTOR;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_TICKETS_RESERVED;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
@@ -73,7 +73,7 @@ public class TicketValidatorTest {
         ValidationResult actual = validator.validate(ticketIds);
 
         //then
-        assertThat(actual).isEqualTo(INVALID_TICKETS_EMPTY);
+        assertThat(actual).isEqualTo(INVALID_NO_TICKET);
     }
 
 

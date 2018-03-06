@@ -28,30 +28,29 @@ public class ReservationsService extends EventBasedService {
 
     private final TicketRepository ticketRepository;
     private final WebSocketEventPublisher webSocketEventPublisher;
-    private final TicketValidator validator;
+    private final TicketValidator ticketValidator;
     private final ReservationIdGenerator reservationIdGenerator;
 
     public ReservationsService(EventBus eventBus,
             TicketRepository ticketRepository,
             WebSocketEventPublisher webSocketEventPublisher,
-            TicketValidator validator,
+            TicketValidator ticketValidator,
             ReservationIdGenerator reservationIdGenerator) {
         super(eventBus);
         this.ticketRepository = ticketRepository;
         this.webSocketEventPublisher = webSocketEventPublisher;
-        this.validator = validator;
+        this.ticketValidator = ticketValidator;
         this.reservationIdGenerator = reservationIdGenerator;
     }
 
     public ReservationResponse reserveTickets(List<TicketId> ticketIds) {
-        ValidationResult validationResult = validator.validate(ticketIds);
+        ValidationResult validationResult = ticketValidator.validate(ticketIds);
 
         if (!validationResult.isValid()) {
             return com.microservicesteam.adele.clerk.domain.ReservationRejected.fromValidationResult(validationResult);
         }
 
         String reservationId = reservationIdGenerator.generateReservationId();
-        log.debug("Reservation id {} generated for ticketIds {}", reservationId, ticketIds);
 
         CreateReservation createReservationCommand = CreateReservation.builder()
                 .reservation(Reservation.builder()
