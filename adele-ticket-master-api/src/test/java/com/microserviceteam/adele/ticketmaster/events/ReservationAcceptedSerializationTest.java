@@ -9,8 +9,8 @@ import org.springframework.boot.test.json.JsonContent;
 
 import com.microservicesteam.adele.ticketmaster.events.Event;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 public class ReservationAcceptedSerializationTest extends AbstractSerializationTest {
 
@@ -19,7 +19,7 @@ public class ReservationAcceptedSerializationTest extends AbstractSerializationT
         ReservationAccepted reservationAccepted = ReservationAccepted.builder()
                 .reservation(Reservation.builder()
                         .reservationId("abc-123")
-                        .addPositions(Position.builder()
+                        .addTickets(TicketId.builder()
                                 .eventId(1L)
                                 .sectorId(2)
                                 .seatId(3)
@@ -30,9 +30,9 @@ public class ReservationAcceptedSerializationTest extends AbstractSerializationT
         JsonContent<Event> serializedJson = json.write(reservationAccepted);
         assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("ReservationAccepted");
         assertThat(serializedJson).extractingJsonPathStringValue("$.reservation.reservationId").isEqualTo("abc-123");
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].eventId").isEqualTo(1);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].sectorId").isEqualTo(2);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.positions[0].seatId").isEqualTo(3);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].eventId").isEqualTo(1);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].sectorId").isEqualTo(2);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].seatId").isEqualTo(3);
 
         assertThat(json.parse(serializedJson.getJson()))
                 .isEqualTo(reservationAccepted);

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.collect.ImmutableSet;
 import com.microservicesteam.adele.ticketmaster.events.ReservationEvent;
-import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,8 +24,8 @@ public class WebSocketEventPublisher {
     }
 
     private ImmutableSet<Integer> extractSectors(ReservationEvent event) {
-        return event.reservation().positions().stream()
-                .map(Position::sectorId)
+        return event.reservation().tickets().stream()
+                .map(TicketId::sectorId)
                 .collect(toImmutableSet());
     }
 

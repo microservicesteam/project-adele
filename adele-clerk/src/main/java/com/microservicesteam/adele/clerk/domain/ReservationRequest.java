@@ -6,14 +6,14 @@ import org.immutables.value.Value;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 @Value.Immutable
 @JsonSerialize(as = ImmutableReservationRequest.class)
 @JsonDeserialize(as = ImmutableReservationRequest.class)
 public interface ReservationRequest {
 
-    List<Position> positions();
+    List<TicketId> tickets();
 
     static Builder builder() {
         return new Builder();

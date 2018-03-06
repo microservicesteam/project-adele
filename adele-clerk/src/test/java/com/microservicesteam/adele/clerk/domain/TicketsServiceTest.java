@@ -1,7 +1,7 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,20 +16,20 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TicketsServiceTest {
 
     private static final long EVENT_ID = 1L;
     private static final int SECTOR_ID = 1;
-    private static final Position POSITION_1 = Position.builder()
+    private static final TicketId TICKET_ID_1 = TicketId.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .seatId(1)
             .build();
-    private static final Position POSITION_2 = Position.builder()
+    private static final TicketId TICKET_ID_2 = TicketId.builder()
             .eventId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .seatId(2)
@@ -58,11 +58,11 @@ public class TicketsServiceTest {
         TicketsCreated ticketsCreated = TicketsCreated.builder()
                 .addTickets(Ticket.builder()
                                 .status(FREE)
-                                .position(POSITION_1)
+                                .ticketId(TICKET_ID_1)
                                 .build(),
                         Ticket.builder()
                                 .status(FREE)
-                                .position(POSITION_2)
+                                .ticketId(TICKET_ID_2)
                                 .build())
                 .build();
 
@@ -72,11 +72,11 @@ public class TicketsServiceTest {
         //then
         verify(ticketRepository).put(Ticket.builder()
                 .status(FREE)
-                .position(POSITION_1)
+                .ticketId(TICKET_ID_1)
                 .build());
         verify(ticketRepository).put(Ticket.builder()
                 .status(FREE)
-                .position(POSITION_2)
+                .ticketId(TICKET_ID_2)
                 .build());
     }
 
@@ -85,11 +85,11 @@ public class TicketsServiceTest {
         ImmutableList<Ticket> ticketsInRepository = ImmutableList.of(
                 Ticket.builder()
                         .status(RESERVED)
-                        .position(POSITION_1)
+                        .ticketId(TICKET_ID_1)
                         .build(),
                 Ticket.builder()
                         .status(FREE)
-                        .position(POSITION_2)
+                        .ticketId(TICKET_ID_2)
                         .build());
         when(ticketRepository.getTicketsStatusByEventAndSector(1, SECTOR_ID)).thenReturn(ticketsInRepository);
         assertThat(underTest.getTicketsStatusByEventAndSector(1, SECTOR_ID))
