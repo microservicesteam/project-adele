@@ -23,7 +23,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-public class Event {
+public class Program {
 
     @Id
     @GeneratedValue

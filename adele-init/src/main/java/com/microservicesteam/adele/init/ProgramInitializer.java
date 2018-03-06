@@ -13,9 +13,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
-import com.microservicesteam.adele.admin.boundary.web.EventRepository;
+import com.microservicesteam.adele.admin.boundary.web.ProgramRepository;
 import com.microservicesteam.adele.admin.domain.Coordinates;
-import com.microservicesteam.adele.admin.domain.Event;
+import com.microservicesteam.adele.admin.domain.Program;
 import com.microservicesteam.adele.admin.domain.EventStatus;
 import com.microservicesteam.adele.admin.domain.Price;
 import com.microservicesteam.adele.admin.domain.Sector;
@@ -29,25 +29,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Component
-public class EventInitializer implements CommandLineRunner {
+public class ProgramInitializer implements CommandLineRunner {
 
-    private static final int EVENT_ID = 1;
+    private static final int PROGRAM_ID = 1;
     private static final int NUMBER_OF_SECTORS = 50;
     private static final int SECTOR_CAPACITY = 250;
 
-    private final EventRepository eventRepository;
+    private final ProgramRepository programRepository;
     private final EventBus eventBus;
 
     @Override
     public void run(String... args) {
-        initEventRepository();
+        initProgramRepository();
         emitTicketCreatedEvents();
     }
 
-    private void initEventRepository() {
-        log.info("Initializing event repository with data...");
-        Event event1 = Event.builder()
-                .name("Init test event")
+    private void initProgramRepository() {
+        log.info("Initializing program repository with data...");
+        Program program1 = Program.builder()
+                .name("Init test program")
                 .description("Lorem ipsum dolor met")
                 .status(EventStatus.OPEN)
                 .dateTime(LocalDateTime.now())
@@ -60,9 +60,9 @@ public class EventInitializer implements CommandLineRunner {
                         .sectors(createSectors())
                         .build())
                 .build();
-        Event event2 = Event.builder()
-                .name("Another event")
-                .description("Closed event description")
+        Program program2 = Program.builder()
+                .name("Another program")
+                .description("Closed program description")
                 .status(EventStatus.CLOSED)
                 .dateTime(LocalDateTime.now())
                 .venue(Venue.builder()
@@ -73,8 +73,8 @@ public class EventInitializer implements CommandLineRunner {
                                 .build())
                         .build())
                 .build();
-        eventRepository.save(event1);
-        eventRepository.save(event2);
+        programRepository.save(program1);
+        programRepository.save(program2);
     }
 
     private void emitTicketCreatedEvents() {
@@ -110,7 +110,7 @@ public class EventInitializer implements CommandLineRunner {
     private static List<Ticket> createTickets(int sectorId) {
         return IntStream.rangeClosed(1, SECTOR_CAPACITY)
                 .mapToObj(id -> Ticket.builder()
-                        .ticketId(createTicket(EVENT_ID, sectorId, id))
+                        .ticketId(createTicket(PROGRAM_ID, sectorId, id))
                         .status(FREE)
                         .build())
                 .collect(toImmutableList());
