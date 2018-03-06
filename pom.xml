@@ -20,7 +20,7 @@
     <version>2017-08-23-SNAPSHOT</version>
     <modules>
         <module>adele-application</module>
-        <module>adele-booking</module>
+        <module>adele-clerk</module>
         <module>adele-event</module>
         <module>adele-messaging</module>
         <module>adele-ticket-master</module>
@@ -48,7 +48,7 @@
             <!-- adele modules -->
             <dependency>
                 <groupId>com.microservicesteam</groupId>
-                <artifactId>adele-booking</artifactId>
+                <artifactId>adele-clerk</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -150,7 +150,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.6</version>
+                <version>3.8</version>
                 <executions>
                     <execution>
                         <goals>

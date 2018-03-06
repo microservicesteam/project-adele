@@ -1,34 +1,36 @@
 package com.microservicesteam.adele.ticketmaster;
 
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.microservicesteam.adele.ticketmaster.events.TicketsAlreadyBooked;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
-import com.microservicesteam.adele.ticketmaster.commands.BookTickets;
-import com.microservicesteam.adele.ticketmaster.commands.CancelTickets;
+import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.events.TicketsBooked;
-import com.microservicesteam.adele.ticketmaster.events.TicketsCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
+import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
-import com.microservicesteam.adele.ticketmaster.model.BookedTicket;
-import com.microservicesteam.adele.ticketmaster.model.FreeTicket;
 import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketStatus;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class TicketMasterService extends EventBasedService {
 
-    Map<Position, Ticket> ticketRepository;
+    Map<Position, TicketStatus> ticketRepository;
 
     TicketMasterService(EventBus eventBus) {
         super(eventBus);
@@ -37,12 +39,12 @@ public class TicketMasterService extends EventBasedService {
 
     @Subscribe
     public void handleCommand(CreateTickets command) {
-        if (positionsNotExist(command.positions())) {
+        if (positionsNotExist(command.tickets())) {
             addTickets(command);
             TicketsCreated ticketsCreated = TicketsCreated.builder()
-                    .addAllPositions(command.positions())
+                    .addAllTickets(command.tickets())
                     .build();
-            log.info("{} tickets created", ticketsCreated.positions().size());
+            log.info("{} tickets created", ticketsCreated.tickets().size());
             eventBus.post(ticketsCreated);
         } else {
             eventBus.post(NoOperation.builder()
@@ -51,37 +53,44 @@ public class TicketMasterService extends EventBasedService {
         }
     }
 
-
     @Subscribe
-    public void handleCommand(BookTickets command) {
-        if (positionsFree(command.positions())) {
-            bookTickets(command);
-            TicketsBooked ticketsBooked = TicketsBooked.builder()
-                    .bookingId(command.bookingId())
-                    .addAllPositions(command.positions())
+    public void handleCommand(CreateReservation command) {
+        Reservation reservation = command.reservation();
+        if (positionsFree(reservation.positions())) {
+            reservePositions(reservation.positions());
+            ReservationAccepted reservationAccepted = ReservationAccepted.builder()
+                    .reservation(Reservation.builder()
+                            .reservationId(reservation.reservationId())
+                            .addAllPositions(reservation.positions())
+                            .build())
                     .build();
-            log.info("Tickets booked: {}", ticketsBooked);
-            eventBus.post(ticketsBooked);
+            log.info("Tickets reserved: {}", reservationAccepted);
+            eventBus.post(reservationAccepted);
         } else {
-            TicketsAlreadyBooked ticketsAlreadyBooked = TicketsAlreadyBooked.builder()
-                    .bookingId(command.bookingId())
-                    .addAllPositions(command.positions())
+            ReservationRejected reservationRejected = ReservationRejected.builder()
+                    .reservation(Reservation.builder()
+                            .reservationId(reservation.reservationId())
+                            .addAllPositions(reservation.positions())
+                            .build())
                     .build();
-            log.debug("Unsuccessful booking attempt: {}", ticketsAlreadyBooked);
-            eventBus.post(ticketsAlreadyBooked);
+            log.debug("Tickets reservation rejected: {}", reservationRejected);
+            eventBus.post(reservationRejected);
         }
     }
 
     @Subscribe
-    public void handleCommand(CancelTickets command) {
-        if (positionsBooked(command.positions())) {
-            cancelTickets(command);
-            TicketsCancelled ticketsCancelled = TicketsCancelled.builder()
-                    .bookingId(command.bookingId())
-                    .addAllPositions(command.positions())
+    public void handleCommand(CancelReservation command) {
+        Reservation reservation = command.reservation();
+        if (positionsReserved(reservation.positions())) {
+            freePositions(reservation.positions());
+            ReservationCancelled reservationCancelled = ReservationCancelled.builder()
+                    .reservation(Reservation.builder()
+                            .reservationId(reservation.reservationId())
+                            .addAllPositions(reservation.positions())
+                            .build())
                     .build();
-            log.info("Tickets cancelled: {}", ticketsCancelled);
-            eventBus.post(ticketsCancelled);
+            log.info("Reservations cancelled: {}", reservationCancelled);
+            eventBus.post(reservationCancelled);
         } else {
             eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
@@ -89,48 +98,39 @@ public class TicketMasterService extends EventBasedService {
         }
     }
 
-    private boolean positionsNotExist(List<Position> positions) {
-        return positions.stream()
+    private boolean positionsNotExist(List<Ticket> tickets) {
+        return tickets.stream()
+                .map(Ticket::position)
                 .noneMatch(position -> ticketRepository.containsKey(position));
     }
 
     private boolean positionsFree(List<Position> positions) {
-        return positions.stream().allMatch(
-                position -> ticketRepository.containsKey(position) &&
-                        ticketRepository.get(position) instanceof FreeTicket);
+        return positionsInState(positions, FREE);
     }
 
-    private boolean positionsBooked(List<Position> positions) {
+    private boolean positionsReserved(List<Position> positions) {
+        return positionsInState(positions, RESERVED);
+    }
+
+    private boolean positionsInState(List<Position> positions, TicketStatus status) {
         return positions.stream().allMatch(
-                position -> ticketRepository.containsKey(position) &&
-                        ticketRepository.get(position) instanceof BookedTicket);
+                position -> status == ticketRepository.get(position));
     }
 
     private void addTickets(CreateTickets command) {
-        command.positions().forEach(
-                position -> ticketRepository.put(position,
-                        FreeTicket.builder()
-                                .position(position)
-                                .build()));
+        command.tickets().forEach(ticket -> ticketRepository.put(ticket.position(), ticket.status()));
     }
 
-    private void bookTickets(BookTickets command) {
-        command.positions().forEach(
-                position -> ticketRepository.put(position,
-                        BookedTicket.builder()
-                                .bookingId(command.bookingId())
-                                .position(position)
-                                .build()));
+    private void reservePositions(List<Position> positions) {
+        positions.forEach(
+                position -> ticketRepository.put(position, RESERVED));
     }
 
-    private void cancelTickets(CancelTickets command) {
-        command.positions().forEach(
+    private void freePositions(List<Position> positions) {
+        positions.forEach(
                 position -> {
                     if (ticketRepository.containsKey(position)) {
-                        ticketRepository.replace(position,
-                                FreeTicket.builder()
-                                        .position(position)
-                                        .build());
+                        ticketRepository.replace(position, FREE);
                     }
                 });
     }
