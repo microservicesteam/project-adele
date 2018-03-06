@@ -10,6 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class AdeleApplicationTest {
 
     @Test
-    public void contextLoads() throws Exception {
+    public void contextLoads() {
     }
 }

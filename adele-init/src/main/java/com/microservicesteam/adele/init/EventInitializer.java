@@ -1,6 +1,7 @@
 package com.microservicesteam.adele.init;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ import com.microservicesteam.adele.admin.domain.Sector;
 import com.microservicesteam.adele.admin.domain.Venue;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.model.Position;
+import com.microservicesteam.adele.ticketmaster.model.Ticket;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +39,7 @@ public class EventInitializer implements CommandLineRunner {
     private final EventBus eventBus;
 
     @Override
-    public void run(String... arg0) throws Exception {
+    public void run(String... args) {
         initEventRepository();
         emitTicketCreatedEvents();
     }
@@ -80,7 +82,7 @@ public class EventInitializer implements CommandLineRunner {
 
         CreateTickets.Builder builder = CreateTickets.builder();
         IntStream.rangeClosed(1, NUMBER_OF_SECTORS)
-                .forEach(sectorId -> builder.addAllPositions(createPositions(sectorId)));
+                .forEach(sectorId -> builder.addAllTickets(createTickets(sectorId)));
 
         eventBus.post(builder.build());
     }
@@ -93,7 +95,7 @@ public class EventInitializer implements CommandLineRunner {
 
     private static Sector createSector() {
         List<Integer> positions = IntStream.rangeClosed(1, SECTOR_CAPACITY)
-                .mapToObj(Integer::new)
+                .boxed()
                 .collect(toList());
         return Sector.builder()
                 .capacity(SECTOR_CAPACITY)
@@ -105,17 +107,20 @@ public class EventInitializer implements CommandLineRunner {
                 .build();
     }
 
-    private static List<Position> createPositions(int sectorId) {
+    private static List<Ticket> createTickets(int sectorId) {
         return IntStream.rangeClosed(1, SECTOR_CAPACITY)
-                .mapToObj(id -> createPosition(EVENT_ID, sectorId, id))
+                .mapToObj(id -> Ticket.builder()
+                        .position(createPosition(EVENT_ID, sectorId, id))
+                        .status(FREE)
+                        .build())
                 .collect(toImmutableList());
     }
 
-    private static Position createPosition(int eventId, int sectorId, int id) {
+    private static Position createPosition(int eventId, int sectorId, int seatId) {
         return Position.builder()
                 .eventId(eventId)
                 .sectorId(sectorId)
-                .id(id)
+                .seatId(seatId)
                 .build();
     }
 
