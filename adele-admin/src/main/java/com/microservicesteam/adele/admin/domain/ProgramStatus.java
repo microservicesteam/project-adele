@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.admin.domain;
 
-public enum EventStatus {
+public enum ProgramStatus {
 
     OPEN,
     CLOSED;

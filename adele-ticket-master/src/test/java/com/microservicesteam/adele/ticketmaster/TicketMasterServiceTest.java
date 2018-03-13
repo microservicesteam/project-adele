@@ -28,8 +28,8 @@ import com.microservicesteam.adele.ticketmaster.model.TicketId;
 public class TicketMasterServiceTest {
 
     private static final String RESERVATION_ID = "abc-123";
-    private static final TicketId TICKET_ID_1 = TicketId.builder().eventId(1).sectorId(1).seatId(1).build();
-    private static final TicketId TICKET_ID_2 = TicketId.builder().eventId(1).sectorId(1).seatId(2).build();
+    private static final TicketId TICKET_ID_1 = TicketId.builder().programId(1).sectorId(1).seatId(1).build();
+    private static final TicketId TICKET_ID_2 = TicketId.builder().programId(1).sectorId(1).seatId(2).build();
 
     private TicketMasterService ticketMasterService;
     private EventBus eventBus;

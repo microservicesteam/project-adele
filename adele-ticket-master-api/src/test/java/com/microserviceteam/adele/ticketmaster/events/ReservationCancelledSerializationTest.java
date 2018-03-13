@@ -21,7 +21,7 @@ public class ReservationCancelledSerializationTest extends AbstractSerialization
                         .reservationId("abc-123")
                         .addTickets(
                                 TicketId.builder()
-                                        .eventId(1L)
+                                        .programId(1L)
                                         .sectorId(2)
                                         .seatId(3)
                                         .build())
@@ -31,7 +31,7 @@ public class ReservationCancelledSerializationTest extends AbstractSerialization
         JsonContent<Event> serializedJson = json.write(reservationCancelled);
         assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("ReservationCancelled");
         assertThat(serializedJson).extractingJsonPathStringValue("$.reservation.reservationId").isEqualTo("abc-123");
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].eventId").isEqualTo(1);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].programId").isEqualTo(1);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].sectorId").isEqualTo(2);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.reservation.tickets[0].seatId").isEqualTo(3);
 

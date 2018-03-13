@@ -14,17 +14,17 @@ public class TicketRepositoryTest {
 
     private static final int ID_1 = 0;
     private static final int ID_2 = 1;
-    private static final int EVENT_ID = 1;
+    private static final int PROGRAM_ID = 1;
     private static final int SECTOR_ID = 2;
     private static final TicketId TICKET_ID_1 = TicketId.builder()
             .seatId(ID_1)
-            .eventId(EVENT_ID)
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .build();
 
     private static final TicketId TICKET_ID_2 = TicketId.builder()
             .seatId(ID_2)
-            .eventId(EVENT_ID)
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .build();
 
@@ -52,7 +52,7 @@ public class TicketRepositoryTest {
         TicketId copyTicketId = TicketId.builder()
                 .seatId(ID_1)
                 .sectorId(SECTOR_ID)
-                .eventId(EVENT_ID)
+                .programId(PROGRAM_ID)
                 .build();
         assertThat(underTest.has(copyTicketId)).isTrue();
     }
@@ -81,7 +81,7 @@ public class TicketRepositoryTest {
         TicketId copyTicketId = TicketId.builder()
                 .seatId(ID_1)
                 .sectorId(SECTOR_ID)
-                .eventId(EVENT_ID)
+                .programId(PROGRAM_ID)
                 .build();
         assertThat(underTest.get(copyTicketId)).isEqualTo(FREE_TICKET);
     }
@@ -111,36 +111,36 @@ public class TicketRepositoryTest {
 
     @Test
     public void getTicketsStatusShouldReturnEmptyListOnEmptyRepository() {
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).isEmpty();
+        assertThat(underTest.getTicketsStatusByProgram(PROGRAM_ID)).isEmpty();
     }
 
     @Test
-    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenEventIdAndSector() {
-        Ticket freeTicketOnOtherEvent = Ticket.builder()
+    public void getTicketsStatusShouldOnlyReturnTicketsForTheGivenProgramIdAndSector() {
+        Ticket freeTicketOnOtherProgram = Ticket.builder()
                 .status(FREE)
                 .ticketId(TicketId.builder()
                         .seatId(ID_1)
-                        .eventId(2)
+                        .programId(2)
                         .sectorId(SECTOR_ID)
                         .build())
                 .build();
         underTest.put(FREE_TICKET);
-        underTest.put(freeTicketOnOtherEvent);
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET);
+        underTest.put(freeTicketOnOtherProgram);
+        assertThat(underTest.getTicketsStatusByProgram(PROGRAM_ID)).containsExactly(FREE_TICKET);
     }
 
     @Test
-    public void getTicketsStatusShouldReturnAllTicketsForTheGivenEventId() {
+    public void getTicketsStatusShouldReturnAllTicketsForTheGivenProgramId() {
         Ticket freeTicketOnOtherSector = Ticket.builder()
                 .status(FREE)
                 .ticketId(TicketId.builder()
                         .seatId(ID_1)
-                        .eventId(EVENT_ID)
+                        .programId(PROGRAM_ID)
                         .sectorId(3)
                         .build())
                 .build();
         underTest.put(FREE_TICKET);
         underTest.put(freeTicketOnOtherSector);
-        assertThat(underTest.getTicketsStatusByEvent(EVENT_ID)).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
+        assertThat(underTest.getTicketsStatusByProgram(PROGRAM_ID)).containsExactly(FREE_TICKET, freeTicketOnOtherSector);
     }
 }

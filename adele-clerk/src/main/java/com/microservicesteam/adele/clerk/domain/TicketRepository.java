@@ -34,12 +34,12 @@ public class TicketRepository {
         return tickets.get(ticketId);
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
-        return filterTicketsBy(matchingEventId(eventId));
+    public ImmutableList<Ticket> getTicketsStatusByProgram(long programId) {
+        return filterTicketsBy(matchingProgramId(programId));
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEventAndSector(long eventId, int sector) {
-        return filterTicketsBy(matchingEventIdAndSector(eventId, sector));
+    public ImmutableList<Ticket> getTicketsStatusByProgramAndSector(long programId, int sector) {
+        return filterTicketsBy(matchingProgramIdAndSector(programId, sector));
     }
 
     private ImmutableList<Ticket> filterTicketsBy(Predicate<Ticket> predicate) {
@@ -49,12 +49,12 @@ public class TicketRepository {
                 .collect(toImmutableList());
     }
 
-    private Predicate<Ticket> matchingEventId(long eventId) {
-        return ticket -> ticket.ticketId().eventId() == eventId;
+    private Predicate<Ticket> matchingProgramId(long programId) {
+        return ticket -> ticket.ticketId().programId() == programId;
     }
 
-    private Predicate<Ticket> matchingEventIdAndSector(long eventId, int sector) {
-        return matchingEventId(eventId)
+    private Predicate<Ticket> matchingProgramIdAndSector(long programId, int sector) {
+        return matchingProgramId(programId)
                 .and(ticket -> ticket.ticketId().sectorId() == sector);
     }
 }
