@@ -27,6 +27,7 @@
         <module>adele-ticket-master-api</module>
         <module>adele-style</module>
         <module>adele-init</module>
+        <module>adele-payment-manager</module>
     </modules>
 
     <name>project-adele</name>
