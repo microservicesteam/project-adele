@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.admin.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
 public enum ProgramStatus {
 

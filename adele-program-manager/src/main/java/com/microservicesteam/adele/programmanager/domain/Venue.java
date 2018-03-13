@@ -1,18 +1,19 @@
-package com.microservicesteam.adele.admin.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
 import static javax.persistence.CascadeType.PERSIST;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import java.time.LocalDateTime;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
@@ -23,21 +24,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-public class Program {
+public class Venue {
 
     @Id
     @GeneratedValue
     Long id;
 
-    String name;
+    String address;
 
-    String description;
+    Coordinates coordinates;
 
-    ProgramStatus status;
-
-    LocalDateTime dateTime;
-
-    @OneToOne(cascade = PERSIST)
-    Venue venue;
-
+    @Singular
+    @OneToMany(cascade = PERSIST)
+    List<Sector> sectors;
 }

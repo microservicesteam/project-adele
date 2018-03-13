@@ -1,7 +1,12 @@
-package com.microservicesteam.adele.admin.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.List;
+
+import org.hibernate.annotations.Immutable;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,10 +22,18 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class User {
+@Entity
+public class Sector {
 
     @Id
     @GeneratedValue
     Long id;
 
+    long capacity;
+
+    Price price;
+
+    @ElementCollection
+    @Immutable
+    List<Integer> seats;
 }
