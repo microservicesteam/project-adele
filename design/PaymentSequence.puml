@@ -73,10 +73,11 @@ Frontend --> Paypal: GET /{approvalUrl}
 note left: {approvalUrl} is the actual PayPal URL
 activate Paypal
 Paypal --> Paypal: fill and submit form
-Paypal --> OrderManager: GET /orders/{orderId}/approvals?status=success&PayerID=abcd1234
+Paypal --> OrderManager: GET /orders/{orderId}/payment?status=success&PayerID=abcd1234
 deactivate Paypal
 
 activate OrderManager
+note left: this is the {return_url} sent to Paypal
 OrderManager --> DB: fetchOrder(orderId)
 OrderManager --> DB: updateOrder(UNDER_PAYMENT, orderId, payerId)
 
