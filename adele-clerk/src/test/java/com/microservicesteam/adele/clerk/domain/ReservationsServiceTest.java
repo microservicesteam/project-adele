@@ -33,15 +33,15 @@ import com.microservicesteam.adele.ticketmaster.model.TicketId;
 @RunWith(MockitoJUnitRunner.class)
 public class ReservationsServiceTest {
 
-    private static final long EVENT_ID = 1L;
+    private static final long PROGRAM_ID = 1L;
     private static final int SECTOR_ID = 1;
     private static final TicketId TICKET_ID_1 = TicketId.builder()
-            .programId(EVENT_ID)
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .seatId(1)
             .build();
     private static final TicketId TICKET_ID_2 = TicketId.builder()
-            .programId(EVENT_ID)
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .seatId(2)
             .build();
