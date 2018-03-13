@@ -1,7 +1,7 @@
-package com.microservicesteam.adele.admin.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.math.BigDecimal;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,11 +18,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Embeddable
-public class Coordinates {
-    
-    @Column(nullable = false)
-    double latitude;
+public class Price {
 
-    @Column(nullable = false)
-    double longitude;
+    BigDecimal amount;
+
+    String currency;
+
 }

@@ -21,7 +21,7 @@
     <modules>
         <module>adele-application</module>
         <module>adele-clerk</module>
-        <module>adele-admin</module>
+        <module>adele-program-manager</module>
         <module>adele-messaging</module>
         <module>adele-ticket-master</module>
         <module>adele-ticket-master-api</module>
@@ -79,7 +79,7 @@
 
             <dependency>
                 <groupId>com.microservicesteam</groupId>
-                <artifactId>adele-admin</artifactId>
+                <artifactId>adele-program-manager</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -1,7 +1,7 @@
-package com.microservicesteam.adele.admin.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
-import javax.persistence.Embeddable;
-import java.math.BigDecimal;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,11 +17,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Embeddable
-public class Price {
+public class User {
 
-    BigDecimal amount;
-
-    String currency;
+    @Id
+    @GeneratedValue
+    Long id;
 
 }
