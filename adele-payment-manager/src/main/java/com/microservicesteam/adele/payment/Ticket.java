@@ -8,12 +8,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface Ticket {
 
-    String programName();
     int sector();
-    int quantity();
-    String description();
     BigDecimal priceAmount();
-    Currency currency();
 
     class Builder extends ImmutableTicket.Builder {
     }
