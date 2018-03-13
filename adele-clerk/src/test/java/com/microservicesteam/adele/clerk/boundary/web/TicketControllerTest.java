@@ -36,66 +36,66 @@ public class TicketControllerTest {
 
     @Test
     public void getTicketsStatusShouldReturnWithTicketDataWhenIsPresent() throws Exception {
-        when(ticketsService.getTicketsStatusByEvent(1)).thenReturn(
+        when(ticketsService.getTicketsStatusByProgram(1)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
                         .ticketId(TicketId.builder()
                                 .seatId(1)
                                 .sectorId(2)
-                                .eventId(1)
+                                .programId(1)
                                 .build())
                         .build()));
-        when(ticketsService.getTicketsStatusByEvent(2)).thenReturn(
+        when(ticketsService.getTicketsStatusByProgram(2)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
                         .ticketId(TicketId.builder()
                                 .seatId(2)
                                 .sectorId(2)
-                                .eventId(2)
+                                .programId(2)
                                 .build())
                         .build()));
-        mockMvc.perform(get("/tickets?eventId=1").accept(APPLICATION_JSON))
+        mockMvc.perform(get("/tickets?programId=1").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status", equalTo("FREE")))
                 .andExpect(jsonPath("$[0].ticketId.seatId", equalTo(1)))
                 .andExpect(jsonPath("$[0].ticketId.sectorId", equalTo(2)))
-                .andExpect(jsonPath("$[0].ticketId.eventId", equalTo(1)));
+                .andExpect(jsonPath("$[0].ticketId.programId", equalTo(1)));
     }
 
     @Test
     public void getTicketsStatusShouldReturnWithEmptyArrayWhenThereAreNoTickets() throws Exception {
-        when(ticketsService.getTicketsStatusByEvent(1)).thenReturn(ImmutableList.of());
-        mockMvc.perform(get("/tickets?eventId=1").accept(APPLICATION_JSON))
+        when(ticketsService.getTicketsStatusByProgram(1)).thenReturn(ImmutableList.of());
+        mockMvc.perform(get("/tickets?programId=1").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
     public void getTicketsStatusShouldAcceptOptionalSectorIdParameter() throws Exception {
-        when(ticketsService.getTicketsStatusByEventAndSector(1, 1)).thenReturn(
+        when(ticketsService.getTicketsStatusByProgramAndSector(1, 1)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
                         .ticketId(TicketId.builder()
                                 .seatId(1)
                                 .sectorId(1)
-                                .eventId(1)
+                                .programId(1)
                                 .build())
                         .build()));
-        when(ticketsService.getTicketsStatusByEventAndSector(1, 2)).thenReturn(
+        when(ticketsService.getTicketsStatusByProgramAndSector(1, 2)).thenReturn(
                 ImmutableList.of(Ticket.builder()
                         .status(FREE)
                         .ticketId(TicketId.builder()
                                 .seatId(2)
                                 .sectorId(2)
-                                .eventId(1)
+                                .programId(1)
                                 .build())
                         .build()));
-        mockMvc.perform(get("/tickets?eventId=1&sectorId=2").accept(APPLICATION_JSON))
+        mockMvc.perform(get("/tickets?programId=1&sectorId=2").accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].status", equalTo("FREE")))
                 .andExpect(jsonPath("$[0].ticketId.seatId", equalTo(2)))
                 .andExpect(jsonPath("$[0].ticketId.sectorId", equalTo(2)))
-                .andExpect(jsonPath("$[0].ticketId.eventId", equalTo(1)));
+                .andExpect(jsonPath("$[0].ticketId.programId", equalTo(1)));
     }
 
     @Import(GuavaModuleConfig.class)

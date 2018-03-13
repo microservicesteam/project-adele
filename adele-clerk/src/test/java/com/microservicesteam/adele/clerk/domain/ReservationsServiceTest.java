@@ -36,12 +36,12 @@ public class ReservationsServiceTest {
     private static final long EVENT_ID = 1L;
     private static final int SECTOR_ID = 1;
     private static final TicketId TICKET_ID_1 = TicketId.builder()
-            .eventId(EVENT_ID)
+            .programId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .seatId(1)
             .build();
     private static final TicketId TICKET_ID_2 = TicketId.builder()
-            .eventId(EVENT_ID)
+            .programId(EVENT_ID)
             .sectorId(SECTOR_ID)
             .seatId(2)
             .build();

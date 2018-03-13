@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableTicketId.class)
 @JsonDeserialize(as = ImmutableTicketId.class)
 public interface TicketId {
-    long eventId();
+    long programId();
 
     int sectorId();
 

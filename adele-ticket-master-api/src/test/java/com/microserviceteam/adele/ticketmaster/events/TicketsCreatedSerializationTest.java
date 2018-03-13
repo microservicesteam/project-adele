@@ -21,7 +21,7 @@ public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
                 .addTickets(Ticket.builder()
                         .status(FREE)
                         .ticketId(TicketId.builder()
-                                .eventId(1L)
+                                .programId(1L)
                                 .sectorId(2)
                                 .seatId(3)
                                 .build())
@@ -31,7 +31,7 @@ public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
         JsonContent<Event> serializedJson = json.write(ticketsCreated);
         assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("TicketsCreated");
         assertThat(serializedJson).extractingJsonPathStringValue("$.tickets[0].status").isEqualTo("FREE");
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.eventId").isEqualTo(1);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.programId").isEqualTo(1);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.sectorId").isEqualTo(2);
         assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.seatId").isEqualTo(3);
 

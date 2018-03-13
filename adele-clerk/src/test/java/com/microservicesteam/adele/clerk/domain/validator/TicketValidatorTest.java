@@ -115,7 +115,7 @@ public class TicketValidatorTest {
 
     private TicketId ticketId(int seatId) {
         return TicketId.builder()
-                .eventId(1)
+                .programId(1)
                 .sectorId(1)
                 .seatId(seatId)
                 .build();

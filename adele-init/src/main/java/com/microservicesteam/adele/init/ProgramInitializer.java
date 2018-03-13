@@ -116,9 +116,9 @@ public class ProgramInitializer implements CommandLineRunner {
                 .collect(toImmutableList());
     }
 
-    private static TicketId createTicket(int eventId, int sectorId, int seatId) {
+    private static TicketId createTicket(int programId, int sectorId, int seatId) {
         return TicketId.builder()
-                .eventId(eventId)
+                .programId(programId)
                 .sectorId(sectorId)
                 .seatId(seatId)
                 .build();

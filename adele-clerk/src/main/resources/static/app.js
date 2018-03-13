@@ -30,7 +30,7 @@ function reserveTickets() {
     request.tickets = [];
     $.each($seats.val().split(","), function(i, seat) {
         request.tickets[i] = {}
-        request.tickets[i].eventId = "1";
+        request.tickets[i].programId = "1";
         request.tickets[i].sectorId = currentSector;
         request.tickets[i].seatId = seat;
     });
@@ -70,7 +70,7 @@ function refreshTicketStatusTable(event) {
 function getTickets() {
     $("#map").empty();
     var currentSector = getCurrentSector();
-    $.get("/tickets?eventId=1&sectorId=" + currentSector, function(data) {
+    $.get("/tickets?programId=1&sectorId=" + currentSector, function(data) {
         $.each(data, function(i, obj){
             $("#map").append("<tr id=\"p-" + obj.ticketId.seatId + "\"><td>" + obj.ticketId.sectorId + "</td><td>" + obj.ticketId.seatId + "</td><td>" + obj.status + "</td></tr>");
         });

@@ -46,7 +46,7 @@ public class ReservationControllerTest {
                 .thenReturn(ReservationRequested.builder()
                         .reservationId("someReservationId")
                         .build());
-        String requestBody = "{\"tickets\":[{\"eventId\":1,\"sectorId\":2,\"seatId\":3}]}";
+        String requestBody = "{\"tickets\":[{\"programId\":1,\"sectorId\":2,\"seatId\":3}]}";
         System.out.println(requestBody);
         mockMvc.perform(post("/reservations").accept(APPLICATION_JSON).content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
