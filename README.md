@@ -1,5 +1,5 @@
 # project-adele
-[![Build Status of project-adele](https://travis-ci.org/microservicesteam/project-adele.svg?branch=master)](https://travis-ci.org/microservicesteam/project-adele) [![codecov](https://codecov.io/gh/microservicesteam/project-adele/branch/master/graph/badge.svg)](https://codecov.io/gh/microservicesteam/project-adele)
+[![Build Status of project-adele](https://travis-ci.org/microservicesteam/project-adele.svg?branch=master)](https://travis-ci.org/microservicesteam/project-adele) [![codecov](https://codecov.io/gh/microservicesteam/project-adele/branch/master/graph/badge.svg)](https://codecov.io/gh/microservicesteam/project-adele) [![Dependency Status](https://www.versioneye.com/user/projects/5ab2d4b20fb24f44857941ad/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5ab2d4b20fb24f44857941ad)
 
 Project Adele
 
