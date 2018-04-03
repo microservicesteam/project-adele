@@ -23,16 +23,16 @@ function disconnect() {
     showEvent("--- Disconnected");
 }
 
-function reservePositions() {
+function reserveTickets() {
     var currentSector = getCurrentSector();
     var $seats = $("#seats");
     var request = {};
-    request.positions = [];
+    request.tickets = [];
     $.each($seats.val().split(","), function(i, seat) {
-        request.positions[i] = {}
-        request.positions[i].eventId = "1";
-        request.positions[i].sectorId = currentSector;
-        request.positions[i].seatId = seat;
+        request.tickets[i] = {}
+        request.tickets[i].programId = "1";
+        request.tickets[i].sectorId = currentSector;
+        request.tickets[i].seatId = seat;
     });
     $.ajax({
       type: "POST",
@@ -62,17 +62,17 @@ function refreshTicketStatusTable(event) {
         default:
             status = "UNKNOWN";
     }
-    $.each(event.reservation.positions, function(i, position) {
-        $("#p-" + position.seatId + " > td:nth-child(3)").text(status);
+    $.each(event.reservation.tickets, function(i, ticketId) {
+        $("#p-" + ticketId.seatId + " > td:nth-child(3)").text(status);
     });
 }
 
 function getTickets() {
     $("#map").empty();
     var currentSector = getCurrentSector();
-    $.get("/tickets?eventId=1&sectorId=" + currentSector, function(data) {
+    $.get("/tickets?programId=1&sectorId=" + currentSector, function(data) {
         $.each(data, function(i, obj){
-            $("#map").append("<tr id=\"p-" + obj.position.seatId + "\"><td>" + obj.position.sectorId + "</td><td>" + obj.position.seatId + "</td><td>" + obj.status + "</td></tr>");
+            $("#map").append("<tr id=\"p-" + obj.ticketId.seatId + "\"><td>" + obj.ticketId.sectorId + "</td><td>" + obj.ticketId.seatId + "</td><td>" + obj.status + "</td></tr>");
         });
     })
 }
@@ -89,7 +89,7 @@ $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $("#reserve").click(function() { reservePositions(); });
+    $("#reserve").click(function() { reserveTickets(); });
     $(".sectors button").click(function() {
         var newSectorId = $(this).data("sector-id");
         updateSectorId(newSectorId);

@@ -13,43 +13,43 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.google.common.eventbus.EventBus;
-import com.microservicesteam.adele.event.boundary.web.EventRepository;
-import com.microservicesteam.adele.event.domain.Coordinates;
-import com.microservicesteam.adele.event.domain.Event;
-import com.microservicesteam.adele.event.domain.EventStatus;
-import com.microservicesteam.adele.event.domain.Price;
-import com.microservicesteam.adele.event.domain.Sector;
-import com.microservicesteam.adele.event.domain.Venue;
+import com.microservicesteam.adele.programmanager.boundary.web.ProgramRepository;
+import com.microservicesteam.adele.programmanager.domain.Coordinates;
+import com.microservicesteam.adele.programmanager.domain.Price;
+import com.microservicesteam.adele.programmanager.domain.Program;
+import com.microservicesteam.adele.programmanager.domain.ProgramStatus;
+import com.microservicesteam.adele.programmanager.domain.Sector;
+import com.microservicesteam.adele.programmanager.domain.Venue;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
 @Component
-public class EventInitializer implements CommandLineRunner {
+public class ProgramInitializer implements CommandLineRunner {
 
-    private static final int EVENT_ID = 1;
+    private static final int PROGRAM_ID = 1;
     private static final int NUMBER_OF_SECTORS = 50;
     private static final int SECTOR_CAPACITY = 250;
 
-    private final EventRepository eventRepository;
+    private final ProgramRepository programRepository;
     private final EventBus eventBus;
 
     @Override
     public void run(String... args) {
-        initEventRepository();
+        initProgramRepository();
         emitTicketCreatedEvents();
     }
 
-    private void initEventRepository() {
-        log.info("Initializing event repository with data...");
-        Event event1 = Event.builder()
-                .name("Init test event")
+    private void initProgramRepository() {
+        log.info("Initializing program repository with data...");
+        Program program1 = Program.builder()
+                .name("Init test program")
                 .description("Lorem ipsum dolor met")
-                .status(EventStatus.OPEN)
+                .status(ProgramStatus.OPEN)
                 .dateTime(LocalDateTime.now())
                 .venue(Venue.builder()
                         .address("Test venue address")
@@ -60,10 +60,10 @@ public class EventInitializer implements CommandLineRunner {
                         .sectors(createSectors())
                         .build())
                 .build();
-        Event event2 = Event.builder()
-                .name("Another event")
-                .description("Closed event description")
-                .status(EventStatus.CLOSED)
+        Program program2 = Program.builder()
+                .name("Another program")
+                .description("Closed program description")
+                .status(ProgramStatus.CLOSED)
                 .dateTime(LocalDateTime.now())
                 .venue(Venue.builder()
                         .address("Another test venue address")
@@ -73,8 +73,8 @@ public class EventInitializer implements CommandLineRunner {
                                 .build())
                         .build())
                 .build();
-        eventRepository.save(event1);
-        eventRepository.save(event2);
+        programRepository.save(program1);
+        programRepository.save(program2);
     }
 
     private void emitTicketCreatedEvents() {
@@ -94,7 +94,7 @@ public class EventInitializer implements CommandLineRunner {
     }
 
     private static Sector createSector() {
-        List<Integer> positions = IntStream.rangeClosed(1, SECTOR_CAPACITY)
+        List<Integer> seats = IntStream.rangeClosed(1, SECTOR_CAPACITY)
                 .boxed()
                 .collect(toList());
         return Sector.builder()
@@ -103,22 +103,22 @@ public class EventInitializer implements CommandLineRunner {
                         .currency("HUF")
                         .amount(new BigDecimal("1500"))
                         .build())
-                .positions(positions)
+                .seats(seats)
                 .build();
     }
 
     private static List<Ticket> createTickets(int sectorId) {
         return IntStream.rangeClosed(1, SECTOR_CAPACITY)
                 .mapToObj(id -> Ticket.builder()
-                        .position(createPosition(EVENT_ID, sectorId, id))
+                        .ticketId(createTicket(PROGRAM_ID, sectorId, id))
                         .status(FREE)
                         .build())
                 .collect(toImmutableList());
     }
 
-    private static Position createPosition(int eventId, int sectorId, int seatId) {
-        return Position.builder()
-                .eventId(eventId)
+    private static TicketId createTicket(int programId, int sectorId, int seatId) {
+        return TicketId.builder()
+                .programId(programId)
                 .sectorId(sectorId)
                 .seatId(seatId)
                 .build();

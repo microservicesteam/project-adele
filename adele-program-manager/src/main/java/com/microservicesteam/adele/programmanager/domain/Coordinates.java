@@ -1,7 +1,7 @@
-package com.microservicesteam.adele.event.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,10 +17,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-public class User {
+@Embeddable
+public class Coordinates {
+    
+    @Column(nullable = false)
+    double latitude;
 
-    @Id
-    @GeneratedValue
-    Long id;
-
+    @Column(nullable = false)
+    double longitude;
 }

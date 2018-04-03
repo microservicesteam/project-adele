@@ -1,13 +1,12 @@
-package com.microservicesteam.adele.event.domain;
+package com.microservicesteam.adele.programmanager.domain;
 
-import javax.persistence.ElementCollection;
+import static javax.persistence.CascadeType.PERSIST;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-
-import java.util.List;
-
-import org.hibernate.annotations.Immutable;
+import javax.persistence.OneToOne;
+import java.time.LocalDateTime;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,17 +23,21 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-public class Sector {
+public class Program {
 
     @Id
     @GeneratedValue
     Long id;
 
-    long capacity;
+    String name;
 
-    Price price;
+    String description;
 
-    @ElementCollection
-    @Immutable
-    List<Integer> positions;
+    ProgramStatus status;
+
+    LocalDateTime dateTime;
+
+    @OneToOne(cascade = PERSIST)
+    Venue venue;
+
 }
