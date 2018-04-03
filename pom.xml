@@ -27,6 +27,7 @@
         <module>adele-ticket-master-api</module>
         <module>adele-style</module>
         <module>adele-init</module>
+        <module>adele-payment-manager</module>
     </modules>
 
     <name>project-adele</name>
@@ -41,6 +42,7 @@
         <junit.version>4.12</junit.version>
         <lombok.version>1.16.16</lombok.version>
         <docker-plugin-version>1.3.4</docker-plugin-version>
+        <paypal-rest-api-sdk.version>1.14.0</paypal-rest-api-sdk.version>
     </properties>
 
     <dependencyManagement>
@@ -109,6 +111,13 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.paypal.sdk</groupId>
+                <artifactId>rest-api-sdk</artifactId>
+                <version>${paypal-rest-api-sdk.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
