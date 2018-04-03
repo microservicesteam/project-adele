@@ -16,29 +16,19 @@ public class PaymentManagerTest {
     private PaymentManager paymentManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         paymentManager = new PaymentManager();
     }
 
     @Test
-    public void succesfulInitPayment() throws MalformedURLException {
-        PaymentResponse paymentResponse = paymentManager.initiatePayment(PaymentRequest.builder()
-                .addTickets(Ticket.builder()
-                        .sector(1)
-                        .priceAmount(TEN)
-                        .build())
-                .currency(Currency.getInstance("EUR"))
-                .programName("Adele Concert 2018")
-                .programDescription("Adele Concert 2018 London")
-                .returnUrl(new URL("http://adeleproject.com/payment?status=success"))
-                .cancelUrl(new URL("http://adeleproject.com/payment?status=failure"))
-                .build());
+    public void succesfulInitPayment() {
+        PaymentResponse paymentResponse = paymentManager.initiatePayment(PaymentUtils.paymentRequest());
 
         assertThat(paymentResponse)
                 .isEqualTo(PaymentResponse.builder()
                         .paymentId("dummy-payment-id")
                         .status(CREATED)
-                        .approveUrl(new URL("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7VA55149MP359292C"))
+                        .approveUrl("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7VA55149MP359292C")
                         .build());
     }
 }

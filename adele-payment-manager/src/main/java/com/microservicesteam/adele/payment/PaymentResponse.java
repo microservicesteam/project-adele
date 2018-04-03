@@ -1,13 +1,13 @@
 package com.microservicesteam.adele.payment;
 
-import java.net.URL;
-
 import org.immutables.value.Value;
 
 @Value.Immutable
 public interface PaymentResponse {
     String paymentId();
-    URL approveUrl();
+
+    String approveUrl();
+
     PaymentStatus status();
 
     static Builder builder() {

@@ -1,6 +1,5 @@
 package com.microservicesteam.adele.payment;
 
-import java.net.URL;
 import java.util.Currency;
 import java.util.List;
 
@@ -17,9 +16,9 @@ public interface PaymentRequest {
 
     List<Ticket> tickets();
 
-    URL returnUrl();
+    String returnUrl();
 
-    URL cancelUrl();
+    String cancelUrl();
 
     static Builder builder() {
         return new Builder();

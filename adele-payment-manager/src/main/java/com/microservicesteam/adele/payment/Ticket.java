@@ -1,7 +1,6 @@
 package com.microservicesteam.adele.payment;
 
 import java.math.BigDecimal;
-import java.util.Currency;
 
 import org.immutables.value.Value;
 
@@ -9,6 +8,7 @@ import org.immutables.value.Value;
 public interface Ticket {
 
     int sector();
+
     BigDecimal priceAmount();
 
     class Builder extends ImmutableTicket.Builder {
