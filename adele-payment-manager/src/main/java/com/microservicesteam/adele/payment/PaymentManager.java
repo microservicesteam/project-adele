@@ -1,5 +1,6 @@
 package com.microservicesteam.adele.payment;
 
+import static com.microservicesteam.adele.payment.ExecutionStatus.APPROVED;
 import static com.microservicesteam.adele.payment.PaymentStatus.CREATED;
 
 import com.paypal.api.payments.Payer;
@@ -21,6 +22,13 @@ public class PaymentManager {
                 .paymentId("dummy-payment-id")
                 .status(CREATED)
                 .approveUrl("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7VA55149MP359292C")
+                .build();
+    }
+
+    public ExecutePaymentResponse executePayment(ExecutePaymentRequest executePaymentRequest) {
+        return ExecutePaymentResponse.builder()
+                .paymentId("dummy-payment-id")
+                .status(APPROVED)
                 .build();
     }
 }
