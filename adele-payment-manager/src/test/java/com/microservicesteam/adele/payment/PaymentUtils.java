@@ -1,14 +1,20 @@
 package com.microservicesteam.adele.payment;
 
-import static java.math.BigDecimal.TEN;
+import com.paypal.api.payments.Payer;
+import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.PaymentExecution;
+import com.paypal.api.payments.RedirectUrls;
 
 import java.util.Currency;
 
-import com.paypal.api.payments.Payer;
-import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.RedirectUrls;
+import static com.microservicesteam.adele.payment.ExecutionStatus.APPROVED;
+import static com.microservicesteam.adele.payment.ExecutionStatus.FAILED;
+import static java.math.BigDecimal.TEN;
 
 public class PaymentUtils {
+
+    private static final String PAYER_ID = "payerId";
+    private static final String PAYMENT_ID = "paymentId";
 
     static PaymentRequest paymentRequest() {
         return PaymentRequest.builder()
@@ -40,5 +46,32 @@ public class PaymentUtils {
 
         return payment;
 
+    }
+
+    static ExecutePaymentRequest executePaymentRequest() {
+        return ExecutePaymentRequest.builder()
+                .payerId(PAYER_ID)
+                .paymentId(PAYMENT_ID)
+                .build();
+    }
+
+    static PaymentExecution paymentExecution() {
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId(PAYER_ID);
+        return paymentExecution;
+    }
+
+    static ExecutePaymentResponse executePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(APPROVED)
+                .build();
+    }
+
+    static ExecutePaymentResponse failedExecutePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(FAILED)
+                .build();
     }
 }

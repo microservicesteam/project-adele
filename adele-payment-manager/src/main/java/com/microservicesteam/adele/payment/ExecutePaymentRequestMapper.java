@@ -6,9 +6,7 @@ public class ExecutePaymentRequestMapper {
 
     public PaymentExecution mapTo(ExecutePaymentRequest executePaymentRequest) {
         PaymentExecution paymentExecution = new PaymentExecution();
-
         paymentExecution.setPayerId(executePaymentRequest.payerId());
-
         return paymentExecution;
     }
 }
