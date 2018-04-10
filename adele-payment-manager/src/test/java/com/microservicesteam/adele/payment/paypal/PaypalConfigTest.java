@@ -1,4 +1,4 @@
-package com.microservicesteam.adele.payment;
+package com.microservicesteam.adele.payment.paypal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +19,7 @@ public class PaypalConfigTest {
     private static final String MODE = "sandbox";
 
     @Autowired
-    PaypalConfig.PaypalProperties paypalProperties;
+    private PaypalConfig.PaypalProperties paypalProperties;
 
     @Test
     public void properties() {
