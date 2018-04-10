@@ -102,27 +102,34 @@ public class PaymentUtils {
         return payment;
     }
 
-    static ExecutePaymentRequest executePaymentRequest() {
+    public static Payment paymentAtExecution() {
+        Payment payment = new Payment();
+        payment.setId(PAYMENT_ID);
+        payment.setState("approved");
+        return payment;
+    }
+
+    public static ExecutePaymentRequest executePaymentRequest() {
         return ExecutePaymentRequest.builder()
                 .payerId(PAYER_ID)
                 .paymentId(PAYMENT_ID)
                 .build();
     }
 
-    static PaymentExecution paymentExecution() {
+    public static PaymentExecution paymentExecution() {
         PaymentExecution paymentExecution = new PaymentExecution();
         paymentExecution.setPayerId(PAYER_ID);
         return paymentExecution;
     }
 
-    static ExecutePaymentResponse executePaymentResponse() {
+    public static ExecutePaymentResponse executePaymentResponse() {
         return ExecutePaymentResponse.builder()
                 .paymentId(PAYMENT_ID)
                 .status(APPROVED)
                 .build();
     }
 
-    static ExecutePaymentResponse failedExecutePaymentResponse() {
+    public static ExecutePaymentResponse failedExecutePaymentResponse() {
         return ExecutePaymentResponse.builder()
                 .paymentId(PAYMENT_ID)
                 .status(FAILED)

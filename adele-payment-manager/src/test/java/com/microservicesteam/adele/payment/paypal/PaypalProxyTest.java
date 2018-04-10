@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 
@@ -50,6 +51,21 @@ public class PaypalProxyTest {
         Payment payment = paypalProxy.create(paymentRequest);
 
         verify(paymentRequest, times(1)).create(apiContext.capture());
+        assertThat(apiContext.getValue().getClientID()).isEqualTo(CLIENT_ID);
+        assertThat(apiContext.getValue().getClientSecret()).isEqualTo(CLIENT_SECRET);
+        assertThat(expectedPayment).isEqualTo(payment);
+    }
+
+    @Test
+    public void execute() throws PayPalRESTException {
+
+        Payment expectedPayment = new Payment();
+
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId("payerId");
+
+        Payment payment = paypalProxy.execute("paymentId", paymentExecution);
+
         assertThat(apiContext.getValue().getClientID()).isEqualTo(CLIENT_ID);
         assertThat(apiContext.getValue().getClientSecret()).isEqualTo(CLIENT_SECRET);
         assertThat(expectedPayment).isEqualTo(payment);

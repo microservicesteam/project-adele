@@ -40,7 +40,6 @@ public class PaymentManagerTest {
     @Mock
     private ExecutePaymentResponseMapper executePaymentResponseMapper;
 
-
     private PaymentManager paymentManager;
 
     @Before

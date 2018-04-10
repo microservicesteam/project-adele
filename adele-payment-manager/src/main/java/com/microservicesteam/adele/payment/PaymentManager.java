@@ -52,6 +52,7 @@ public class PaymentManager {
 
         try {
             Payment executedPayment = paypalProxy.execute(executePaymentRequest.paymentId(), paymentExecution);
+            log.debug("Payment executed successfully at PayPal");
             return executePaymentResponseMapper.mapTo(executedPayment);
         } catch (PayPalRESTException e) {
             log.error("Error at PayPal", e);

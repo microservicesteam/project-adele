@@ -1,11 +1,10 @@
-package com.microservicesteam.adele.payment;
-
-import org.junit.Test;
+package com.microservicesteam.adele.payment.paypal;
 
 import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentRequest;
+import static com.microservicesteam.adele.payment.PaymentUtils.paymentExecution;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.microservicesteam.adele.payment.paypal.ExecutePaymentRequestMapper;
+import org.junit.Test;
 
 public class ExecutePaymentRequestMapperTest {
 
@@ -14,6 +13,6 @@ public class ExecutePaymentRequestMapperTest {
     @Test
     public void mapExecuteRequestToPaymentExecution() {
         assertThat(executePaymentRequestMapper.mapTo(executePaymentRequest()))
-                .isEqualTo(PaymentUtils.paymentExecution());
+                .isEqualTo(paymentExecution());
     }
 }
