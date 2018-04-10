@@ -1,51 +1,81 @@
 package com.microservicesteam.adele.payment;
 
-import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
-import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.PayPalRESTException;
+import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentRequest;
+import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentResponse;
+import static com.microservicesteam.adele.payment.PaymentUtils.failedExecutePaymentResponse;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.microservicesteam.adele.payment.PaymentStatus.CREATED;
-import static com.microservicesteam.adele.payment.PaymentUtils.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
+import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
+import com.microservicesteam.adele.payment.paypal.PaypalProxy;
+import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.PaymentExecution;
+import com.paypal.base.rest.PayPalRESTException;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
 public class PaymentManagerTest {
 
-    @Mock
-    private PaypalObjectFactory objectFactory;
+    private static final PaymentRequest PAYMENT_REQUEST = PaymentUtils.paymentRequest();
+    private static final Payment PAYMENT_AT_REQUEST = PaymentUtils.paymentAtRequest();
+    private static final Payment PAYMENT_AT_RESPONSE = PaymentUtils.paymentAtResponse();
 
+    @MockBean
+    private PaymentRequestMapper paymentRequestMapper;
+    @MockBean
+    private PaymentResponseMapper paymentResponseMapper;
+    @MockBean
+    private PaypalProxy paypalProxy;
     @Mock
     private ExecutePaymentRequestMapper executePaymentRequestMapper;
-
-    @Mock
-    private Payment payment;
 
     private PaymentManager paymentManager;
 
     @Before
     public void setUp() {
-        when(objectFactory.getPayment()).thenReturn(payment); //every time when a mock returns with another mock a kitten dies in the universe...
-        paymentManager = new PaymentManager(objectFactory, executePaymentRequestMapper);
+        paymentManager = new PaymentManager(executePaymentRequestMapper, paymentRequestMapper, paymentResponseMapper, paypalProxy);
     }
 
     @Test
-    public void successfulInitPayment() {
-        PaymentResponse paymentResponse = paymentManager.initiatePayment(PaymentUtils.paymentRequest());
+    public void successfulInitPayment() throws PayPalRESTException {
+        PaymentResponse expectedPaymentResponse = PaymentUtils.paymentResponse();
+        when(paymentRequestMapper.mapTo(PAYMENT_REQUEST)).thenReturn(PAYMENT_AT_REQUEST);
+        when(paypalProxy.create(PAYMENT_AT_REQUEST)).thenReturn(PAYMENT_AT_RESPONSE);
+        when(paymentResponseMapper.mapTo(PAYMENT_AT_RESPONSE)).thenReturn(expectedPaymentResponse);
+
+        PaymentResponse paymentResponse = paymentManager.initiatePayment(PAYMENT_REQUEST);
+
+        assertThat(paymentResponse).isEqualTo(expectedPaymentResponse);
+    }
+
+    @Test
+    public void failedInitPaymentDueAtPaypal() throws PayPalRESTException {
+        when(paymentRequestMapper.mapTo(PAYMENT_REQUEST)).thenReturn(PAYMENT_AT_REQUEST);
+        when(paypalProxy.create(PAYMENT_AT_REQUEST)).thenThrow(new PayPalRESTException(""));
+
+        PaymentResponse paymentResponse = paymentManager.initiatePayment(PAYMENT_REQUEST);
 
         assertThat(paymentResponse)
-                .isEqualTo(PaymentResponse.builder()
-                        .paymentId("dummy-payment-id")
-                        .status(CREATED)
-                        .approveUrl("https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7VA55149MP359292C")
-                        .build());
+                .isEqualTo(PaymentResponse.failed());
+    }
+
+    @Test
+    public void failedInitPaymentDueAtAdele() throws PayPalRESTException {
+        when(paymentRequestMapper.mapTo(PAYMENT_REQUEST)).thenReturn(PAYMENT_AT_REQUEST);
+        when(paypalProxy.create(PAYMENT_AT_REQUEST)).thenThrow(new NullPointerException(""));
+
+        PaymentResponse paymentResponse = paymentManager.initiatePayment(PAYMENT_REQUEST);
+        assertThat(paymentResponse)
+                .isEqualTo(PaymentResponse.failed());
     }
 
     @Test
@@ -54,7 +84,7 @@ public class PaymentManagerTest {
         Payment executedPayment = new Payment();
         executedPayment.setId("paymentId");
         executedPayment.setState("approved");
-        when(payment.execute(any(APIContext.class), any(PaymentExecution.class))).thenReturn(executedPayment);
+        when(paypalProxy.execute(any(String.class), any(PaymentExecution.class))).thenReturn(executedPayment);
 
         //when
         ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(executePaymentRequest());
@@ -66,7 +96,7 @@ public class PaymentManagerTest {
     @Test
     public void executePaymentShouldReturnWithFailedResponseWhenPaymentExecutionThrowsRestException() throws PayPalRESTException {
         //given
-        when(payment.execute(any(APIContext.class), any(PaymentExecution.class))).thenThrow(new PayPalRESTException("test rest failure"));
+        when(paypalProxy.execute(any(String.class), any(PaymentExecution.class))).thenThrow(new PayPalRESTException("test rest failure"));
 
         //when
         ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(executePaymentRequest());
