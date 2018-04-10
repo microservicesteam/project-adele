@@ -10,8 +10,8 @@ import org.springframework.boot.test.json.JsonContent;
 
 import com.microservicesteam.adele.ticketmaster.events.Event;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
 
@@ -20,8 +20,8 @@ public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
         TicketsCreated ticketsCreated = TicketsCreated.builder()
                 .addTickets(Ticket.builder()
                         .status(FREE)
-                        .position(Position.builder()
-                                .eventId(1L)
+                        .ticketId(TicketId.builder()
+                                .programId(1L)
                                 .sectorId(2)
                                 .seatId(3)
                                 .build())
@@ -31,9 +31,9 @@ public class TicketsCreatedSerializationTest extends AbstractSerializationTest {
         JsonContent<Event> serializedJson = json.write(ticketsCreated);
         assertThat(serializedJson).extractingJsonPathStringValue("type").isEqualTo("TicketsCreated");
         assertThat(serializedJson).extractingJsonPathStringValue("$.tickets[0].status").isEqualTo("FREE");
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].position.eventId").isEqualTo(1);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].position.sectorId").isEqualTo(2);
-        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].position.seatId").isEqualTo(3);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.programId").isEqualTo(1);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.sectorId").isEqualTo(2);
+        assertThat(serializedJson).extractingJsonPathNumberValue("$.tickets[0].ticketId.seatId").isEqualTo(3);
 
         assertThat(json.parse(serializedJson.getJson()))
                 .isEqualTo(ticketsCreated);

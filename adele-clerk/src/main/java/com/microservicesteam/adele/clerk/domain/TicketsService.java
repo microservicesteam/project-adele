@@ -21,12 +21,12 @@ public class TicketsService extends EventBasedService {
         this.ticketRepository = ticketRepository;
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
-        return ticketRepository.getTicketsStatusByEvent(eventId);
+    public ImmutableList<Ticket> getTicketsStatusByProgram(long programId) {
+        return ticketRepository.getTicketsStatusByProgram(programId);
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEventAndSector(long eventId, int sector) {
-        return ticketRepository.getTicketsStatusByEventAndSector(eventId, sector);
+    public ImmutableList<Ticket> getTicketsStatusByProgramAndSector(long programId, int sector) {
+        return ticketRepository.getTicketsStatusByProgramAndSector(programId, sector);
     }
 
     @Subscribe

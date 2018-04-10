@@ -1,9 +1,9 @@
 package com.microservicesteam.adele.clerk.domain;
 
-import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_POSITIONS_EMPTY;
+import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.INVALID_NO_TICKET;
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -21,27 +21,27 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.clerk.boundary.web.WebSocketEventPublisher;
-import com.microservicesteam.adele.clerk.domain.validator.PositionsValidator;
+import com.microservicesteam.adele.clerk.domain.validator.TicketValidator;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReservationsServiceTest {
 
-    private static final long EVENT_ID = 1L;
+    private static final long PROGRAM_ID = 1L;
     private static final int SECTOR_ID = 1;
-    private static final Position POSITION_1 = Position.builder()
-            .eventId(EVENT_ID)
+    private static final TicketId TICKET_ID_1 = TicketId.builder()
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .seatId(1)
             .build();
-    private static final Position POSITION_2 = Position.builder()
-            .eventId(EVENT_ID)
+    private static final TicketId TICKET_ID_2 = TicketId.builder()
+            .programId(PROGRAM_ID)
             .sectorId(SECTOR_ID)
             .seatId(2)
             .build();
@@ -52,7 +52,7 @@ public class ReservationsServiceTest {
     private EventBus eventBus;
 
     @Mock
-    private PositionsValidator validator;
+    private TicketValidator validator;
     @Mock
     private ReservationIdGenerator reservationIdGenerator;
     @Mock
@@ -73,30 +73,30 @@ public class ReservationsServiceTest {
     }
 
     @Test
-    public void reservePositionsShouldReturnReservationRejectionWhenValidationFails() {
+    public void reserveTicketsShouldReturnReservationRejectionWhenValidationFails() {
         //given
-        when(validator.validate(emptyList())).thenReturn(INVALID_POSITIONS_EMPTY);
+        when(validator.validate(emptyList())).thenReturn(INVALID_NO_TICKET);
 
         //when
-        ReservationResponse reservationResponse = underTest.reservePositions(emptyList());
+        ReservationResponse reservationResponse = underTest.reserveTickets(emptyList());
 
         //then
         assertThat(reservationResponse).isInstanceOf(ReservationRejected.class);
         ReservationRejected reservationRejected = (ReservationRejected) reservationResponse;
-        assertThat(reservationRejected.code()).isEqualTo(INVALID_POSITIONS_EMPTY.code());
-        assertThat(reservationRejected.reason()).isEqualTo(INVALID_POSITIONS_EMPTY.message());
+        assertThat(reservationRejected.code()).isEqualTo(INVALID_NO_TICKET.code());
+        assertThat(reservationRejected.reason()).isEqualTo(INVALID_NO_TICKET.message());
     }
 
     @Test
-    public void reservePositionsShouldGenerateReservationIdAndSendCreateReservationCommand() {
+    public void reserveTicketsShouldGenerateReservationIdAndSendCreateReservationCommand() {
         //given
-        List<Position> positions = Arrays.asList(POSITION_1, POSITION_2);
+        List<TicketId> ticketIds = Arrays.asList(TICKET_ID_1, TICKET_ID_2);
 
         //when
-        ReservationResponse reservationResponse = underTest.reservePositions(positions);
+        ReservationResponse reservationResponse = underTest.reserveTickets(ticketIds);
 
         //then
-        verify(validator).validate(positions);
+        verify(validator).validate(ticketIds);
         assertThat(reservationResponse).isInstanceOf(ReservationRequested.class);
         ReservationRequested reservationRequested = (ReservationRequested) reservationResponse;
 
@@ -107,7 +107,7 @@ public class ReservationsServiceTest {
                 .containsExactly(CreateReservation.builder()
                         .reservation(Reservation.builder()
                                 .reservationId(RESERVATION_ID)
-                                .addPositions(POSITION_1, POSITION_2)
+                                .addTickets(TICKET_ID_1, TICKET_ID_2)
                                 .build())
                         .build());
     }
@@ -118,7 +118,7 @@ public class ReservationsServiceTest {
         ReservationAccepted reservationAccepted = ReservationAccepted.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(POSITION_1)
+                        .addTickets(TICKET_ID_1)
                         .build())
                 .build();
 
@@ -128,7 +128,7 @@ public class ReservationsServiceTest {
         //then
         verify(ticketRepository).put(Ticket.builder()
                 .status(RESERVED)
-                .position(POSITION_1)
+                .ticketId(TICKET_ID_1)
                 .build());
         verify(webSocketEventPublisher).publishToSector(reservationAccepted);
     }
@@ -139,7 +139,7 @@ public class ReservationsServiceTest {
         ReservationCancelled reservationCancelled = ReservationCancelled.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(POSITION_1, POSITION_2)
+                        .addTickets(TICKET_ID_1, TICKET_ID_2)
                         .build())
                 .build();
 
@@ -149,11 +149,11 @@ public class ReservationsServiceTest {
         //then
         verify(ticketRepository).put(Ticket.builder()
                 .status(FREE)
-                .position(POSITION_1)
+                .ticketId(TICKET_ID_1)
                 .build());
         verify(ticketRepository).put(Ticket.builder()
                 .status(FREE)
-                .position(POSITION_2)
+                .ticketId(TICKET_ID_2)
                 .build());
         verify(webSocketEventPublisher).publishToSector(reservationCancelled);
     }
@@ -164,7 +164,7 @@ public class ReservationsServiceTest {
                 com.microservicesteam.adele.ticketmaster.events.ReservationRejected.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(POSITION_1)
+                        .addTickets(TICKET_ID_1)
                         .build())
                 .build();
 
