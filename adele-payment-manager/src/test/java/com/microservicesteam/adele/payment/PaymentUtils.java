@@ -75,33 +75,6 @@ public class PaymentUtils {
 
     }
 
-    static ExecutePaymentRequest executePaymentRequest() {
-        return ExecutePaymentRequest.builder()
-                .payerId(PAYER_ID)
-                .paymentId(PAYMENT_ID)
-                .build();
-    }
-
-    static PaymentExecution paymentExecution() {
-        PaymentExecution paymentExecution = new PaymentExecution();
-        paymentExecution.setPayerId(PAYER_ID);
-        return paymentExecution;
-    }
-
-    static ExecutePaymentResponse executePaymentResponse() {
-        return ExecutePaymentResponse.builder()
-                .paymentId(PAYMENT_ID)
-                .status(APPROVED)
-                .build();
-    }
-
-    static ExecutePaymentResponse failedExecutePaymentResponse() {
-        return ExecutePaymentResponse.builder()
-                .paymentId(PAYMENT_ID)
-                .status(FAILED)
-                .build();
-    }
-
     public static Payment paymentAtResponse() {
 
         Amount amount = new Amount();
@@ -127,5 +100,32 @@ public class PaymentUtils {
         payment.setLinks(Arrays.asList(execute_url, approval_url));
 
         return payment;
+    }
+
+    static ExecutePaymentRequest executePaymentRequest() {
+        return ExecutePaymentRequest.builder()
+                .payerId(PAYER_ID)
+                .paymentId(PAYMENT_ID)
+                .build();
+    }
+
+    static PaymentExecution paymentExecution() {
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId(PAYER_ID);
+        return paymentExecution;
+    }
+
+    static ExecutePaymentResponse executePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(APPROVED)
+                .build();
+    }
+
+    static ExecutePaymentResponse failedExecutePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(FAILED)
+                .build();
     }
 }

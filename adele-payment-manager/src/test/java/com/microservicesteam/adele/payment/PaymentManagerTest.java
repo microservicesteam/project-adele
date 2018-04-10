@@ -11,10 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.microservicesteam.adele.payment.paypal.ExecutePaymentRequestMapper;
+import com.microservicesteam.adele.payment.paypal.ExecutePaymentResponseMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
 import com.microservicesteam.adele.payment.paypal.PaypalProxy;
@@ -37,12 +38,15 @@ public class PaymentManagerTest {
     private PaypalProxy paypalProxy;
     @Mock
     private ExecutePaymentRequestMapper executePaymentRequestMapper;
+    @Mock
+    private ExecutePaymentResponseMapper executePaymentResponseMapper;
+
 
     private PaymentManager paymentManager;
 
     @Before
     public void setUp() {
-        paymentManager = new PaymentManager(executePaymentRequestMapper, paymentRequestMapper, paymentResponseMapper, paypalProxy);
+        paymentManager = new PaymentManager(paymentRequestMapper, paymentResponseMapper, paypalProxy, executePaymentRequestMapper, executePaymentResponseMapper);
     }
 
     @Test
@@ -85,6 +89,7 @@ public class PaymentManagerTest {
         executedPayment.setId("paymentId");
         executedPayment.setState("approved");
         when(paypalProxy.execute(any(String.class), any(PaymentExecution.class))).thenReturn(executedPayment);
+        when(executePaymentResponseMapper.mapTo(any())).thenReturn(executePaymentResponse());
 
         //when
         ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(executePaymentRequest());
