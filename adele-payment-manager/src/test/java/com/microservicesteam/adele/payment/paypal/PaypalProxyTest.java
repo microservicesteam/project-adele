@@ -9,9 +9,10 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.APIContext;
@@ -23,7 +24,8 @@ public class PaypalProxyTest {
     private static final String CLIENT_ID = "clientId";
     private static final String CLIENT_SECRET = "clientSecret";
     private static final String MODE = "sandbox";
-    private static APIContext apiContext = new APIContext("clientId", "clientSecret", "sandbox");
+    @Captor
+    private ArgumentCaptor<APIContext> apiContext;
 
     @Mock
     private Payment paymentRequest;
@@ -43,12 +45,13 @@ public class PaypalProxyTest {
     @Test
     public void create() throws PayPalRESTException {
         Payment expectedPayment = new Payment();
-        //TODO: compare apiContext as well
         when(paymentRequest.create(any(APIContext.class))).thenReturn(expectedPayment);
 
         Payment payment = paypalProxy.create(paymentRequest);
 
-        verify(paymentRequest, times(1)).create(any(APIContext.class));
+        verify(paymentRequest, times(1)).create(apiContext.capture());
+        assertThat(apiContext.getValue().getClientID()).isEqualTo(CLIENT_ID);
+        assertThat(apiContext.getValue().getClientSecret()).isEqualTo(CLIENT_SECRET);
         assertThat(expectedPayment).isEqualTo(payment);
     }
 }

@@ -1,6 +1,5 @@
 package com.microservicesteam.adele.payment.paypal;
 
-import static com.microservicesteam.adele.payment.PaymentStatus.CREATED;
 import static com.microservicesteam.adele.payment.PaymentStatus.FAILED;
 
 import org.springframework.stereotype.Component;

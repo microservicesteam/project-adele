@@ -4,10 +4,6 @@ import static java.math.BigDecimal.ROUND_CEILING;
 import static java.util.Collections.singletonList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -21,7 +17,7 @@ import com.paypal.api.payments.Transaction;
 
 @Component
 public class PaymentRequestMapper {
-    public Payment mapTo(PaymentRequest paymentRequest){
+    public Payment mapTo(PaymentRequest paymentRequest) {
 
         BigDecimal totalAmount = paymentRequest.tickets().stream()
                 .map(Ticket::priceAmount)
