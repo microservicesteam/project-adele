@@ -5,20 +5,20 @@ import org.springframework.stereotype.Component;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Component
 public class PaypalProxy {
 
-    private final APIContext apiContext;
+    private final PaypalConfig.PaypalProperties paypalProperties;
 
-    public PaypalProxy(PaypalConfig.PaypalProperties paypalProperties) {
-        apiContext = new APIContext(
+    public Payment create(Payment paymentRequest) throws PayPalRESTException {
+
+        APIContext apiContext = new APIContext(
                 paypalProperties.getClientId(),
                 paypalProperties.getClientSecret(),
                 paypalProperties.getMode());
-    }
-
-    public Payment create(Payment paymentRequest) throws PayPalRESTException {
         return paymentRequest.create(apiContext);
     }
 }

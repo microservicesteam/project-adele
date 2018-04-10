@@ -6,8 +6,8 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
@@ -15,18 +15,18 @@ import com.microservicesteam.adele.payment.paypal.PaypalProxy;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class PaymentManagerTest {
 
     private static final PaymentRequest PAYMENT_REQUEST = PaymentUtils.paymentRequest();
     private static final Payment PAYMENT_AT_REQUEST = PaymentUtils.paymentAtRequest();
     private static final Payment PAYMENT_AT_RESPONSE = PaymentUtils.paymentAtResponse();
 
-    @MockBean
+    @Mock
     private PaymentRequestMapper paymentRequestMapper;
-    @MockBean
+    @Mock
     private PaymentResponseMapper paymentResponseMapper;
-    @MockBean
+    @Mock
     private PaypalProxy paypalProxy;
 
     private PaymentManager paymentManager;
@@ -49,7 +49,7 @@ public class PaymentManagerTest {
     }
 
     @Test
-    public void failedInitPaymentDueAtPaypal() throws PayPalRESTException {
+    public void failedInitPaymentDueToPaypal() throws PayPalRESTException {
         when(paymentRequestMapper.mapTo(PAYMENT_REQUEST)).thenReturn(PAYMENT_AT_REQUEST);
         when(paypalProxy.create(PAYMENT_AT_REQUEST)).thenThrow(new PayPalRESTException(""));
 
@@ -60,7 +60,7 @@ public class PaymentManagerTest {
     }
 
     @Test
-    public void failedInitPaymentDueAtAdele() throws PayPalRESTException {
+    public void failedInitPaymentDueToAdele() throws PayPalRESTException {
         when(paymentRequestMapper.mapTo(PAYMENT_REQUEST)).thenReturn(PAYMENT_AT_REQUEST);
         when(paypalProxy.create(PAYMENT_AT_REQUEST)).thenThrow(new NullPointerException(""));
 

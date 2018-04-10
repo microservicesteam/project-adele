@@ -44,8 +44,8 @@ public class PaymentUtils {
     public static Payment paymentAtRequest() {
 
         Amount amount = new Amount();
-        amount.setCurrency("USD");
-        amount.setTotal("1.00");
+        amount.setCurrency("EUR");
+        amount.setTotal("10.00");
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);

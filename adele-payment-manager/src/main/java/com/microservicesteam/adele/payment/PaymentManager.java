@@ -1,5 +1,7 @@
 package com.microservicesteam.adele.payment;
 
+import org.springframework.stereotype.Component;
+
 import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
 import com.microservicesteam.adele.payment.paypal.PaypalProxy;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
+@Component
 public class PaymentManager {
 
     private final PaymentRequestMapper paymentRequestMapper;
