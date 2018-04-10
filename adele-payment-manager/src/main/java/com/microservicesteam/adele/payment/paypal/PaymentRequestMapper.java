@@ -1,9 +1,11 @@
 package com.microservicesteam.adele.payment.paypal;
 
 import static java.math.BigDecimal.ROUND_CEILING;
+import static java.util.Collections.singletonList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,8 +33,6 @@ public class PaymentRequestMapper {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
-        List<Transaction> transactions = new ArrayList<>();
-        transactions.add(transaction);
 
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
@@ -45,7 +45,7 @@ public class PaymentRequestMapper {
         payment.setIntent("sale");
         payment.setPayer(payer);
         payment.setRedirectUrls(redirectUrls);
-        payment.setTransactions(transactions);
+        payment.setTransactions(singletonList(transaction));
 
         return payment;
     }
