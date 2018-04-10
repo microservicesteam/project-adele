@@ -6,20 +6,17 @@ import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Component
 public class PaypalProxy {
 
-    private final APIContext apiContext;
-
-    public PaypalProxy(PaypalConfig.PaypalProperties paypalProperties) {
-        apiContext = new APIContext(
-                paypalProperties.getClientId(),
-                paypalProperties.getClientSecret(),
-                paypalProperties.getMode());
-    }
+    private final PaypalConfig.PaypalProperties paypalProperties;
 
     public Payment create(Payment paymentRequest) throws PayPalRESTException {
+
+        APIContext apiContext = getApiContext();
         return paymentRequest.create(apiContext);
     }
 
@@ -27,6 +24,13 @@ public class PaypalProxy {
         Payment payment = new Payment();
         payment.setId(paymentId);
 
-        return payment.execute(apiContext, paymentExecution);
+        return payment.execute(getApiContext(), paymentExecution);
+    }
+
+    private APIContext getApiContext() {
+        return new APIContext(
+                paypalProperties.getClientId(),
+                paypalProperties.getClientSecret(),
+                paypalProperties.getMode());
     }
 }

@@ -2,6 +2,8 @@ package com.microservicesteam.adele.payment;
 
 import static com.microservicesteam.adele.payment.ExecutionStatus.FAILED;
 
+import org.springframework.stereotype.Component;
+
 import com.microservicesteam.adele.payment.paypal.ExecutePaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.ExecutePaymentResponseMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
+@Component
 public class PaymentManager {
 
     private final PaymentRequestMapper paymentRequestMapper;
