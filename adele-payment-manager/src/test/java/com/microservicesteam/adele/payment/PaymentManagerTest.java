@@ -86,7 +86,7 @@ public class PaymentManagerTest {
         Payment executedPayment = new Payment();
         executedPayment.setId("paymentId");
         executedPayment.setState("approved");
-        when(paypalProxy.execute(any(String.class), any(PaymentExecution.class))).thenReturn(executedPayment);
+        when(paypalProxy.execute(any(Payment.class), any(String.class))).thenReturn(executedPayment);
         when(executePaymentResponseMapper.mapTo(any())).thenReturn(executePaymentResponse());
 
         //when
@@ -99,7 +99,7 @@ public class PaymentManagerTest {
     @Test
     public void executePaymentShouldReturnWithFailedResponseWhenPaymentExecutionThrowsRestException() throws PayPalRESTException {
         //given
-        when(paypalProxy.execute(any(String.class), any(PaymentExecution.class))).thenThrow(new PayPalRESTException("test rest failure"));
+        when(paypalProxy.execute(any(Payment.class), any(String.class))).thenThrow(new PayPalRESTException("test rest failure"));
 
         //when
         ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(executePaymentRequest());

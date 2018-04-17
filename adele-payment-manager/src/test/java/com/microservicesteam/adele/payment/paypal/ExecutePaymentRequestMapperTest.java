@@ -4,6 +4,7 @@ import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentReq
 import static com.microservicesteam.adele.payment.PaymentUtils.paymentExecution;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.paypal.api.payments.Payment;
 import org.junit.Test;
 
 public class ExecutePaymentRequestMapperTest {
@@ -12,7 +13,7 @@ public class ExecutePaymentRequestMapperTest {
 
     @Test
     public void mapExecuteRequestToPaymentExecution() {
-        assertThat(executePaymentRequestMapper.mapTo(executePaymentRequest()))
-                .isEqualTo(paymentExecution());
+        assertThat(executePaymentRequestMapper.mapTo(executePaymentRequest()).getId())
+                .isEqualTo(executePaymentRequest().paymentId());
     }
 }

@@ -1,19 +1,13 @@
 package com.microservicesteam.adele.payment;
 
-import static com.microservicesteam.adele.payment.ExecutionStatus.FAILED;
-
-import org.springframework.stereotype.Component;
-
-import com.microservicesteam.adele.payment.paypal.ExecutePaymentRequestMapper;
-import com.microservicesteam.adele.payment.paypal.ExecutePaymentResponseMapper;
-import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
-import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
-import com.microservicesteam.adele.payment.paypal.PaypalProxy;
+import com.microservicesteam.adele.payment.paypal.*;
 import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import static com.microservicesteam.adele.payment.ExecutionStatus.FAILED;
 
 @Slf4j
 @AllArgsConstructor
@@ -28,10 +22,8 @@ public class PaymentManager {
     private final ExecutePaymentResponseMapper executePaymentResponseMapper;
 
     public PaymentResponse initiatePayment(PaymentRequest paymentRequest) {
-
-        Payment payment = paymentRequestMapper.mapTo(paymentRequest);
         try {
-
+            Payment payment = paymentRequestMapper.mapTo(paymentRequest);
             Payment createdPayment = paypalProxy.create(payment);
             log.debug("Payment created successfully at PayPal");
             return paymentResponseMapper.mapTo(createdPayment);
@@ -48,10 +40,9 @@ public class PaymentManager {
     }
 
     public ExecutePaymentResponse executePayment(ExecutePaymentRequest executePaymentRequest) {
-        PaymentExecution paymentExecution = executePaymentRequestMapper.mapTo(executePaymentRequest);
-
         try {
-            Payment executedPayment = paypalProxy.execute(executePaymentRequest.paymentId(), paymentExecution);
+            Payment payment = executePaymentRequestMapper.mapTo(executePaymentRequest);
+            Payment executedPayment = paypalProxy.execute(payment, executePaymentRequest.payerId());
             log.debug("Payment executed successfully at PayPal");
             return executePaymentResponseMapper.mapTo(executedPayment);
         } catch (PayPalRESTException e) {

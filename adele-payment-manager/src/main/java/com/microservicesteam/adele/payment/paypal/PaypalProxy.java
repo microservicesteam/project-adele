@@ -1,12 +1,11 @@
 package com.microservicesteam.adele.payment.paypal;
 
-import org.springframework.stereotype.Component;
-
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
@@ -20,10 +19,9 @@ public class PaypalProxy {
         return paymentRequest.create(apiContext);
     }
 
-    public Payment execute(String paymentId, PaymentExecution paymentExecution) throws PayPalRESTException {
-        Payment payment = new Payment();
-        payment.setId(paymentId);
-
+    public Payment execute(Payment payment, String payerId) throws PayPalRESTException {
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId(payerId);
         return payment.execute(getApiContext(), paymentExecution);
     }
 
