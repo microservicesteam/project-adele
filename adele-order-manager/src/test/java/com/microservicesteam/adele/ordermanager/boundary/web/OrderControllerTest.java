@@ -40,7 +40,6 @@ public class OrderControllerTest {
     public void postOrderShouldSaveTheOrder() throws Exception {
         when(orderService.saveOrder(any())).thenReturn(orderId);
         String requestBody = "{\"name\":\"name\",\"email\":\"email\",\"reservationId\":\"cef758d6-29cf-40c8-ba91-f2a68aa6ecf7\"}";
-        System.out.println(requestBody);
 
         mockMvc.perform(post("/orders").accept(contentType).content(requestBody).contentType(contentType))
                 .andExpect(status().isOk())
