@@ -22,27 +22,21 @@ import com.paypal.base.rest.PayPalRESTException;
 @RunWith(MockitoJUnitRunner.class)
 public class PaypalProxyTest {
 
-    private static final String CLIENT_ID = "clientId";
-    private static final String CLIENT_SECRET = "clientSecret";
-    private static final String MODE = "sandbox";
-    @Captor
-    private ArgumentCaptor<APIContext> apiContextCaptor;
     @Captor
     private ArgumentCaptor<PaymentExecution> paymentExecutionCaptor;
 
     @Mock
     private Payment paymentRequest;
 
+    @Mock
+    private APIContext apiContext;
+
     private PaypalProxy paypalProxy;
 
     @Before
     public void setUp() {
-        PaypalConfig.PaypalProperties paypalProperties = new PaypalConfig.PaypalProperties();
-        paypalProperties.setClientId(CLIENT_ID);
-        paypalProperties.setClientSecret(CLIENT_SECRET);
-        paypalProperties.setMode(MODE);
 
-        paypalProxy = new PaypalProxy(paypalProperties);
+        paypalProxy = new PaypalProxy(apiContext);
     }
 
     @Test
@@ -52,9 +46,7 @@ public class PaypalProxyTest {
 
         Payment payment = paypalProxy.create(paymentRequest);
 
-        verify(paymentRequest, times(1)).create(apiContextCaptor.capture());
-        assertThat(apiContextCaptor.getValue().getClientID()).isEqualTo(CLIENT_ID);
-        assertThat(apiContextCaptor.getValue().getClientSecret()).isEqualTo(CLIENT_SECRET);
+        verify(paymentRequest, times(1)).create(any(APIContext.class));
         assertThat(expectedPayment).isEqualTo(payment);
     }
 
@@ -65,9 +57,7 @@ public class PaypalProxyTest {
 
         Payment payment = paypalProxy.execute(paymentRequest, "payerId");
 
-        verify(paymentRequest, times(1)).execute(apiContextCaptor.capture(), paymentExecutionCaptor.capture());
-        assertThat(apiContextCaptor.getValue().getClientID()).isEqualTo(CLIENT_ID);
-        assertThat(apiContextCaptor.getValue().getClientSecret()).isEqualTo(CLIENT_SECRET);
+        verify(paymentRequest, times(1)).execute(any(APIContext.class), paymentExecutionCaptor.capture());
         assertThat(paymentExecutionCaptor.getValue().getPayerId()).isEqualTo("payerId");
         assertThat(expectedPayment).isEqualTo(payment);
     }
