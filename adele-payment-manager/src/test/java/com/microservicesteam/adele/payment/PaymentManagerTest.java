@@ -87,7 +87,7 @@ public class PaymentManagerTest {
         executedPayment.setId("paymentId");
         executedPayment.setState("approved");
         when(paypalProxy.execute(any(Payment.class), any(String.class))).thenReturn(executedPayment);
-        when(executePaymentResponseMapper.mapTo(any())).thenReturn(executePaymentResponse());
+        when(executePaymentResponseMapper.mapTo(executedPayment)).thenReturn(executePaymentResponse());
 
         //when
         ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(executePaymentRequest());

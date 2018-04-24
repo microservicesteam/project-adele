@@ -19,10 +19,10 @@ public class PaypalProxy {
         return paymentRequest.create(apiContext);
     }
 
-    public Payment execute(Payment payment, String payerId) throws PayPalRESTException {
+    public Payment execute(Payment createdPayment, String payerId) throws PayPalRESTException {
         PaymentExecution paymentExecution = new PaymentExecution();
         paymentExecution.setPayerId(payerId);
-        return payment.execute(getApiContext(), paymentExecution);
+        return createdPayment.execute(getApiContext(), paymentExecution);
     }
 
     private APIContext getApiContext() {
