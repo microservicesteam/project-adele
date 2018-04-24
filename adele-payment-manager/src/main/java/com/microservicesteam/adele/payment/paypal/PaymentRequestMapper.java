@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import com.microservicesteam.adele.payment.PaymentRequest;
 import com.microservicesteam.adele.payment.Ticket;
 import com.paypal.api.payments.Amount;
+import com.paypal.api.payments.Item;
+import com.paypal.api.payments.ItemList;
 import com.paypal.api.payments.Payer;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.RedirectUrls;
@@ -29,7 +31,20 @@ public class PaymentRequestMapper {
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
+        transaction.setDescription("This is the payment of your tickets!");
 
+        //TODO make these details dynamic
+        Item item = new Item();
+        item.setName("Adele 2018");
+        item.setDescription("Adele concert ticket");
+        item.setCurrency(paymentRequest.currency().getCurrencyCode());
+        item.setQuantity("1");
+        item.setPrice(totalAmount.setScale(2, ROUND_CEILING).toEngineeringString());
+
+        ItemList itemList = new ItemList();
+        itemList.setItems(singletonList(item));
+
+        transaction.setItemList(itemList);
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
 
