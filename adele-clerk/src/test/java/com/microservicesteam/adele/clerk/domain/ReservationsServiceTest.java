@@ -4,6 +4,7 @@ import static com.microservicesteam.adele.clerk.domain.validator.ValidationResul
 import static com.microservicesteam.adele.clerk.domain.validator.ValidationResult.VALID_REQUEST;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -26,6 +27,7 @@ import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationClosed;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
 import com.microservicesteam.adele.ticketmaster.model.TicketId;
@@ -170,6 +172,25 @@ public class ReservationsServiceTest {
 
         eventBus.post(reservationRejected);
 
+        verify(webSocketEventPublisher).publishToSector(reservationRejected);
+    }
+
+    @Test
+    public void onReservationClosedEventTheEventIsPublished() {
+        ReservationClosed reservationRejected =
+                ReservationClosed.builder()
+                        .reservation(Reservation.builder()
+                                .reservationId(RESERVATION_ID)
+                                .addTickets(TICKET_ID_1)
+                                .build())
+                        .build();
+
+        eventBus.post(reservationRejected);
+
+        verify(ticketRepository).put(Ticket.builder()
+                .status(SOLD)
+                .ticketId(TICKET_ID_1)
+                .build());
         verify(webSocketEventPublisher).publishToSector(reservationRejected);
     }
 

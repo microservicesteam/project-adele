@@ -2,10 +2,12 @@ package com.microservicesteam.adele.ticketmaster;
 
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
 
@@ -13,10 +15,12 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationClosed;
 import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
@@ -59,19 +63,13 @@ public class TicketMasterService extends EventBasedService {
         if (ticketsFree(reservation.tickets())) {
             reserveTickets(reservation.tickets());
             ReservationAccepted reservationAccepted = ReservationAccepted.builder()
-                    .reservation(Reservation.builder()
-                            .reservationId(reservation.reservationId())
-                            .addAllTickets(reservation.tickets())
-                            .build())
+                    .reservation(reservation)
                     .build();
             log.info("Tickets reserved: {}", reservationAccepted);
             eventBus.post(reservationAccepted);
         } else {
             ReservationRejected reservationRejected = ReservationRejected.builder()
-                    .reservation(Reservation.builder()
-                            .reservationId(reservation.reservationId())
-                            .addAllTickets(reservation.tickets())
-                            .build())
+                    .reservation(reservation)
                     .build();
             log.debug("Tickets reservation rejected: {}", reservationRejected);
             eventBus.post(reservationRejected);
@@ -84,13 +82,27 @@ public class TicketMasterService extends EventBasedService {
         if (ticketsReserved(reservation.tickets())) {
             freeTickets(reservation.tickets());
             ReservationCancelled reservationCancelled = ReservationCancelled.builder()
-                    .reservation(Reservation.builder()
-                            .reservationId(reservation.reservationId())
-                            .addAllTickets(reservation.tickets())
-                            .build())
+                    .reservation(reservation)
                     .build();
             log.info("Reservations cancelled: {}", reservationCancelled);
             eventBus.post(reservationCancelled);
+        } else {
+            eventBus.post(NoOperation.builder()
+                    .sourceCommand(command)
+                    .build());
+        }
+    }
+
+    @Subscribe
+    public void handleCommand(CloseReservation command) {
+        Reservation reservation = command.reservation();
+        if (ticketsReserved(reservation.tickets())) {
+            sellTickets(reservation.tickets());
+            ReservationClosed reservationClosed = ReservationClosed.builder()
+                    .reservation(reservation)
+                    .build();
+            log.info("Reservation closed: {}", reservationClosed);
+            eventBus.post(reservationClosed);
         } else {
             eventBus.post(NoOperation.builder()
                     .sourceCommand(command)
@@ -122,16 +134,18 @@ public class TicketMasterService extends EventBasedService {
     }
 
     private void reserveTickets(List<TicketId> ticketIds) {
-        ticketIds.forEach(
-                ticketId -> ticketRepository.put(ticketId, RESERVED));
+        ticketIds.forEach(setTicketStateTo(RESERVED));
     }
 
     private void freeTickets(List<TicketId> ticketIds) {
-        ticketIds.forEach(
-                ticketId -> {
-                    if (ticketRepository.containsKey(ticketId)) {
-                        ticketRepository.replace(ticketId, FREE);
-                    }
-                });
+        ticketIds.forEach(setTicketStateTo(FREE));
+    }
+
+    private void sellTickets(List<TicketId> ticketIds) {
+        ticketIds.forEach(setTicketStateTo(SOLD));
+    }
+
+    private Consumer<TicketId> setTicketStateTo(TicketStatus status) {
+        return ticketId -> ticketRepository.replace(ticketId, status);
     }
 }
