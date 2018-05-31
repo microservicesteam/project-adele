@@ -1,23 +1,23 @@
 package com.microservicesteam.adele.payment;
 
-import static com.microservicesteam.adele.payment.PaymentStatus.CREATED;
-import static java.math.BigDecimal.TEN;
+import com.paypal.api.payments.*;
+import org.assertj.core.util.Lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 
-import org.assertj.core.util.Lists;
-
-import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.Links;
-import com.paypal.api.payments.Payer;
-import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.RedirectUrls;
-import com.paypal.api.payments.Transaction;
+import static com.microservicesteam.adele.payment.ExecutionStatus.APPROVED;
+import static com.microservicesteam.adele.payment.ExecutionStatus.FAILED;
+import static com.microservicesteam.adele.payment.PaymentStatus.CREATED;
+import static java.math.BigDecimal.TEN;
+import static java.util.Collections.singletonList;
 
 public class PaymentUtils {
+
+    private static final String PAYER_ID = "payerId";
+    private static final String PAYMENT_ID = "paymentId";
 
     public static PaymentRequest paymentRequest() {
         return PaymentRequest.builder()
@@ -51,6 +51,19 @@ public class PaymentUtils {
         transaction.setAmount(amount);
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
+        transaction.setDescription("This is the payment of your tickets!");
+
+        Item item = new Item();
+        item.setName("Adele 2018");
+        item.setDescription("Adele concert ticket");
+        item.setCurrency("EUR");
+        item.setQuantity("1");
+        item.setPrice("10.00");
+
+        ItemList itemList = new ItemList();
+        itemList.setItems(singletonList(item));
+
+        transaction.setItemList(itemList);
 
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
@@ -94,5 +107,39 @@ public class PaymentUtils {
         payment.setLinks(Arrays.asList(execute_url, approval_url));
 
         return payment;
+    }
+
+    public static Payment paymentAtExecution() {
+        Payment payment = new Payment();
+        payment.setId(PAYMENT_ID);
+        payment.setState("approved");
+        return payment;
+    }
+
+    public static ExecutePaymentRequest executePaymentRequest() {
+        return ExecutePaymentRequest.builder()
+                .payerId(PAYER_ID)
+                .paymentId(PAYMENT_ID)
+                .build();
+    }
+
+    public static PaymentExecution paymentExecution() {
+        PaymentExecution paymentExecution = new PaymentExecution();
+        paymentExecution.setPayerId(PAYER_ID);
+        return paymentExecution;
+    }
+
+    public static ExecutePaymentResponse executePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(APPROVED)
+                .build();
+    }
+
+    public static ExecutePaymentResponse failedExecutePaymentResponse() {
+        return ExecutePaymentResponse.builder()
+                .paymentId(PAYMENT_ID)
+                .status(FAILED)
+                .build();
     }
 }
