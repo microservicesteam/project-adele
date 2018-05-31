@@ -3,9 +3,10 @@ package com.microservicesteam.adele.ordermanager.domain;
 public enum OrderStatus {
 
     RESERVED,
-    UNDER_PAYMENT,
+    PAYMENT_CREATED,
+    PAYMENT_APPROVED,
     PAID,
-    CANCELLED,
+    PAYMENT_CANCELLED,
     EXPIRED
 
 }
