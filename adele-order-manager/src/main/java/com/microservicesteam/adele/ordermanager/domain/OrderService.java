@@ -5,10 +5,14 @@ import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.function.Supplier;
 
-import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
-import com.microservicesteam.adele.payment.*;
 import org.springframework.stereotype.Service;
 
+import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
+import com.microservicesteam.adele.payment.PaymentManager;
+import com.microservicesteam.adele.payment.PaymentRequest;
+import com.microservicesteam.adele.payment.PaymentResponse;
+import com.microservicesteam.adele.payment.PaymentStatus;
+import com.microservicesteam.adele.payment.Ticket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final String URL = "/orders/%s/payment?success=%s";
+    private static final String URL = "/orders/%s/payment?status=%s";
     private static final String SUCCESS = "success";
     private static final String CANCELLED = "cancelled";
 
@@ -38,8 +42,8 @@ public class OrderService {
             throw new InvalidPaymentResponseException("Payment initiation failed to orderId: " + orderId);
         }
 
-        orderRepository.updatePaymentId(orderId, paymentResponse.paymentId()
-                        .orElseThrow( () -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId)));
+        String paymentID = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
+        orderRepository.updatePaymentId(orderId, paymentID);
 
         return paymentResponse.approveUrl()
                 .orElseThrow( () -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
