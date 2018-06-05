@@ -35,7 +35,7 @@ public class OrderService {
         return order.orderId;
     }
 
-    public String initiatePayment(String orderId) {
+    public ApproveUrlResponse initiatePayment(String orderId) {
         PaymentResponse paymentResponse = paymentManager.initiatePayment(createPaymentRequest(orderId));
 
         if (paymentResponse.status().equals(PaymentStatus.FAILED)) {
@@ -45,8 +45,10 @@ public class OrderService {
         String paymentID = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
         orderRepository.updatePaymentId(orderId, paymentID);
 
-        return paymentResponse.approveUrl()
-                .orElseThrow( () -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
+        String approveUrl = paymentResponse.approveUrl().orElseThrow(() -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
+        return ApproveUrlResponse.builder()
+                .approveUrl(approveUrl)
+                .build();
     }
 
     private Order fromPostOrderRequest(PostOrderRequest postOrderRequest) {

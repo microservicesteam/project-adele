@@ -77,13 +77,16 @@ public class OrderServiceTest {
                 .paymentId(PAYMENT_ID)
                 .approveUrl(APPROVE_URL)
                 .build();
+        ApproveUrlResponse expected = ApproveUrlResponse.builder()
+                .approveUrl(APPROVE_URL)
+                .build();
         when(paymentManager.initiatePayment(any())).thenReturn(paymentResponse);
 
-        String actual = orderService.initiatePayment(ORDER_ID);
+        ApproveUrlResponse actual = orderService.initiatePayment(ORDER_ID);
 
         verify(paymentManager).initiatePayment(any());
         verify(orderRepository).updatePaymentId(ORDER_ID, PAYMENT_ID);
-        assertThat(actual).isEqualTo(APPROVE_URL);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test

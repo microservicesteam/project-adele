@@ -1,5 +1,6 @@
 package com.microservicesteam.adele.ordermanager.boundary.web;
 
+import com.microservicesteam.adele.ordermanager.domain.ApproveUrlResponse;
 import com.microservicesteam.adele.ordermanager.domain.OrderService;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -20,6 +22,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.Charset;
@@ -29,7 +32,7 @@ import java.nio.charset.Charset;
 public class OrderControllerTest {
 
     private static final String ORDER_ID = "6489d903-c07c-48d3-81f9-2d8251b1d3b6";
-    private static final String APPROVAL_URL = "approvalUrl";
+    private static final String APPROVE_URL = "approveUrl";
 
     private MediaType contentType = new MediaType(APPLICATION_JSON.getType(),
             APPLICATION_JSON.getSubtype(),
@@ -62,11 +65,13 @@ public class OrderControllerTest {
 
     @Test
     public void getApproveUrlShouldReturnWithApprovalUrl() throws Exception{
-        when(orderService.initiatePayment(anyString())).thenReturn(APPROVAL_URL);
+        when(orderService.initiatePayment(anyString())).thenReturn(ApproveUrlResponse.builder()
+                .approveUrl(APPROVE_URL)
+                .build());
 
         mockMvc.perform(get("/orders/{orderId}/approval", ORDER_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().string(APPROVAL_URL));
+                .andExpect(jsonPath("$.approveUrl", equalTo(APPROVE_URL)));
     }
 
 

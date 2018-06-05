@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.microservicesteam.adele.ordermanager.domain.ApproveUrlResponse;
 import com.microservicesteam.adele.ordermanager.domain.OrderService;
 import com.microservicesteam.adele.ordermanager.domain.PostOrderRequest;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
@@ -28,7 +29,7 @@ public class OrderController {
     }
 
     @GetMapping("{orderId}/approval")
-    public String getApproveUrl(@PathVariable("orderId") String orderId) {
+    public ApproveUrlResponse getApproveUrl(@PathVariable("orderId") String orderId) {
         return orderService.initiatePayment(orderId);
     }
 
