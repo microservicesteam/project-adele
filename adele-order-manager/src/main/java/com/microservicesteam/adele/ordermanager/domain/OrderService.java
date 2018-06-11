@@ -1,34 +1,51 @@
 package com.microservicesteam.adele.ordermanager.domain;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentRequest;
 import com.microservicesteam.adele.payment.PaymentResponse;
 import com.microservicesteam.adele.payment.PaymentStatus;
 import com.microservicesteam.adele.payment.Ticket;
-import lombok.RequiredArgsConstructor;
+import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class OrderService {
+public class OrderService extends EventBasedService {
 
     private static final String URL = "/orders/%s/payment?status=%s";
     private static final String SUCCESS = "success";
     private static final String CANCELLED = "cancelled";
 
     private final OrderRepository orderRepository;
+    private final ReservationRepository reservationRepository;
     private final PaymentManager paymentManager;
     private final Supplier<String> orderIdGenerator;
     private final Supplier<LocalDateTime> currentLocalDateTime;
+
+    public OrderService(OrderRepository orderRepository, ReservationRepository reservationRepository, PaymentManager paymentManager,
+            Supplier<String> orderIdGenerator,
+            Supplier<LocalDateTime> currentLocalDateTime, EventBus eventBus) {
+        super(eventBus);
+        this.orderRepository = orderRepository;
+        this.reservationRepository = reservationRepository;
+        this.paymentManager = paymentManager;
+        this.orderIdGenerator = orderIdGenerator;
+        this.currentLocalDateTime = currentLocalDateTime;
+    }
 
     public String saveOrder(PostOrderRequest orderRequest) {
         Order order = orderRepository.save(fromPostOrderRequest(orderRequest));
@@ -48,6 +65,27 @@ public class OrderService {
         String approveUrl = paymentResponse.approveUrl().orElseThrow(() -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
         return ApproveUrlResponse.builder()
                 .approveUrl(approveUrl)
+                .build();
+    }
+
+    @Subscribe
+    public void handleEvent(ReservationAccepted reservationAccepted) {
+        Reservation reservation = Reservation.builder()
+                .reservationId(UUID.fromString(reservationAccepted.reservation().reservationId()))
+                .build();
+
+        reservation.setTicketIds(reservationAccepted.reservation().tickets().stream()
+                .map(eventTicketId -> mapTicket(reservation, eventTicketId))
+                .collect(toList()));
+        reservationRepository.save(reservation);
+    }
+
+    private TicketId mapTicket(Reservation reservation, com.microservicesteam.adele.ticketmaster.model.TicketId eventTicketId) {
+        return TicketId.builder()
+                .programId(eventTicketId.programId())
+                .sectorId(eventTicketId.sectorId())
+                .seatId(eventTicketId.seatId())
+                .reservation(reservation)
                 .build();
     }
 

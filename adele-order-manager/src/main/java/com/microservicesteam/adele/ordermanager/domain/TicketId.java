@@ -3,7 +3,8 @@ package com.microservicesteam.adele.ordermanager.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,26 +21,19 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-public class Order {
+public class TicketId {
 
     @Id
     @GeneratedValue
-    String orderId;
+    Long id;
 
-    String reservationId;
+    long programId;
 
-    OrderStatus status;
+    int sectorId;
 
-    LocalDateTime creationTimestamp;
+    int seatId;
 
-    String name;
-
-    String email;
-
-    String paymentId;
-
-    String payerId;
-
-    LocalDateTime lastUpdated;
-
+    @ManyToOne
+    @JoinColumn(name = "reservationId")
+    Reservation reservation;
 }
