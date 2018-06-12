@@ -177,7 +177,7 @@ public class ReservationsServiceTest {
 
     @Test
     public void onReservationClosedEventTheEventIsPublished() {
-        ReservationClosed reservationRejected =
+        ReservationClosed reservationClosed =
                 ReservationClosed.builder()
                         .reservation(Reservation.builder()
                                 .reservationId(RESERVATION_ID)
@@ -185,13 +185,13 @@ public class ReservationsServiceTest {
                                 .build())
                         .build();
 
-        eventBus.post(reservationRejected);
+        eventBus.post(reservationClosed);
 
         verify(ticketRepository).put(Ticket.builder()
                 .status(SOLD)
                 .ticketId(TICKET_ID_1)
                 .build());
-        verify(webSocketEventPublisher).publishToSector(reservationRejected);
+        verify(webSocketEventPublisher).publishToSector(reservationClosed);
     }
 
 
