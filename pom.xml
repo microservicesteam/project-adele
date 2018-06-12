@@ -84,7 +84,11 @@
                 <artifactId>adele-payment-manager</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.microservicesteam</groupId>
+                <artifactId>adele-order-manager</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.microservicesteam</groupId>
                 <artifactId>adele-program-manager</artifactId>

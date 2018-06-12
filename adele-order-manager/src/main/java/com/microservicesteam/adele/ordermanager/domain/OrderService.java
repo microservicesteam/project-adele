@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderService {
 
     private static final String URL = "/orders/%s/payment?status=%s";
-    private static final String SUCCESS = "success";
+    private static final String APPROVED = "approved";
     private static final String CANCELLED = "cancelled";
 
     private final OrderRepository orderRepository;
@@ -42,8 +42,8 @@ public class OrderService {
             throw new InvalidPaymentResponseException("Payment initiation failed to orderId: " + orderId);
         }
 
-        String paymentID = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
-        orderRepository.updatePaymentId(orderId, paymentID);
+        String paymentId = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
+        orderRepository.updatePaymentId(orderId, paymentId);
 
         String approveUrl = paymentResponse.approveUrl().orElseThrow(() -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
         return ApproveUrlResponse.builder()
@@ -79,7 +79,7 @@ public class OrderService {
                                 .sector(1)
                                 .priceAmount(BigDecimal.TEN)
                                 .build())
-                .returnUrl(String.format(URL, orderId, SUCCESS))
+                .returnUrl(String.format(URL, orderId, APPROVED))
                 .cancelUrl(String.format(URL, orderId, CANCELLED))
                 .build();
     }
