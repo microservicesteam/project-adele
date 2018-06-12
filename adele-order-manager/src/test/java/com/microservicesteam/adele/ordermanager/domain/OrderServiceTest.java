@@ -48,11 +48,14 @@ public class OrderServiceTest {
     @Mock
     private PaymentManager paymentManager;
 
+    @Mock
+    private OrderConfiguration.OrderProperties orderProperties;
+
     private OrderService orderService;
 
     @Before
     public void setUp() {
-        orderService = new OrderService(orderRepository, paymentManager, idGenerator, currentLocalDateTime);
+        orderService = new OrderService(orderProperties, orderRepository, paymentManager, idGenerator, currentLocalDateTime);
 
         when(idGenerator.get()).thenReturn(ORDER_ID);
         when(currentLocalDateTime.get()).thenReturn(NOW);

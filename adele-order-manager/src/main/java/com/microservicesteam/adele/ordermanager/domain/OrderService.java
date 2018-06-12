@@ -25,6 +25,7 @@ public class OrderService {
     private static final String APPROVED = "approved";
     private static final String CANCELLED = "cancelled";
 
+    private final OrderConfiguration.OrderProperties orderProperties;
     private final OrderRepository orderRepository;
     private final PaymentManager paymentManager;
     private final Supplier<String> orderIdGenerator;
@@ -79,8 +80,8 @@ public class OrderService {
                                 .sector(1)
                                 .priceAmount(BigDecimal.TEN)
                                 .build())
-                .returnUrl(String.format(URL, orderId, APPROVED))
-                .cancelUrl(String.format(URL, orderId, CANCELLED))
+                .returnUrl(String.format(orderProperties.getDomainUrl() + URL, orderId, APPROVED))
+                .cancelUrl(String.format(orderProperties.getDomainUrl() + URL, orderId, CANCELLED))
                 .build();
     }
 
