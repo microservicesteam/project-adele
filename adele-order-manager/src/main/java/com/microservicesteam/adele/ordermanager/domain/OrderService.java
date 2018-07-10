@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final String URL = "/orders/%s/payment?status=%s";
+    private static final String REDIRECT_PATH = "/orders/%s/payment?status=%s";
     private static final String APPROVED = "approved";
     private static final String CANCELLED = "cancelled";
 
@@ -80,8 +80,8 @@ public class OrderService {
                                 .sector(1)
                                 .priceAmount(BigDecimal.TEN)
                                 .build())
-                .returnUrl(String.format(orderProperties.getDomainUrl() + URL, orderId, APPROVED))
-                .cancelUrl(String.format(orderProperties.getDomainUrl() + URL, orderId, CANCELLED))
+                .returnUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, APPROVED))
+                .cancelUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, CANCELLED))
                 .build();
     }
 
