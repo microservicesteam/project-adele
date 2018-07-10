@@ -10,51 +10,51 @@ import java.util.function.Predicate;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.ImmutableList;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 @Service
 public class TicketRepository {
 
-    private final Map<Position, Ticket> tickets;
+    private final Map<TicketId, Ticket> tickets;
 
     public TicketRepository() {
         this.tickets = new HashMap<>();
     }
 
     public void put(Ticket ticket) {
-        tickets.put(ticket.position(), ticket);
+        tickets.put(ticket.ticketId(), ticket);
     }
 
-    public boolean has(Position position) {
-        return tickets.containsKey(position);
+    public boolean has(TicketId ticketId) {
+        return tickets.containsKey(ticketId);
     }
 
-    public Ticket get(Position position) {
-        return tickets.get(position);
+    public Ticket get(TicketId ticketId) {
+        return tickets.get(ticketId);
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEvent(long eventId) {
-        return filterTicketsBy(matchingEventId(eventId));
+    public ImmutableList<Ticket> getTicketsStatusByProgram(long programId) {
+        return filterTicketsBy(matchingProgramId(programId));
     }
 
-    public ImmutableList<Ticket> getTicketsStatusByEventAndSector(long eventId, int sector) {
-        return filterTicketsBy(matchingEventIdAndSector(eventId, sector));
+    public ImmutableList<Ticket> getTicketsStatusByProgramAndSector(long programId, int sector) {
+        return filterTicketsBy(matchingProgramIdAndSector(programId, sector));
     }
 
     private ImmutableList<Ticket> filterTicketsBy(Predicate<Ticket> predicate) {
         return tickets.values().stream()
                 .filter(predicate)
-                .sorted(comparingInt(t -> t.position().seatId()))
+                .sorted(comparingInt(t -> t.ticketId().seatId()))
                 .collect(toImmutableList());
     }
 
-    private Predicate<Ticket> matchingEventId(long eventId) {
-        return ticket -> ticket.position().eventId() == eventId;
+    private Predicate<Ticket> matchingProgramId(long programId) {
+        return ticket -> ticket.ticketId().programId() == programId;
     }
 
-    private Predicate<Ticket> matchingEventIdAndSector(long eventId, int sector) {
-        return matchingEventId(eventId)
-                .and(ticket -> ticket.position().sectorId() == sector);
+    private Predicate<Ticket> matchingProgramIdAndSector(long programId, int sector) {
+        return matchingProgramId(programId)
+                .and(ticket -> ticket.ticketId().sectorId() == sector);
     }
 }

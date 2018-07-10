@@ -1,7 +1,8 @@
 package com.microservicesteam.adele.ticketmaster;
 
-import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -14,22 +15,24 @@ import org.junit.Test;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationClosed;
 import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
-import com.microservicesteam.adele.ticketmaster.model.Position;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
 public class TicketMasterServiceTest {
 
     private static final String RESERVATION_ID = "abc-123";
-    private static final Position POSITION_1 = Position.builder().eventId(1).sectorId(1).seatId(1).build();
-    private static final Position POSITION_2 = Position.builder().eventId(1).sectorId(1).seatId(2).build();
+    private static final TicketId TICKET_ID_1 = TicketId.builder().programId(1).sectorId(1).seatId(1).build();
+    private static final TicketId TICKET_ID_2 = TicketId.builder().programId(1).sectorId(1).seatId(2).build();
 
     private TicketMasterService ticketMasterService;
     private EventBus eventBus;
@@ -47,35 +50,35 @@ public class TicketMasterServiceTest {
     @Test
     public void createTicketsCommandResultsInTicketsCreatedEvent() {
         //WHEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, FREE),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, FREE),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
-                .containsExactly(ticketsCreatedEventForPositions(POSITION_1, POSITION_2));
+                .containsExactly(ticketsCreated(TICKET_ID_1, TICKET_ID_2));
     }
 
     @Test
-    public void createTicketsCommandForAlreadyExistingPositionResultsInNoOperationEvent() {
+    public void createTicketsCommandForAlreadyExistingTicketResultsInNoOperationEvent() {
         //GIVEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //WHEN
-        CreateTickets ignoredCreateTicketsCommand = createTicketsForPositions(POSITION_1);
+        CreateTickets ignoredCreateTicketsCommand = createTickets(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, FREE),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, FREE),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForPositions(POSITION_1, POSITION_2),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
                         NoOperation.builder()
                                 .sourceCommand(ignoredCreateTicketsCommand)
                                 .build());
@@ -84,128 +87,179 @@ public class TicketMasterServiceTest {
     @Test
     public void createReservationCommandResultsInReservationCreatedEvent() {
         //GIVEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
 
         //WHEN
-        createReservationForPositions(POSITION_1);
+        createReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, RESERVED),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, RESERVED),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForPositions(POSITION_1, POSITION_2),
-                        reservationAcceptedEventForPosition(POSITION_1));
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1));
     }
 
     @Test
-    public void createReservationForAlreadyReservedPositionResultsInReservationRejectedEvent() {
+    public void createReservationForAlreadyReservedTicketResultsInReservationRejectedEvent() {
         //GIVEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
-        createReservationForPositions(POSITION_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        createReservationForPositions(POSITION_1);
+        createReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, RESERVED),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, RESERVED),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForPositions(POSITION_1, POSITION_2),
-                        reservationAcceptedEventForPosition(POSITION_1),
-                        reservationRejectedEventForPosition(POSITION_1));
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        reservationRejected(TICKET_ID_1));
     }
 
     @Test
     public void cancelReservationCommandResultsInReservationCancelledEvent() {
         //GIVEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
-        createReservationForPositions(POSITION_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        cancelReservationForPositions(POSITION_1);
+        cancelReservation(TICKET_ID_1);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, FREE),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, FREE),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForPositions(POSITION_1, POSITION_2),
-                        reservationAcceptedEventForPosition(POSITION_1),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
                         ReservationCancelled.builder()
                                 .reservation(Reservation.builder()
                                         .reservationId(RESERVATION_ID)
-                                        .addPositions(POSITION_1)
+                                        .addTickets(TICKET_ID_1)
                                         .build())
                                 .build());
     }
 
     @Test
-    public void cancelReservationCommandForFreePositionResultsInNoOperationEvent() {
+    public void cancelReservationCommandForFreeTicketResultsInNoOperationEvent() {
         //GIVEN
-        createTicketsForPositions(POSITION_1, POSITION_2);
-        createReservationForPositions(POSITION_1);
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
 
         //WHEN
-        CancelReservation cancelReservationCommand = cancelReservationForPositions(POSITION_2);
+        CancelReservation cancelReservationCommand = cancelReservation(TICKET_ID_2);
 
         //THEN
         assertThat(ticketMasterService.ticketRepository)
                 .hasSize(2)
-                .contains(entry(POSITION_1, RESERVED),
-                        entry(POSITION_2, FREE));
+                .contains(entry(TICKET_ID_1, RESERVED),
+                        entry(TICKET_ID_2, FREE));
         assertThat(deadEventListener.deadEvents)
                 .extracting("event")
                 .containsExactly(
-                        ticketsCreatedEventForPositions(POSITION_1, POSITION_2),
-                        reservationAcceptedEventForPosition(POSITION_1),
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
                         NoOperation.builder()
                                 .sourceCommand(cancelReservationCommand)
                                 .build());
     }
 
-    private CreateReservation createReservationForPositions(Position... positions) {
+    @Test
+    public void closeReservationCommandForAlreadyReservedTicketsResultsInReservationClosedEvent() {
+        //GIVEN
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
+
+        //WHEN
+        closeReservation(TICKET_ID_1);
+
+        //THEN
+        assertThat(ticketMasterService.ticketRepository)
+                .hasSize(2)
+                .contains(entry(TICKET_ID_1, SOLD),
+                        entry(TICKET_ID_2, FREE));
+        assertThat(deadEventListener.deadEvents)
+                .extracting("event")
+                .containsExactly(
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        ReservationClosed.builder()
+                                .reservation(Reservation.builder()
+                                        .reservationId(RESERVATION_ID)
+                                        .addTickets(TICKET_ID_1)
+                                        .build())
+                                .build());
+    }
+
+    @Test
+    public void closeReservationCommandForFreeTicketsResultsInNoOperationEvent() {
+        //GIVEN
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
+
+        //WHEN
+        CloseReservation closeReservation = closeReservation(TICKET_ID_2);
+
+        //THEN
+        assertThat(ticketMasterService.ticketRepository)
+                .hasSize(2)
+                .contains(entry(TICKET_ID_1, RESERVED),
+                        entry(TICKET_ID_2, FREE));
+        assertThat(deadEventListener.deadEvents)
+                .extracting("event")
+                .containsExactly(
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        NoOperation.builder()
+                                .sourceCommand(closeReservation)
+                                .build());
+    }
+
+    private CreateReservation createReservation(TicketId... ticketIds) {
         CreateReservation createReservation = CreateReservation.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(positions)
+                        .addTickets(ticketIds)
                         .build())
                 .build();
         eventBus.post(createReservation);
         return createReservation;
     }
 
-    private ReservationAccepted reservationAcceptedEventForPosition(Position position) {
+    private ReservationAccepted reservationAccepted(TicketId ticketId) {
         return ReservationAccepted.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(position)
+                        .addTickets(ticketId)
                         .build())
                 .build();
     }
 
-    private ReservationRejected reservationRejectedEventForPosition(Position position) {
+    private ReservationRejected reservationRejected(TicketId ticketId) {
         return ReservationRejected.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(position)
+                        .addTickets(ticketId)
                         .build())
                 .build();
     }
 
-    private CreateTickets createTicketsForPositions(Position... positions) {
+    private CreateTickets createTickets(TicketId... ticketIds) {
         CreateTickets createTicketsCommand = CreateTickets.builder()
-                .addAllTickets(Arrays.stream(positions)
+                .addAllTickets(Arrays.stream(ticketIds)
                         .map(this::createFreeTicket)
                         .collect(toList()))
                 .build();
@@ -213,29 +267,40 @@ public class TicketMasterServiceTest {
         return createTicketsCommand;
     }
 
-    private TicketsCreated ticketsCreatedEventForPositions(Position... positions) {
+    private TicketsCreated ticketsCreated(TicketId... ticketIds) {
         return TicketsCreated.builder()
-                .addAllTickets(Arrays.stream(positions)
+                .addAllTickets(Arrays.stream(ticketIds)
                         .map(this::createFreeTicket)
                         .collect(toList()))
                 .build();
     }
 
-    private Ticket createFreeTicket(Position position) {
+    private Ticket createFreeTicket(TicketId ticketId) {
         return Ticket.builder()
                 .status(FREE)
-                .position(position)
+                .ticketId(ticketId)
                 .build();
     }
 
-    private CancelReservation cancelReservationForPositions(Position... positions) {
+    private CancelReservation cancelReservation(TicketId... ticketIds) {
         CancelReservation cancelReservationCommand = CancelReservation.builder()
                 .reservation(Reservation.builder()
                         .reservationId(RESERVATION_ID)
-                        .addPositions(positions)
+                        .addTickets(ticketIds)
                         .build())
                 .build();
         eventBus.post(cancelReservationCommand);
         return cancelReservationCommand;
+    }
+
+    private CloseReservation closeReservation(TicketId... ticketIds) {
+        CloseReservation closeReservation = CloseReservation.builder()
+                .reservation(Reservation.builder()
+                        .reservationId(RESERVATION_ID)
+                        .addTickets(ticketIds)
+                        .build())
+                .build();
+        eventBus.post(closeReservation);
+        return closeReservation;
     }
 }

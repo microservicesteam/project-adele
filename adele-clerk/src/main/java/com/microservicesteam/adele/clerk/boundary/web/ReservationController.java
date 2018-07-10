@@ -18,8 +18,8 @@ public class ReservationController {
     private final ReservationsService reservationsService;
 
     @PostMapping
-    public ReservationResponse reservePositions(@RequestBody ReservationRequest reservationRequest) {
-        return reservationsService.reservePositions(reservationRequest.positions());
+    public ReservationResponse reserveTickets(@RequestBody ReservationRequest reservationRequest) {
+        return reservationsService.reserveTickets(reservationRequest.tickets());
     }
 
 }

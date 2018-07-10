@@ -18,14 +18,14 @@ public class TicketController {
 
     private final TicketsService ticketsService;
 
-    @GetMapping(params = {"eventId"})
-    public List<Ticket> getTickets(@RequestParam long eventId) {
-        return ticketsService.getTicketsStatusByEvent(eventId);
+    @GetMapping(params = {"programId"})
+    public List<Ticket> getTickets(@RequestParam long programId) {
+        return ticketsService.getTicketsStatusByProgram(programId);
     }
 
-    @GetMapping(params = {"eventId", "sectorId"})
-    public List<Ticket> getTickets(@RequestParam long eventId, @RequestParam int sectorId) {
-        return ticketsService.getTicketsStatusByEventAndSector(eventId, sectorId);
+    @GetMapping(params = {"programId", "sectorId"})
+    public List<Ticket> getTickets(@RequestParam long programId, @RequestParam int sectorId) {
+        return ticketsService.getTicketsStatusByProgramAndSector(programId, sectorId);
     }
 
 }
