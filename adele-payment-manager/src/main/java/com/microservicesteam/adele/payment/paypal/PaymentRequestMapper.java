@@ -1,6 +1,6 @@
 package com.microservicesteam.adele.payment.paypal;
 
-import static java.math.BigDecimal.ROUND_CEILING;
+import static java.math.RoundingMode.CEILING;
 import static java.util.Collections.singletonList;
 
 import java.math.BigDecimal;
@@ -27,7 +27,7 @@ public class PaymentRequestMapper {
 
         Amount amount = new Amount();
         amount.setCurrency(paymentRequest.currency().getCurrencyCode());
-        amount.setTotal(totalAmount.setScale(2, ROUND_CEILING).toEngineeringString());
+        amount.setTotal(totalAmount.setScale(2, CEILING).toEngineeringString());
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
@@ -39,7 +39,7 @@ public class PaymentRequestMapper {
         item.setDescription("Adele concert ticket");
         item.setCurrency(paymentRequest.currency().getCurrencyCode());
         item.setQuantity("1");
-        item.setPrice(totalAmount.setScale(2, ROUND_CEILING).toEngineeringString());
+        item.setPrice(totalAmount.setScale(2, CEILING).toEngineeringString());
 
         ItemList itemList = new ItemList();
         itemList.setItems(singletonList(item));

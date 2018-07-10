@@ -4,14 +4,14 @@ import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentReq
 import static com.microservicesteam.adele.payment.PaymentUtils.executePaymentResponse;
 import static com.microservicesteam.adele.payment.PaymentUtils.failedExecutePaymentResponse;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.microservicesteam.adele.payment.paypal.ExecutePaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.ExecutePaymentResponseMapper;
@@ -85,6 +85,7 @@ public class PaymentManagerTest {
         Payment executedPayment = new Payment();
         executedPayment.setId("paymentId");
         executedPayment.setState("approved");
+        when(executePaymentRequestMapper.mapTo(any(ExecutePaymentRequest.class))).thenReturn(new Payment());
         when(paypalProxy.execute(any(Payment.class), any(String.class))).thenReturn(executedPayment);
         when(executePaymentResponseMapper.mapTo(executedPayment)).thenReturn(executePaymentResponse());
 
@@ -98,6 +99,7 @@ public class PaymentManagerTest {
     @Test
     public void executePaymentShouldReturnWithFailedResponseWhenPaymentExecutionThrowsRestException() throws PayPalRESTException {
         //given
+        when(executePaymentRequestMapper.mapTo(any(ExecutePaymentRequest.class))).thenReturn(new Payment());
         when(paypalProxy.execute(any(Payment.class), any(String.class))).thenThrow(new PayPalRESTException("test rest failure"));
 
         //when
