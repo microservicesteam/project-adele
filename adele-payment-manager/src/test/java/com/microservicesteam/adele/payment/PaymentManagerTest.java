@@ -19,7 +19,6 @@ import com.microservicesteam.adele.payment.paypal.PaymentRequestMapper;
 import com.microservicesteam.adele.payment.paypal.PaymentResponseMapper;
 import com.microservicesteam.adele.payment.paypal.PaypalProxy;
 import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.PayPalRESTException;
 
 @RunWith(MockitoJUnitRunner.class)

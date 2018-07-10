@@ -2,6 +2,7 @@ package com.microservicesteam.adele.ticketmaster;
 
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -14,10 +15,12 @@ import org.junit.Test;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.commands.CreateTickets;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationClosed;
 import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.events.TicketsCreated;
 import com.microservicesteam.adele.ticketmaster.exceptions.NoOperation;
@@ -174,6 +177,57 @@ public class TicketMasterServiceTest {
                                 .build());
     }
 
+    @Test
+    public void closeReservationCommandForAlreadyReservedTicketsResultsInReservationClosedEvent() {
+        //GIVEN
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
+
+        //WHEN
+        closeReservation(TICKET_ID_1);
+
+        //THEN
+        assertThat(ticketMasterService.ticketRepository)
+                .hasSize(2)
+                .contains(entry(TICKET_ID_1, SOLD),
+                        entry(TICKET_ID_2, FREE));
+        assertThat(deadEventListener.deadEvents)
+                .extracting("event")
+                .containsExactly(
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        ReservationClosed.builder()
+                                .reservation(Reservation.builder()
+                                        .reservationId(RESERVATION_ID)
+                                        .addTickets(TICKET_ID_1)
+                                        .build())
+                                .build());
+    }
+
+    @Test
+    public void closeReservationCommandForFreeTicketsResultsInNoOperationEvent() {
+        //GIVEN
+        createTickets(TICKET_ID_1, TICKET_ID_2);
+        createReservation(TICKET_ID_1);
+
+        //WHEN
+        CloseReservation closeReservation = closeReservation(TICKET_ID_2);
+
+        //THEN
+        assertThat(ticketMasterService.ticketRepository)
+                .hasSize(2)
+                .contains(entry(TICKET_ID_1, RESERVED),
+                        entry(TICKET_ID_2, FREE));
+        assertThat(deadEventListener.deadEvents)
+                .extracting("event")
+                .containsExactly(
+                        ticketsCreated(TICKET_ID_1, TICKET_ID_2),
+                        reservationAccepted(TICKET_ID_1),
+                        NoOperation.builder()
+                                .sourceCommand(closeReservation)
+                                .build());
+    }
+
     private CreateReservation createReservation(TicketId... ticketIds) {
         CreateReservation createReservation = CreateReservation.builder()
                 .reservation(Reservation.builder()
@@ -237,5 +291,16 @@ public class TicketMasterServiceTest {
                 .build();
         eventBus.post(cancelReservationCommand);
         return cancelReservationCommand;
+    }
+
+    private CloseReservation closeReservation(TicketId... ticketIds) {
+        CloseReservation closeReservation = CloseReservation.builder()
+                .reservation(Reservation.builder()
+                        .reservationId(RESERVATION_ID)
+                        .addTickets(ticketIds)
+                        .build())
+                .build();
+        eventBus.post(closeReservation);
+        return closeReservation;
     }
 }
