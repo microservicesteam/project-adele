@@ -35,5 +35,5 @@ public class TicketId {
 
     @ManyToOne
     @JoinColumn(name = "reservationId")
-    Reservation reservation;
+    ReservedTicket reservation;
 }

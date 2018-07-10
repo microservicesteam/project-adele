@@ -1,7 +1,5 @@
 package com.microservicesteam.adele.ordermanager.domain;
 
-import static java.util.stream.Collectors.toList;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
@@ -19,7 +17,13 @@ import com.microservicesteam.adele.payment.PaymentRequest;
 import com.microservicesteam.adele.payment.PaymentResponse;
 import com.microservicesteam.adele.payment.PaymentStatus;
 import com.microservicesteam.adele.payment.Ticket;
+import com.microservicesteam.adele.programmanager.boundary.web.ProgramRepository;
+import com.microservicesteam.adele.programmanager.boundary.web.SectorRepository;
+import com.microservicesteam.adele.programmanager.boundary.web.VenueRepository;
+import com.microservicesteam.adele.programmanager.domain.Program;
+import com.microservicesteam.adele.programmanager.domain.Sector;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
+import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,16 +36,22 @@ public class OrderService extends EventBasedService {
 
     private final OrderRepository orderRepository;
     private final ReservationRepository reservationRepository;
+    private final ProgramRepository programRepository;
+    private final VenueRepository venueRepository;
+    private final SectorRepository sectorRepository;
     private final PaymentManager paymentManager;
     private final Supplier<String> orderIdGenerator;
     private final Supplier<LocalDateTime> currentLocalDateTime;
 
-    public OrderService(OrderRepository orderRepository, ReservationRepository reservationRepository, PaymentManager paymentManager,
-            Supplier<String> orderIdGenerator,
-            Supplier<LocalDateTime> currentLocalDateTime, EventBus eventBus) {
+    public OrderService(OrderRepository orderRepository, ReservationRepository reservationRepository,
+            ProgramRepository programRepository, VenueRepository venueRepository, SectorRepository sectorRepository,
+            PaymentManager paymentManager, Supplier<String> orderIdGenerator, Supplier<LocalDateTime> currentLocalDateTime, EventBus eventBus) {
         super(eventBus);
         this.orderRepository = orderRepository;
         this.reservationRepository = reservationRepository;
+        this.programRepository = programRepository;
+        this.venueRepository = venueRepository;
+        this.sectorRepository = sectorRepository;
         this.paymentManager = paymentManager;
         this.orderIdGenerator = orderIdGenerator;
         this.currentLocalDateTime = currentLocalDateTime;
@@ -70,17 +80,19 @@ public class OrderService extends EventBasedService {
 
     @Subscribe
     public void handleEvent(ReservationAccepted reservationAccepted) {
-        Reservation reservation = Reservation.builder()
-                .reservationId(UUID.fromString(reservationAccepted.reservation().reservationId()))
+        Reservation reservation = reservationAccepted.reservation();
+        Program program = programRepository.findOne(reservation.tickets().get(0).programId());
+        Sector sector = sectorRepository.findOne(Long.valueOf(reservation.tickets().get(0).sectorId()));
+        ReservedTicket reservedTicket = ReservedTicket.builder()
+                .reservationId(UUID.fromString(reservation.reservationId()))
+                .programName(program.name)
+                .programDescription(program.description)
+                .sector(sector.id)
                 .build();
-
-        reservation.setTicketIds(reservationAccepted.reservation().tickets().stream()
-                .map(eventTicketId -> mapTicket(reservation, eventTicketId))
-                .collect(toList()));
-        reservationRepository.save(reservation);
+        reservationRepository.save(reservedTicket);
     }
 
-    private TicketId mapTicket(Reservation reservation, com.microservicesteam.adele.ticketmaster.model.TicketId eventTicketId) {
+    private TicketId mapTicket(ReservedTicket reservation, com.microservicesteam.adele.ticketmaster.model.TicketId eventTicketId) {
         return TicketId.builder()
                 .programId(eventTicketId.programId())
                 .sectorId(eventTicketId.sectorId())

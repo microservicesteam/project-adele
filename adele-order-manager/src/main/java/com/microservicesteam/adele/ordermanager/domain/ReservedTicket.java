@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-public class Reservation {
+public class ReservedTicket {
 
     @Id
     @GeneratedValue
@@ -30,7 +31,17 @@ public class Reservation {
 
     UUID reservationId;
 
-    @OneToMany(mappedBy = "id")
-    List<TicketId> ticketIds;
+    String programName;
 
+    String programDescription;
+
+    String venueAddress;
+
+    int sector;
+
+    int seat;
+
+    BigDecimal price;
+
+    String currency;
 }
