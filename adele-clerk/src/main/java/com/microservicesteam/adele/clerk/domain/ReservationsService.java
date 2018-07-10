@@ -2,6 +2,7 @@ package com.microservicesteam.adele.clerk.domain;
 
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.FREE;
 import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.RESERVED;
+import static com.microservicesteam.adele.ticketmaster.model.TicketStatus.SOLD;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ticketmaster.commands.CreateReservation;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.events.ReservationCancelled;
+import com.microservicesteam.adele.ticketmaster.events.ReservationClosed;
 import com.microservicesteam.adele.ticketmaster.events.ReservationRejected;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.Ticket;
@@ -90,5 +92,15 @@ public class ReservationsService extends EventBasedService {
     @Subscribe
     public void handleEvent(ReservationRejected reservationRejected) {
         webSocketEventPublisher.publishToSector(reservationRejected);
+    }
+
+    @Subscribe
+    public void handleEvent(ReservationClosed reservationClosed) {
+        reservationClosed.reservation().tickets()
+                .forEach(ticketId -> ticketRepository.put(Ticket.builder()
+                        .status(SOLD)
+                        .ticketId(ticketId)
+                        .build()));
+        webSocketEventPublisher.publishToSector(reservationClosed);
     }
 }

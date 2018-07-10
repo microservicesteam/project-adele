@@ -1,0 +1,39 @@
+@startuml
+() "/orders" as ORD
+() "/reservations" as RES
+() "/programs" as PRO
+() "/tickets" as TIC
+() REST
+
+node "Reservation" {
+  [Booking Clerk] - RES
+  [Booking Clerk] -u- TIC
+  [Booking Clerk] --> [Ticket Master]
+}
+
+node "Ordering" {
+    database "Orders" {
+    }
+    ORD - [Order Manager]
+    [Order Manager] -> [Payment]
+    [Order Manager] --> Orders
+    Orders <- [Scheduler]
+}
+
+node "Program Management" {
+    database "Progs" {
+    }
+    [Program Manager] -> Progs
+}
+
+PRO - [Program Manager]
+[UI] --> ORD
+[UI] --> RES
+[UI] -> PRO
+[UI] -l-> TIC
+
+REST - [PayPal API]
+[Payment] -> REST
+[Postman] -> SMTP
+
+@enduml

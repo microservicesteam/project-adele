@@ -1,0 +1,51 @@
+{
+  "id": "PAY-3CM18082Y9532445FLJYMNTY",
+  "intent": "sale",
+  "state": "created",
+  "payer": {
+    "payment_method": "paypal"
+  },
+  "transactions": [
+    {
+      "amount": {
+        "total": "7.00",
+        "currency": "USD",
+        "details": {
+          "subtotal": "5.00",
+          "tax": "1.00",
+          "shipping": "1.00"
+        }
+      },
+      "description": "This is the payment transaction description.",
+      "item_list": {
+        "items": [
+          {
+            "name": "Ground Coffee 40 oz",
+            "price": "5.00",
+            "currency": "USD",
+            "quantity": 1
+          }
+        ]
+      },
+      "related_resources": []
+    }
+  ],
+  "create_time": "2018-01-30T19:26:07Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAY-3CM18082Y9532445FLJYMNTY",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7VA55149MP359292C",
+      "rel": "approval_url",
+      "method": "REDIRECT"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v1/payments/payment/PAY-3CM18082Y9532445FLJYMNTY/execute",
+      "rel": "execute",
+      "method": "POST"
+    }
+  ]
+}

@@ -10,7 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value=TicketsCreated.class, name="TicketsCreated"),
         @JsonSubTypes.Type(value=ReservationAccepted.class, name="ReservationAccepted"),
         @JsonSubTypes.Type(value=ReservationCancelled.class, name="ReservationCancelled"),
-        @JsonSubTypes.Type(value=ReservationRejected.class, name="ReservationRejected")
+        @JsonSubTypes.Type(value=ReservationRejected.class, name="ReservationRejected"),
+        @JsonSubTypes.Type(value=ReservationClosed.class, name="ReservationClosed")
 })
 public interface Event {
 }
