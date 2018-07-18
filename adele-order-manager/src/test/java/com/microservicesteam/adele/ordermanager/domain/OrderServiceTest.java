@@ -6,16 +6,22 @@ import static org.mockito.Matchers.any;
 
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.messaging.listeners.DeadEventListener;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentResponse;
 import com.microservicesteam.adele.payment.PaymentStatus;
+import com.microservicesteam.adele.programmanager.boundary.web.ProgramRepository;
+import com.microservicesteam.adele.programmanager.boundary.web.SectorRepository;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +59,12 @@ public class OrderServiceTest {
     @Mock
     private PaymentManager paymentManager;
 
+    @Mock
+    private ProgramRepository programRepository;
+
+    @Mock
+    private SectorRepository sectorRepository;
+
     private OrderService orderService;
 
     private EventBus eventBus;
@@ -63,7 +75,7 @@ public class OrderServiceTest {
         eventBus = new EventBus();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
-        orderService = new OrderService(orderRepository, reservationRepository, programRepository, venueRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus);
+        orderService = new OrderService(orderRepository, reservationRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus);
 
         when(idGenerator.get()).thenReturn(ORDER_ID);
         when(currentLocalDateTime.get()).thenReturn(NOW);
@@ -91,7 +103,11 @@ public class OrderServiceTest {
         ApproveUrlResponse expected = ApproveUrlResponse.builder()
                 .approveUrl(APPROVE_URL)
                 .build();
+        Order order = givenOrder();
         when(paymentManager.initiatePayment(any())).thenReturn(paymentResponse);
+        when(orderRepository.findOne(ORDER_ID)).thenReturn(order);
+        when(reservationRepository.findReservationsByReservationId(order.reservationId))
+                .thenReturn(ImmutableList.of(givenReservedTicket()));
 
         ApproveUrlResponse actual = orderService.initiatePayment(ORDER_ID);
 
@@ -167,6 +183,20 @@ public class OrderServiceTest {
                 .status(OrderStatus.RESERVED)
                 .creationTimestamp(NOW)
                 .lastUpdated(NOW)
+                .build();
+    }
+
+    private ReservedTicket givenReservedTicket() {
+        return ReservedTicket.builder()
+                .id(1L)
+                .programName("Awesome program")
+                .programDescription("Awesome program description")
+                .reservationId(UUID.fromString(RESERVATION_ID))
+                .venueAddress("Venue address")
+                .currency("HUF")
+                .price(new BigDecimal("10"))
+                .sector(2)
+                .seat(3)
                 .build();
     }
 

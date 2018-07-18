@@ -3,9 +3,7 @@ package com.microservicesteam.adele.ordermanager.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 import lombok.AccessLevel;

@@ -1,16 +1,22 @@
 package com.microservicesteam.adele.ordermanager.domain;
 
+import static java.util.stream.Collectors.toList;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
+import com.microservicesteam.adele.ordermanager.domain.ReservedTicket.ReservedTicketBuilder;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentRequest;
@@ -19,11 +25,11 @@ import com.microservicesteam.adele.payment.PaymentStatus;
 import com.microservicesteam.adele.payment.Ticket;
 import com.microservicesteam.adele.programmanager.boundary.web.ProgramRepository;
 import com.microservicesteam.adele.programmanager.boundary.web.SectorRepository;
-import com.microservicesteam.adele.programmanager.boundary.web.VenueRepository;
 import com.microservicesteam.adele.programmanager.domain.Program;
 import com.microservicesteam.adele.programmanager.domain.Sector;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
+import com.microservicesteam.adele.ticketmaster.model.TicketId;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -37,20 +43,18 @@ public class OrderService extends EventBasedService {
     private final OrderRepository orderRepository;
     private final ReservationRepository reservationRepository;
     private final ProgramRepository programRepository;
-    private final VenueRepository venueRepository;
     private final SectorRepository sectorRepository;
     private final PaymentManager paymentManager;
     private final Supplier<String> orderIdGenerator;
     private final Supplier<LocalDateTime> currentLocalDateTime;
 
     public OrderService(OrderRepository orderRepository, ReservationRepository reservationRepository,
-            ProgramRepository programRepository, VenueRepository venueRepository, SectorRepository sectorRepository,
+            ProgramRepository programRepository, SectorRepository sectorRepository,
             PaymentManager paymentManager, Supplier<String> orderIdGenerator, Supplier<LocalDateTime> currentLocalDateTime, EventBus eventBus) {
         super(eventBus);
         this.orderRepository = orderRepository;
         this.reservationRepository = reservationRepository;
         this.programRepository = programRepository;
-        this.venueRepository = venueRepository;
         this.sectorRepository = sectorRepository;
         this.paymentManager = paymentManager;
         this.orderIdGenerator = orderIdGenerator;
@@ -81,24 +85,23 @@ public class OrderService extends EventBasedService {
     @Subscribe
     public void handleEvent(ReservationAccepted reservationAccepted) {
         Reservation reservation = reservationAccepted.reservation();
-        Program program = programRepository.findOne(reservation.tickets().get(0).programId());
-        Sector sector = sectorRepository.findOne(Long.valueOf(reservation.tickets().get(0).sectorId()));
-        ReservedTicket reservedTicket = ReservedTicket.builder()
+        TicketId firstTicket = reservation.tickets().get(0);
+        Program program = programRepository.findOne(firstTicket.programId());
+        Sector sector = sectorRepository.findOne(Long.valueOf(firstTicket.sectorId()));
+        ReservedTicketBuilder ticketBuilder = ReservedTicket.builder()
                 .reservationId(UUID.fromString(reservation.reservationId()))
                 .programName(program.name)
                 .programDescription(program.description)
-                .sector(sector.id)
-                .build();
-        reservationRepository.save(reservedTicket);
-    }
-
-    private TicketId mapTicket(ReservedTicket reservation, com.microservicesteam.adele.ticketmaster.model.TicketId eventTicketId) {
-        return TicketId.builder()
-                .programId(eventTicketId.programId())
-                .sectorId(eventTicketId.sectorId())
-                .seatId(eventTicketId.seatId())
-                .reservation(reservation)
-                .build();
+                .venueAddress(program.venue.address)
+                .price(sector.price.amount)
+                .currency(sector.price.currency)
+                .sector(Math.toIntExact(sector.id)); //TODO fix this later to get real sector id
+        reservation.tickets().forEach(ticketId -> {
+            ReservedTicket reservedTicket = ticketBuilder
+                    .seat(ticketId.seatId())
+                    .build();
+            reservationRepository.save(reservedTicket);
+        });
     }
 
     private Order fromPostOrderRequest(PostOrderRequest postOrderRequest) {
@@ -115,20 +118,28 @@ public class OrderService extends EventBasedService {
     }
 
     private PaymentRequest createPaymentRequest(String orderId) {
-        // TODO query necessary data from db
+        Order order = orderRepository.findOne(orderId);
+        List<ReservedTicket> reservedTickets =
+                reservationRepository.findReservationsByReservationId(order.reservationId);
+
+        if (reservedTickets.isEmpty()) {
+            //TODO polling?
+            throw new IllegalStateException("Reserved tickets cannot be found for " + order.reservationId);
+        }
+        ReservedTicket firstTicket = reservedTickets.get(0);
+
+        List<Ticket> tickets = reservedTickets.stream()
+                .map(rt -> Ticket.builder()
+                        .sector(rt.sector)
+                        .priceAmount(rt.price)
+                        .build())
+                .collect(toList());
+
         return PaymentRequest.builder()
-                .programName("Adele Concert 2018, Wembley")
-                .programDescription("Best concert ever")
-                .currency(Currency.getInstance("HUF"))
-                .addTickets(
-                        Ticket.builder()
-                                .sector(1)
-                                .priceAmount(BigDecimal.TEN)
-                                .build(),
-                        Ticket.builder()
-                                .sector(1)
-                                .priceAmount(BigDecimal.TEN)
-                                .build())
+                .programName(firstTicket.programName)
+                .programDescription(firstTicket.programDescription)
+                .currency(Currency.getInstance(firstTicket.currency))
+                .tickets(tickets)
                 .returnUrl(String.format(URL, orderId, SUCCESS))
                 .cancelUrl(String.format(URL, orderId, CANCELLED))
                 .build();
