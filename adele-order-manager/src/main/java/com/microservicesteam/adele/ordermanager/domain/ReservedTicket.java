@@ -29,13 +29,19 @@ public class ReservedTicket {
 
     UUID reservationId;
 
+    Long programId;
+
     String programName;
 
     String programDescription;
 
     String venueAddress;
 
+    Long sectorId;
+
     int sector;
+
+    Long seatId;
 
     int seat;
 

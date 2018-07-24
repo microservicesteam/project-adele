@@ -2,14 +2,11 @@ package com.microservicesteam.adele.ordermanager.domain;
 
 import static java.util.stream.Collectors.toList;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Currency;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -90,15 +87,18 @@ public class OrderService extends EventBasedService {
         Sector sector = sectorRepository.findOne(Long.valueOf(firstTicket.sectorId()));
         ReservedTicketBuilder ticketBuilder = ReservedTicket.builder()
                 .reservationId(UUID.fromString(reservation.reservationId()))
+                .programId(firstTicket.programId())
                 .programName(program.name)
                 .programDescription(program.description)
                 .venueAddress(program.venue.address)
                 .price(sector.price.amount)
                 .currency(sector.price.currency)
-                .sector(Math.toIntExact(sector.id)); //TODO fix this later to get real sector id
+                .sectorId((long) firstTicket.sectorId())
+                .sector(Math.toIntExact(sector.id)); //TODO fix this later to get real sector number
         reservation.tickets().forEach(ticketId -> {
             ReservedTicket reservedTicket = ticketBuilder
-                    .seat(ticketId.seatId())
+                    .seatId((long) ticketId.seatId())
+                    .seat(ticketId.seatId()) //TODO fix this later to get the real seat number
                     .build();
             reservationRepository.save(reservedTicket);
         });
@@ -123,7 +123,6 @@ public class OrderService extends EventBasedService {
                 reservationRepository.findReservationsByReservationId(order.reservationId);
 
         if (reservedTickets.isEmpty()) {
-            //TODO polling?
             throw new IllegalStateException("Reserved tickets cannot be found for " + order.reservationId);
         }
         ReservedTicket firstTicket = reservedTickets.get(0);
