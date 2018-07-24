@@ -33,10 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OrderService extends EventBasedService {
 
-    private static final String URL = "/orders/%s/payment?status=%s";
-    private static final String SUCCESS = "success";
+    private static final String REDIRECT_PATH = "/orders/%s/payment?status=%s";
+    private static final String APPROVED = "approved";
     private static final String CANCELLED = "cancelled";
 
+    private final OrderConfiguration.OrderProperties orderProperties;
     private final OrderRepository orderRepository;
     private final ReservationRepository reservationRepository;
     private final ProgramRepository programRepository;
@@ -47,7 +48,8 @@ public class OrderService extends EventBasedService {
 
     public OrderService(OrderRepository orderRepository, ReservationRepository reservationRepository,
             ProgramRepository programRepository, SectorRepository sectorRepository,
-            PaymentManager paymentManager, Supplier<String> orderIdGenerator, Supplier<LocalDateTime> currentLocalDateTime, EventBus eventBus) {
+            PaymentManager paymentManager, Supplier<String> orderIdGenerator, Supplier<LocalDateTime> currentLocalDateTime,
+            EventBus eventBus, OrderConfiguration.OrderProperties orderProperties) {
         super(eventBus);
         this.orderRepository = orderRepository;
         this.reservationRepository = reservationRepository;
@@ -56,6 +58,7 @@ public class OrderService extends EventBasedService {
         this.paymentManager = paymentManager;
         this.orderIdGenerator = orderIdGenerator;
         this.currentLocalDateTime = currentLocalDateTime;
+        this.orderProperties = orderProperties;
     }
 
     public String saveOrder(PostOrderRequest orderRequest) {
@@ -70,8 +73,8 @@ public class OrderService extends EventBasedService {
             throw new InvalidPaymentResponseException("Payment initiation failed to orderId: " + orderId);
         }
 
-        String paymentID = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
-        orderRepository.updatePaymentId(orderId, paymentID);
+        String paymentId = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
+        orderRepository.updatePaymentId(orderId, paymentId);
 
         String approveUrl = paymentResponse.approveUrl().orElseThrow(() -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
         return ApproveUrlResponse.builder()
@@ -139,8 +142,8 @@ public class OrderService extends EventBasedService {
                 .programDescription(firstTicket.programDescription)
                 .currency(Currency.getInstance(firstTicket.currency))
                 .tickets(tickets)
-                .returnUrl(String.format(URL, orderId, SUCCESS))
-                .cancelUrl(String.format(URL, orderId, CANCELLED))
+                .returnUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, APPROVED))
+                .cancelUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, CANCELLED))
                 .build();
     }
 

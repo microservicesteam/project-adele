@@ -74,6 +74,9 @@ public class OrderServiceTest {
     @Mock
     private SectorRepository sectorRepository;
 
+    @Mock
+    private OrderConfiguration.OrderProperties orderProperties;
+
     private OrderService orderService;
 
     private EventBus eventBus;
@@ -84,7 +87,7 @@ public class OrderServiceTest {
         eventBus = new EventBus();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
-        orderService = new OrderService(orderRepository, reservationRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus);
+        orderService = new OrderService(orderRepository, reservationRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus, orderProperties);
         orderService.init();
 
         when(idGenerator.get()).thenReturn(ORDER_ID);
@@ -104,7 +107,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void initiatePaymentShouldReturnApproveUrlWhenPaymentResponseIsCorrect() throws Exception {
+    public void initiatePaymentShouldReturnApproveUrlWhenPaymentResponseIsCorrect() {
         PaymentResponse paymentResponse = PaymentResponse.builder()
                 .status(PaymentStatus.CREATED)
                 .paymentId(PAYMENT_ID)
@@ -127,7 +130,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenPaymentStatusIsFailed() throws Exception {
+    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenPaymentStatusIsFailed() {
         PaymentResponse paymentResponse = PaymentResponse.builder()
                 .status(PaymentStatus.FAILED)
                 .paymentId(PAYMENT_ID)
@@ -142,12 +145,13 @@ public class OrderServiceTest {
         Throwable actual = catchThrowable( () -> orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
-        assertThat(actual).isInstanceOf(InvalidPaymentResponseException.class);
-        assertThat(actual).hasMessage(PAYMENT_INITIATION_FAILED_TO_ORDER_ID);
+        assertThat(actual)
+                .isInstanceOf(InvalidPaymentResponseException.class)
+                .hasMessage(PAYMENT_INITIATION_FAILED_TO_ORDER_ID);
     }
 
     @Test
-    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenPaymentIdIsEmpty() throws Exception {
+    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenPaymentIdIsEmpty() {
         PaymentResponse paymentResponse = PaymentResponse.builder()
                 .status(PaymentStatus.CREATED)
                 .paymentId(Optional.empty())
@@ -162,12 +166,13 @@ public class OrderServiceTest {
         Throwable actual = catchThrowable( () -> orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
-        assertThat(actual).isInstanceOf(InvalidPaymentResponseException.class);
-        assertThat(actual).hasMessage(PAYMENT_ID_MISSING_TO_ORDER_ID);
+        assertThat(actual)
+                .isInstanceOf(InvalidPaymentResponseException.class)
+                .hasMessage(PAYMENT_ID_MISSING_TO_ORDER_ID);
     }
 
     @Test
-    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenApproveUrlIsEmpty() throws Exception {
+    public void initiatePaymentShouldThrowInvalidPaymentResponseExceptionWhenApproveUrlIsEmpty() {
         PaymentResponse paymentResponse = PaymentResponse.builder()
                 .status(PaymentStatus.CREATED)
                 .paymentId(PAYMENT_ID)
@@ -181,8 +186,9 @@ public class OrderServiceTest {
         Throwable actual = catchThrowable( () ->orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
-        assertThat(actual).isInstanceOf(InvalidPaymentResponseException.class);
-        assertThat(actual).hasMessage(APPROVE_URL_IS_MISSING_TO_ORDER_ID);
+        assertThat(actual)
+                .isInstanceOf(InvalidPaymentResponseException.class)
+                .hasMessage(APPROVE_URL_IS_MISSING_TO_ORDER_ID);
     }
 
     @Test
