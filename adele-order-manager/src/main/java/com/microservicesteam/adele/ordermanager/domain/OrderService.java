@@ -7,19 +7,24 @@ import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 
+import com.google.common.eventbus.EventBus;
+import com.microservicesteam.adele.messaging.EventBasedService;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
+import com.microservicesteam.adele.payment.ExecutePaymentRequest;
+import com.microservicesteam.adele.payment.ExecutePaymentResponse;
+import com.microservicesteam.adele.payment.ExecutionStatus;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentRequest;
 import com.microservicesteam.adele.payment.PaymentResponse;
 import com.microservicesteam.adele.payment.PaymentStatus;
 import com.microservicesteam.adele.payment.Ticket;
-import lombok.RequiredArgsConstructor;
+import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class OrderService {
+public class OrderService extends EventBasedService {
 
     private static final String REDIRECT_PATH = "/orders/%s/payment?status=%s";
     private static final String APPROVED = "approved";
@@ -30,6 +35,17 @@ public class OrderService {
     private final PaymentManager paymentManager;
     private final Supplier<String> orderIdGenerator;
     private final Supplier<LocalDateTime> currentLocalDateTime;
+
+    public OrderService(EventBus eventBus, OrderConfiguration.OrderProperties orderProperties,
+            OrderRepository orderRepository, PaymentManager paymentManager, Supplier<String> orderIdGenerator,
+            Supplier<LocalDateTime> currentLocalDateTime) {
+        super(eventBus);
+        this.orderProperties = orderProperties;
+        this.orderRepository = orderRepository;
+        this.paymentManager = paymentManager;
+        this.orderIdGenerator = orderIdGenerator;
+        this.currentLocalDateTime = currentLocalDateTime;
+    }
 
     public String saveOrder(PostOrderRequest orderRequest) {
         Order order = orderRepository.save(fromPostOrderRequest(orderRequest));
@@ -50,6 +66,21 @@ public class OrderService {
         return ApproveUrlResponse.builder()
                 .approveUrl(approveUrl)
                 .build();
+    }
+
+    public void handlePayment(String orderId, String paymentId, String payerId, String status) {
+        if (status.equals("success")) {
+            int updatedRows = orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_APPROVED, orderId, paymentId, OrderStatus.PAYMENT_CREATED);
+            if(updatedRows == 1 && executePayment(paymentId, payerId)) {
+                orderRepository.updateStatusByOrderId(orderId, OrderStatus.PAID);
+                // TODO fill the command with reservation data, when it will be available
+                eventBus.post(CloseReservation.builder().build());
+            }
+        } else {
+            orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_APPROVED, orderId, paymentId, OrderStatus.PAYMENT_CANCELLED);
+            // TODO fill the command with reservation data, when it will be available
+            eventBus.post(CancelReservation.builder().build());
+        }
     }
 
     private Order fromPostOrderRequest(PostOrderRequest postOrderRequest) {
@@ -83,6 +114,14 @@ public class OrderService {
                 .returnUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, APPROVED))
                 .cancelUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, CANCELLED))
                 .build();
+    }
+
+    private boolean executePayment(String paymentId, String payerId) {
+        ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(ExecutePaymentRequest.builder()
+                .paymentId(paymentId)
+                .payerId(payerId)
+                .build());
+        return executePaymentResponse.status().equals(ExecutionStatus.APPROVED);
     }
 
 }

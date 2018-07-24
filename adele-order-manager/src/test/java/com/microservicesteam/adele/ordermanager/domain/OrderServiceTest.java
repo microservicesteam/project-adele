@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.google.common.eventbus.EventBus;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentResponse;
@@ -51,11 +52,14 @@ public class OrderServiceTest {
     @Mock
     private OrderConfiguration.OrderProperties orderProperties;
 
+    @Mock
+    private EventBus eventBus;
+
     private OrderService orderService;
 
     @Before
     public void setUp() {
-        orderService = new OrderService(orderProperties, orderRepository, paymentManager, idGenerator, currentLocalDateTime);
+        orderService = new OrderService(eventBus, orderProperties, orderRepository, paymentManager, idGenerator, currentLocalDateTime);
 
         when(idGenerator.get()).thenReturn(ORDER_ID);
         when(currentLocalDateTime.get()).thenReturn(NOW);
