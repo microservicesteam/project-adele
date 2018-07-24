@@ -73,16 +73,14 @@ Frontend --> Paypal: GET /{approvalUrl}
 note left: {approvalUrl} is the actual PayPal URL
 activate Paypal
 Paypal --> Paypal: fill and submit form
-Paypal --> OrderManager: GET /orders/{orderId}/payment?status=<state>&PayerID=abcd1234
+Paypal --> OrderManager: GET /orders/{orderId}/payment?status=<state>&payerID=abcd1234&paymentId=PAY-0YY78928127449742LJ477NQ
 deactivate Paypal
 
 activate OrderManager
 note left: this is the {return_url} sent to Paypal
-OrderManager --> DB: fetchOrder(orderId)
-OrderManager --> OrderManager: validate paymentId and state
-note left: Order expires after 10 minutes, however scheduler checks 11 minute interval
 alt order state = PAYMENT_CREATED & status = success
 OrderManager --> DB: updateOrder(PAYMENT_APPROVED, orderId, payerId)
+note right: Order expires after 10 minutes, however scheduler checks 11 minute interval
 OrderManager --> PaymentManager: ExecutePaymentRequest
 note right: ExecutePaymentRequest: paymentId, payerId
 
@@ -97,10 +95,11 @@ ExecutePaymentResponse {
 }
 end note
 OrderManager --> DB: updateOrderStatus(PAID, orderId)
-OrderManager --> TicketMaster: ticketSoldCommand
+OrderManager --> TicketMaster: closeReservationCommand
 
 else order state = PAYMENT_CREATED & status == cancelled
 OrderManager --> DB: updateOrder(PAYMENT_CANCELLED, orderId)
+OrderManager --> TicketMaster: cancelReservationCommand
 else order state = EXPIRED
 OrderManager --> PaymentManager: CancelPaymentRequest?
 PaymentManager --> PaymentManager: createPaymentCancellation?
