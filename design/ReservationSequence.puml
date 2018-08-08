@@ -65,8 +65,8 @@ activate ReservationService
     end
 deactivate ReservationService
 
-activate TicketMasterService
     EventBus --> TicketMasterService: handle CreateReservation
+activate TicketMasterService
 
     TicketMasterService --> TicketMasterRepository: check if all tickets are FREE
     TicketMasterService <-- TicketMasterRepository
