@@ -87,7 +87,7 @@ public class OrderServiceTest {
         eventBus = new EventBus();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
-        orderService = new OrderService(orderRepository, reservationRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus, orderProperties);
+        orderService = new OrderService(orderRepository, reservationRepository, ticketIdRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus, orderProperties);
         orderService.init();
 
         when(idGenerator.get()).thenReturn(ORDER_ID);

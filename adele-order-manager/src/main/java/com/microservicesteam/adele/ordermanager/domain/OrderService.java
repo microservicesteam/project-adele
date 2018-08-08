@@ -96,12 +96,10 @@ public class OrderService extends EventBasedService {
                 .venueAddress(program.venue.address)
                 .price(sector.price.amount)
                 .currency(sector.price.currency)
-                .sectorId((long) firstTicket.sectorId())
-                .sector(Math.toIntExact(sector.id)); //TODO fix this later to get real sector number
+                .sectorId(firstTicket.sectorId());
         reservation.tickets().forEach(ticketId -> {
             ReservedTicket reservedTicket = ticketBuilder
-                    .seatId((long) ticketId.seatId())
-                    .seat(ticketId.seatId()) //TODO fix this later to get the real seat number
+                    .seat(ticketId.seatId())
                     .build();
             reservationRepository.save(reservedTicket);
         });
@@ -126,6 +124,7 @@ public class OrderService extends EventBasedService {
                 reservationRepository.findReservationsByReservationId(order.reservationId);
 
         if (reservedTickets.isEmpty()) {
+            // Happens if ReservationAccepted event was not processed yet, but user already submitted create order page
             throw new IllegalStateException("Reserved tickets cannot be found for " + order.reservationId);
         }
         ReservedTicket firstTicket = reservedTickets.get(0);

@@ -37,11 +37,7 @@ public class ReservedTicket {
 
     String venueAddress;
 
-    Long sectorId;
-
     int sector;
-
-    Long seatId;
 
     int seat;
 
