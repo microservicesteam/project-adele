@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.Currency;
 import java.util.UUID;
 
 import lombok.AccessLevel;
@@ -43,5 +44,5 @@ public class ReservedTicket {
 
     BigDecimal price;
 
-    String currency;
+    Currency currency;
 }

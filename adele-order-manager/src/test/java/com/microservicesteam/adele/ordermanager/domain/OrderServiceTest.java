@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -220,7 +221,7 @@ public class OrderServiceTest {
                 .capacity(50)
                 .price(Price.builder()
                         .amount(new BigDecimal("5000"))
-                        .currency("HUF")
+                        .currency(Currency.getInstance("HUF"))
                         .build())
                 .build();
         when(sectorRepository.findOne(2L)).thenReturn(sector);
@@ -268,7 +269,7 @@ public class OrderServiceTest {
                 .programDescription("Awesome program description")
                 .reservationId(UUID.fromString(RESERVATION_ID))
                 .venueAddress("Venue address")
-                .currency("HUF")
+                .currency(Currency.getInstance("HUF"))
                 .price(new BigDecimal("10"))
                 .sector(2)
                 .seat(3)

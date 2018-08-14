@@ -3,7 +3,6 @@ package com.microservicesteam.adele.ordermanager.domain;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDateTime;
-import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -125,7 +124,6 @@ public class OrderService extends EventBasedService {
             // Happens if ReservationAccepted event was not processed yet, but user already submitted create order page
             throw new IllegalStateException("Reserved tickets cannot be found for " + order.reservationId);
         }
-        ReservedTicket firstTicket = reservedTickets.get(0);
 
         List<Ticket> tickets = reservedTickets.stream()
                 .map(rt -> Ticket.builder()
@@ -134,10 +132,11 @@ public class OrderService extends EventBasedService {
                         .build())
                 .collect(toList());
 
+        ReservedTicket firstTicket = reservedTickets.get(0);
         return PaymentRequest.builder()
                 .programName(firstTicket.programName)
                 .programDescription(firstTicket.programDescription)
-                .currency(Currency.getInstance(firstTicket.currency))
+                .currency(firstTicket.currency)
                 .tickets(tickets)
                 .returnUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, APPROVED))
                 .cancelUrl(String.format(orderProperties.getDomainUrl() + REDIRECT_PATH, orderId, CANCELLED))
