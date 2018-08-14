@@ -2,6 +2,7 @@ package com.microservicesteam.adele.programmanager.domain;
 
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
+import java.util.Currency;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,6 @@ public class Price {
 
     BigDecimal amount;
 
-    String currency;
+    Currency currency;
 
 }
