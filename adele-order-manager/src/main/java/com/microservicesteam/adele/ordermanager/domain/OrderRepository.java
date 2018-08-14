@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface OrderRepository extends JpaRepository<Order, String> {
 
     @Query("update Order o set o.paymentId = :paymentId where orderId = :orderId")
-    void updatePaymentId(@Param("orderId")String orderId, @Param("paymentId") String paymentID);
+    void updatePaymentId(@Param("orderId") String orderId, @Param("paymentId") String paymentId);
 
 }

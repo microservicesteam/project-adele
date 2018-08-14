@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -100,7 +101,7 @@ public class ProgramInitializer implements CommandLineRunner {
         return Sector.builder()
                 .capacity(SECTOR_CAPACITY)
                 .price(Price.builder()
-                        .currency("HUF")
+                        .currency(Currency.getInstance("HUF"))
                         .amount(new BigDecimal("1500"))
                         .build())
                 .seats(seats)
