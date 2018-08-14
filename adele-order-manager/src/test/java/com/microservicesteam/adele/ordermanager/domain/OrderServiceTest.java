@@ -37,7 +37,6 @@ import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.TicketId;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class OrderServiceTest {
 
@@ -87,7 +86,8 @@ public class OrderServiceTest {
         eventBus = new EventBus();
         deadEventListener = new DeadEventListener(eventBus);
         deadEventListener.init();
-        orderService = new OrderService(orderRepository, reservationRepository, ticketIdRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus, orderProperties);
+        orderService = new OrderService(orderRepository, reservationRepository, programRepository, sectorRepository, paymentManager, idGenerator, currentLocalDateTime, eventBus,
+                orderProperties);
         orderService.init();
 
         when(idGenerator.get()).thenReturn(ORDER_ID);
@@ -142,7 +142,7 @@ public class OrderServiceTest {
         when(reservationRepository.findReservationsByReservationId(order.reservationId))
                 .thenReturn(ImmutableList.of(givenReservedTicket()));
 
-        Throwable actual = catchThrowable( () -> orderService.initiatePayment(ORDER_ID));
+        Throwable actual = catchThrowable(() -> orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
         assertThat(actual)
@@ -163,7 +163,7 @@ public class OrderServiceTest {
         when(reservationRepository.findReservationsByReservationId(order.reservationId))
                 .thenReturn(ImmutableList.of(givenReservedTicket()));
 
-        Throwable actual = catchThrowable( () -> orderService.initiatePayment(ORDER_ID));
+        Throwable actual = catchThrowable(() -> orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
         assertThat(actual)
@@ -183,7 +183,7 @@ public class OrderServiceTest {
         when(orderRepository.findOne(ORDER_ID)).thenReturn(order);
         when(reservationRepository.findReservationsByReservationId(order.reservationId))
                 .thenReturn(ImmutableList.of(givenReservedTicket()));
-        Throwable actual = catchThrowable( () ->orderService.initiatePayment(ORDER_ID));
+        Throwable actual = catchThrowable(() -> orderService.initiatePayment(ORDER_ID));
 
         verify(paymentManager).initiatePayment(any());
         assertThat(actual)
@@ -235,10 +235,8 @@ public class OrderServiceTest {
         assertThat(capturedReservedTicket.programDescription).isEqualTo("Program description");
         assertThat(capturedReservedTicket.venueAddress).isEqualTo("Address");
         assertThat(capturedReservedTicket.price).isEqualTo(new BigDecimal("5000"));
-        assertThat(capturedReservedTicket.sectorId).isEqualTo(2);
         assertThat(capturedReservedTicket.sector).isEqualTo(2);
         assertThat(capturedReservedTicket.seat).isEqualTo(3);
-        assertThat(capturedReservedTicket.seatId).isEqualTo(3);
     }
 
     private PostOrderRequest givenPostOrderRequest() {

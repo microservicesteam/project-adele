@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.microservicesteam.adele.messaging.EventBasedService;
-import com.microservicesteam.adele.ordermanager.domain.ReservedTicket.ReservedTicketBuilder;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
 import com.microservicesteam.adele.payment.PaymentManager;
 import com.microservicesteam.adele.payment.PaymentRequest;
@@ -88,17 +87,16 @@ public class OrderService extends EventBasedService {
         TicketId firstTicket = reservation.tickets().get(0);
         Program program = programRepository.findOne(firstTicket.programId());
         Sector sector = sectorRepository.findOne(Long.valueOf(firstTicket.sectorId()));
-        ReservedTicketBuilder ticketBuilder = ReservedTicket.builder()
-                .reservationId(UUID.fromString(reservation.reservationId()))
-                .programId(firstTicket.programId())
-                .programName(program.name)
-                .programDescription(program.description)
-                .venueAddress(program.venue.address)
-                .price(sector.price.amount)
-                .currency(sector.price.currency)
-                .sectorId(firstTicket.sectorId());
         reservation.tickets().forEach(ticketId -> {
-            ReservedTicket reservedTicket = ticketBuilder
+            ReservedTicket reservedTicket = ReservedTicket.builder()
+                    .reservationId(UUID.fromString(reservation.reservationId()))
+                    .programId(firstTicket.programId())
+                    .programName(program.name)
+                    .programDescription(program.description)
+                    .venueAddress(program.venue.address)
+                    .price(sector.price.amount)
+                    .currency(sector.price.currency)
+                    .sector(firstTicket.sectorId())
                     .seat(ticketId.seatId())
                     .build();
             reservationRepository.save(reservedTicket);
