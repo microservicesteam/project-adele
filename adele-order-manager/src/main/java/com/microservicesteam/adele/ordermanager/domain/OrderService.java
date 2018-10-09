@@ -109,16 +109,21 @@ public class OrderService extends EventBasedService {
 
     public void handlePayment(String orderId, String paymentId, String payerId, String status) {
         if (status.equals("success")) {
-            int updatedRows = orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_APPROVED, orderId, paymentId, OrderStatus.PAYMENT_CREATED);
-            if(updatedRows == 1 && executePayment(paymentId, payerId)) {
-                orderRepository.updateStatusByOrderId(orderId, OrderStatus.PAID);
-                // TODO fill the command with reservation data, when it will be available
-                eventBus.post(CloseReservation.builder().build());
+            int updatedRows = orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_APPROVED);
+            if(updatedRows == 1) {
+                ExecutePaymentResponse executePaymentResponse = executePayment(paymentId, payerId);
+                if(ExecutionStatus.APPROVED.equals(executePaymentResponse.status())) {
+                    orderRepository.updateStatusByOrderId(orderId, OrderStatus.PAID);
+                    eventBus.post(CloseReservation.builder()
+                            .reservation(getReservation(orderId))
+                            .build());
+                }
             }
         } else {
-            orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_APPROVED, orderId, paymentId, OrderStatus.PAYMENT_CANCELLED);
-            // TODO fill the command with reservation data, when it will be available
-            eventBus.post(CancelReservation.builder().build());
+            orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_CANCELLED);
+            eventBus.post(CancelReservation.builder()
+                    .reservation(getReservation(orderId))
+                    .build());
         }
     }
 
@@ -163,12 +168,26 @@ public class OrderService extends EventBasedService {
                 .build();
     }
 
-    private boolean executePayment(String paymentId, String payerId) {
-        ExecutePaymentResponse executePaymentResponse = paymentManager.executePayment(ExecutePaymentRequest.builder()
+    private ExecutePaymentResponse executePayment(String paymentId, String payerId) {
+        return paymentManager.executePayment(ExecutePaymentRequest.builder()
                 .paymentId(paymentId)
                 .payerId(payerId)
                 .build());
-        return executePaymentResponse.status().equals(ExecutionStatus.APPROVED);
+    }
+
+    private Reservation getReservation(String orderId) {
+        Order order = orderRepository.findOne(orderId);
+        List<ReservedTicket> reservedTickets = reservationRepository.findReservationsByReservationId(order.reservationId);
+        return Reservation.builder()
+                .reservationId(order.reservationId)
+                .addAllTickets(reservedTickets.stream()
+                        .map(reservedTicket -> TicketId.builder()
+                                .programId(reservedTicket.programId)
+                                .sectorId(reservedTicket.sector)
+                                .seatId(reservedTicket.seat)
+                                .build())
+                        .collect(toList()))
+                .build();
     }
 
 }
