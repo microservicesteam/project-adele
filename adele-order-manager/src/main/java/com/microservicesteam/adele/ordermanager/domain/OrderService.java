@@ -21,12 +21,12 @@ import com.microservicesteam.adele.payment.PaymentRequest;
 import com.microservicesteam.adele.payment.PaymentResponse;
 import com.microservicesteam.adele.payment.PaymentStatus;
 import com.microservicesteam.adele.payment.Ticket;
-import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
-import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import com.microservicesteam.adele.programmanager.boundary.web.ProgramRepository;
 import com.microservicesteam.adele.programmanager.boundary.web.SectorRepository;
 import com.microservicesteam.adele.programmanager.domain.Program;
 import com.microservicesteam.adele.programmanager.domain.Sector;
+import com.microservicesteam.adele.ticketmaster.commands.CancelReservation;
+import com.microservicesteam.adele.ticketmaster.commands.CloseReservation;
 import com.microservicesteam.adele.ticketmaster.events.ReservationAccepted;
 import com.microservicesteam.adele.ticketmaster.model.Reservation;
 import com.microservicesteam.adele.ticketmaster.model.TicketId;
@@ -110,9 +110,9 @@ public class OrderService extends EventBasedService {
     public void handlePayment(String orderId, String paymentId, String payerId, String status) {
         if (status.equals("success")) {
             int updatedRows = orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_APPROVED);
-            if(updatedRows == 1) {
+            if (updatedRows == 1) {
                 ExecutePaymentResponse executePaymentResponse = executePayment(paymentId, payerId);
-                if(ExecutionStatus.APPROVED.equals(executePaymentResponse.status())) {
+                if (ExecutionStatus.APPROVED.equals(executePaymentResponse.status())) {
                     orderRepository.updateStatusByOrderId(orderId, OrderStatus.PAID);
                     eventBus.post(CloseReservation.builder()
                             .reservation(getReservation(orderId))

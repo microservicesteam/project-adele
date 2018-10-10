@@ -39,6 +39,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.microservicesteam</groupId>
+            <artifactId>adele-payment-manager</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>

@@ -1,0 +1,102 @@
+@startuml
+actor User
+participant Frontend
+box "Clerk" #LightBlue
+participant ReservationService
+participant TicketRepository
+end box
+queue EventBus
+box "TicketMaster" #LightBlue
+participant TicketMasterService
+participant TicketMasterRepository
+end box
+participant OrderManager
+database DB
+
+User --> Frontend: reserve button
+Frontend -> ReservationService: POST /reservations
+
+note left
+    POST /reservations
+    {
+        tickets: [
+            {
+                programId: 1,
+                sectorId: 1,
+                seatId: 5
+            },
+            {
+                programId: 1,
+                sectorId: 1,
+                seatId: 6
+            }
+        ]
+    }
+end note
+
+activate ReservationService
+    ReservationService --> TicketRepository: validate tickets
+    ReservationService <-- TicketRepository
+    alt invalid
+        ReservationService --> Frontend: ReservationRejected: code, reason
+    else valid
+        ReservationService --> ReservationService: createReservationCommand
+        note left
+            CreateReservation {
+                reservation: {
+                    reservationId: "abc123"
+                    tickets: [
+                        {
+                            programId: 1,
+                            sectorId: 1,
+                            seatId: 5
+                        },
+                        {
+                            programId: 1,
+                            sectorId: 1,
+                            seatId: 6
+                        }
+                    ]
+                }
+            }
+        end note
+        ReservationService --> EventBus: publish CreateReservation
+        ReservationService --> Frontend: ReservationAccepted: reservationId
+    end
+deactivate ReservationService
+
+    EventBus --> TicketMasterService: handle CreateReservation
+activate TicketMasterService
+
+    TicketMasterService --> TicketMasterRepository: check if all tickets are FREE
+    TicketMasterService <-- TicketMasterRepository
+
+    alt ticket status = FREE
+        TicketMasterService --> TicketMasterRepository: set status of tickets to RESERVED
+        TicketMasterService <-- TicketMasterRepository:
+        EventBus <-- TicketMasterService: publish ReservationAccepted
+    else ticket status != FREE
+        EventBus <-- TicketMasterService: publish ReservationRejected
+    end
+deactivate TicketMasterService
+
+ReservationService <-- EventBus: handle ReservationEvent
+activate ReservationService
+    alt ReservationAccepted
+        ReservationService --> TicketRepository: set status of tickets to RESERVED
+        ReservationService <-- TicketRepository
+    else ReservationRejected
+        ReservationService --> ReservationService: Noop
+    end
+    Frontend <-- ReservationService: publish ReservationEvent on websocket
+deactivate ReservationService
+
+    alt ReservationAccepted
+        Frontend --> User: redirect user to Order page
+    else ReservationRejected
+        Frontend --> User: show error msg
+    end
+    EventBus --> OrderManager: handle ReservationAccepted
+    OrderManager --> DB: save ReservedTicket object for each ticket
+
+@enduml
