@@ -38,9 +38,9 @@ public class OrderController {
 
     @GetMapping("{orderId}/payment")
     public ResponseEntity handlePayment(@PathVariable("orderId") String orderId,
-            @RequestParam(name = "PaymentID") String paymentId,
+            @RequestParam(name = "paymentId") String paymentId,
             @RequestParam(name = "status") String status,
-            @RequestParam(name = "PayerID") String payerId) {
+            @RequestParam(name = "payerId") String payerId) {
         // TODO add proper location
         String location = "payment result page";
         orderService.handlePayment(orderId, paymentId, payerId, status);
