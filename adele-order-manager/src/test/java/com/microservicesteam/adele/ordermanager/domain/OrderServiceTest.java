@@ -230,14 +230,18 @@ public class OrderServiceTest {
         ArgumentCaptor<ReservedTicket> captor = ArgumentCaptor.forClass(ReservedTicket.class);
         verify(reservationRepository).save(captor.capture());
         ReservedTicket capturedReservedTicket = captor.getValue();
-        assertThat(capturedReservedTicket.reservationId.toString()).isEqualTo(RESERVATION_ID);
-        assertThat(capturedReservedTicket.programId).isEqualTo(1);
-        assertThat(capturedReservedTicket.programName).isEqualTo("Program name");
-        assertThat(capturedReservedTicket.programDescription).isEqualTo("Program description");
-        assertThat(capturedReservedTicket.venueAddress).isEqualTo("Address");
-        assertThat(capturedReservedTicket.price).isEqualTo(new BigDecimal("5000"));
-        assertThat(capturedReservedTicket.sector).isEqualTo(2);
-        assertThat(capturedReservedTicket.seat).isEqualTo(3);
+        ReservedTicket expectedTicket = new ReservedTicket.ReservedTicketBuilder()
+                .reservationId(UUID.fromString(RESERVATION_ID))
+                .programId(1L)
+                .programName("Program name")
+                .programDescription("Program description")
+                .venueAddress("Address")
+                .price(new BigDecimal("5000"))
+                .currency(Currency.getInstance("HUF"))
+                .sector(2)
+                .seat(3)
+                .build();
+        assertThat(capturedReservedTicket).isEqualTo(expectedTicket);
     }
 
     private PostOrderRequest givenPostOrderRequest() {
