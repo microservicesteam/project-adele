@@ -22,5 +22,6 @@ public class OrderConfigurationTest {
     @Test
     public void properties() {
         assertThat(orderProperties.getDomainUrl()).isEqualTo(DOMAIN_URL);
+        assertThat(orderProperties.getLifeTime()).isEqualTo(12);
     }
 }
