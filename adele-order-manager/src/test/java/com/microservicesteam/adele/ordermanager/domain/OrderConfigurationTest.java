@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class OrderConfigurationTest {
 
     private static final String DOMAIN_URL = "adele.hu";
+    private static final int LIFETIME = 12;
+    private static final String SUCCESS_PAGE = "successPage";
 
     @Autowired
     private OrderConfiguration.OrderProperties orderProperties;
@@ -22,6 +24,7 @@ public class OrderConfigurationTest {
     @Test
     public void properties() {
         assertThat(orderProperties.getDomainUrl()).isEqualTo(DOMAIN_URL);
-        assertThat(orderProperties.getLifeTime()).isEqualTo(12);
+        assertThat(orderProperties.getLifeTime()).isEqualTo(LIFETIME);
+        assertThat(orderProperties.getSuccessPage()).isEqualTo(SUCCESS_PAGE);
     }
 }

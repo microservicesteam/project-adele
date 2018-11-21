@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.microservicesteam.adele.ordermanager.domain.ApproveUrlResponse;
+import com.microservicesteam.adele.ordermanager.domain.OrderConfiguration;
 import com.microservicesteam.adele.ordermanager.domain.OrderService;
 import com.microservicesteam.adele.ordermanager.domain.PostOrderRequest;
 import com.microservicesteam.adele.ordermanager.domain.exception.InvalidPaymentResponseException;
@@ -25,6 +26,8 @@ import lombok.AllArgsConstructor;
 public class OrderController {
 
     private final OrderService orderService;
+
+    private final OrderConfiguration.OrderProperties orderProperties;
 
     @PostMapping
     public String postOrder(@RequestBody PostOrderRequest postOrderRequest) {
@@ -41,12 +44,10 @@ public class OrderController {
             @RequestParam(name = "paymentId") String paymentId,
             @RequestParam(name = "status") String status,
             @RequestParam(name = "payerId") String payerId) {
-        // TODO add proper location
-        String location = "payment result page";
         orderService.handlePayment(orderId, paymentId, payerId, status);
         return ResponseEntity
                 .status(HttpStatus.FOUND)
-                .header(HttpHeaders.LOCATION, location)
+                .header(HttpHeaders.LOCATION, orderProperties.getSuccessPage())
                 .build();
     }
 
