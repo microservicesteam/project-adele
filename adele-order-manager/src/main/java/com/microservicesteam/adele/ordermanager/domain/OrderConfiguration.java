@@ -8,12 +8,13 @@ import lombok.Data;
 
 @Configuration
 @EnableConfigurationProperties(OrderConfiguration.OrderProperties.class)
-public class OrderConfiguration {
+class OrderConfiguration {
 
     @Data
     @ConfigurationProperties("order")
     static class OrderProperties {
         private String domainUrl;
+        private long lifeTime;
     }
 
 }
