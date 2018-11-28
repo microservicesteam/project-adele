@@ -244,6 +244,11 @@ public class OrderServiceTest {
         assertThat(capturedReservedTicket).isEqualTo(expectedTicket);
     }
 
+    @Test
+    public void handlePayment() {
+        // TODO implement tests to handle payment method
+    }
+
     private PostOrderRequest givenPostOrderRequest() {
         return PostOrderRequest.builder()
                 .name(NAME)
