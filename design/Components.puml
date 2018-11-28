@@ -24,6 +24,7 @@ node "Program Management" {
     database "Progs" {
     }
     [Program Manager] -> Progs
+    [Order Manager] -u-> [Program Manager]
 }
 
 PRO - [Program Manager]

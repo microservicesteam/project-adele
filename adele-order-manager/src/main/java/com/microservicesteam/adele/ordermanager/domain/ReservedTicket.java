@@ -1,45 +1,48 @@
 package com.microservicesteam.adele.ordermanager.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 import lombok.experimental.FieldDefaults;
 
-@Value
+@Data
 @Getter(AccessLevel.NONE)
 @FieldDefaults(level = AccessLevel.PUBLIC)
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Entity
-@Table(name = "orders")
-public class Order {
+public class ReservedTicket {
 
     @Id
-    String orderId;
+    @GeneratedValue
+    Long id;
 
-    String reservationId;
+    UUID reservationId;
 
-    OrderStatus status;
+    Long programId;
 
-    LocalDateTime creationTimestamp;
+    String programName;
 
-    String name;
+    String programDescription;
 
-    String email;
+    String venueAddress;
 
-    String paymentId;
+    int sector;
 
-    String payerId;
+    int seat;
 
-    LocalDateTime lastUpdated;
+    BigDecimal price;
 
+    Currency currency;
 }
