@@ -33,7 +33,6 @@ public class OrderRepositoryTest {
     @Test
     public void updatePaymentIdShouldUpdatePaymentId() {
         entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, null));
-        entityManager.flush();
 
         orderRepository.updatePaymentIdByOrderId(ORDER_ID_1, PAYMENT_ID_1);
 
@@ -46,7 +45,6 @@ public class OrderRepositoryTest {
     @Test
     public void updateStatusByOrderIdAndStatus() {
         entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, PAYMENT_ID_1));
-        entityManager.flush();
 
         orderRepository.updateStatusByOrderId(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED);
 
