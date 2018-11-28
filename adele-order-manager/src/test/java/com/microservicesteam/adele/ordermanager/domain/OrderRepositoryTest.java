@@ -17,7 +17,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class OrderRepositoryTest {
 
     public static final String ORDER_ID_1 = "orderId1";
+    private static final String ORDER_ID_2 = "paymentId2";
     public static final String PAYMENT_ID_1 = "paymentId1";
+    public static final String PAYMENT_ID_2 = "paymentId2";
     public static final String RESERVATION_ID = "reservationId";
     public static final LocalDateTime NOW = LocalDateTime.now();
     public static final String PAYER_ID = "payerId";
@@ -54,16 +56,57 @@ public class OrderRepositoryTest {
         assertThat(actual).isEqualTo(expected);
     }
 
-//    @Test
-//    public void updateStatusByOrderIdPaymentIdStatus() throws Exception {
-//        orderRepository.save(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, null));
-//
-//        //orderRepository.updateStatusByOrderIdPaymentIdStatus(ORDER_ID_1, PAYMENT_ID_1);
-//
-//        Order actual = orderRepository.findOne(ORDER_ID_1);
-//        Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, PAYMENT_ID_1);
-//        assertThat(actual).isEqualTo(expected);
-//    }
+    @Test
+    public void updateStatusByOrderIdAndPaymentIdAndStatus() {
+        entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1));
+
+        orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_APPROVED,
+                ORDER_ID_1, PAYMENT_ID_1, OrderStatus.PAID);
+
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_1);
+        Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAID, PAYMENT_ID_1);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void updateStatusByOrderIdAndPaymentIdAndStatusShouldNotUpdateWhenPaymentIdIsDifferent() {
+        entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_2));
+
+        orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_APPROVED,
+                ORDER_ID_1, PAYMENT_ID_1, OrderStatus.PAID);
+
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_1);
+        Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_2);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void updateStatusByOrderIdAndPaymentIdAndStatusShouldNotUpdateWhenStatusIsDifferent() {
+        entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1));
+
+        orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_CREATED,
+                ORDER_ID_1, PAYMENT_ID_1, OrderStatus.PAID);
+
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_1);
+        Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void updateStatusByOrderIdAndPaymentIdAndStatusShouldNotUpdateWhenIdIsDifferent() {
+        entityManager.persist(givenOrder(ORDER_ID_2, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1));
+
+        orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_APPROVED,
+                ORDER_ID_1, PAYMENT_ID_1, OrderStatus.PAID);
+
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_2);
+        Order expected = givenOrder(ORDER_ID_2, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1);
+        assertThat(actual).isEqualTo(expected);
+    }
 
     private Order givenOrder(String orderId, OrderStatus status, String paymentId) {
         return Order.builder()
