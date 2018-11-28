@@ -31,23 +31,27 @@ public class OrderRepositoryTest {
     private OrderRepository orderRepository;
 
     @Test
-    public void updatePaymentIdShouldUpdatePaymentId() throws Exception {
-        orderRepository.save(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, null));
+    public void updatePaymentIdShouldUpdatePaymentId() {
+        entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, null));
+        entityManager.flush();
 
-        orderRepository.updatePaymentId(ORDER_ID_1, PAYMENT_ID_1);
+        orderRepository.updatePaymentIdByOrderId(ORDER_ID_1, PAYMENT_ID_1);
 
-        Order actual = orderRepository.findOne(ORDER_ID_1);
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_1);
         Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, PAYMENT_ID_1);
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    public void updateStatusByOrderId() throws Exception {
-        orderRepository.save(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, PAYMENT_ID_1));
+    public void updateStatusByOrderIdAndStatus() {
+        entityManager.persist(givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_CREATED, PAYMENT_ID_1));
+        entityManager.flush();
 
         orderRepository.updateStatusByOrderId(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED);
 
-        Order actual = orderRepository.findOne(ORDER_ID_1);
+        entityManager.clear();
+        Order actual = entityManager.find(Order.class, ORDER_ID_1);
         Order expected = givenOrder(ORDER_ID_1, OrderStatus.PAYMENT_APPROVED, PAYMENT_ID_1);
         assertThat(actual).isEqualTo(expected);
     }
@@ -77,7 +81,7 @@ public class OrderRepositoryTest {
                 .build();
     }
 
-    @SpringBootApplication(scanBasePackages = "com.microservicesteam.adele")
+    @SpringBootApplication(scanBasePackages = "com.microservicesteam.adele.ordermanager.domain")
     static class TestConfiguration {
     }
 

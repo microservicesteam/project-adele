@@ -77,7 +77,7 @@ public class OrderService extends EventBasedService {
         }
 
         String paymentId = paymentResponse.paymentId().orElseThrow(() -> new InvalidPaymentResponseException("Payment id missing to orderId: " + orderId));
-        orderRepository.updatePaymentId(orderId, paymentId);
+        orderRepository.updatePaymentIdByOrderId(orderId, paymentId);
 
         String approveUrl = paymentResponse.approveUrl().orElseThrow(() -> new InvalidPaymentResponseException("Approve url is missing to orderId: " + orderId));
         return ApproveUrlResponse.builder()
@@ -109,7 +109,7 @@ public class OrderService extends EventBasedService {
 
     public void handlePayment(String orderId, String paymentId, String payerId, String status) {
         if (status.equals("success")) {
-            int updatedRows = orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_APPROVED);
+            int updatedRows = orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_APPROVED);
             if (updatedRows == 1) {
                 ExecutePaymentResponse executePaymentResponse = executePayment(paymentId, payerId);
                 if (ExecutionStatus.APPROVED.equals(executePaymentResponse.status())) {
@@ -120,7 +120,7 @@ public class OrderService extends EventBasedService {
                 }
             }
         } else {
-            orderRepository.updateStatusByOrderIdPaymentIdStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_CANCELLED);
+            orderRepository.updateStatusByOrderIdAndPaymentIdAndStatus(OrderStatus.PAYMENT_CREATED, orderId, paymentId, OrderStatus.PAYMENT_CANCELLED);
             eventBus.post(CancelReservation.builder()
                     .reservation(getReservation(orderId))
                     .build());

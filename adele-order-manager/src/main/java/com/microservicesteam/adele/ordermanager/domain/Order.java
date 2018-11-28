@@ -2,6 +2,7 @@ package com.microservicesteam.adele.ordermanager.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 import lombok.AccessLevel;
@@ -18,7 +19,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor(force = true, access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@Entity(name = "Orders")
+@Entity
+@Table(name = "orders")
 public class Order {
 
     @Id

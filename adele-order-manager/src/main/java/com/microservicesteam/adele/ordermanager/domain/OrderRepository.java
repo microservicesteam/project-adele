@@ -9,20 +9,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> {
 
-    @Modifying(clearAutomatically = true)
-    @Query("update Orders o set o.paymentId = :paymentId where orderId = :orderId")
-    int updatePaymentId(@Param("orderId") String orderId, @Param("paymentId") String paymentId);
+    @Modifying
+    @Query("update Order o set o.paymentId = :paymentId where o.orderId = :orderId")
+    int updatePaymentIdByOrderId(@Param("orderId") String orderId, @Param("paymentId") String paymentId);
 
-    @Modifying(clearAutomatically = true)
-    @Query("update Orders o set o.status = :newStatus where o.orderId = :orderId")
-    int updateStatusByOrderId (@Param("orderId")String orderId, @Param("newStatus") OrderStatus newStatus);
+    @Modifying
+    @Query("update Order o set o.status = :newStatus where o.orderId = :orderId")
+    int updateStatusByOrderId(@Param("orderId")String orderId, @Param("newStatus") OrderStatus newStatus);
 
-    @Modifying(clearAutomatically = true)
-    @Query("update Orders o set o.status = :newStatus "
+    @Modifying
+    @Query("update Order o set o.status = :newStatus "
             + "where o.orderId = :orderId "
             + "and o.paymentId = :paymentId "
             + "and o.status = :status")
-    int updateStatusByOrderIdPaymentIdStatus(
+    int updateStatusByOrderIdAndPaymentIdAndStatus(
             @Param("status") OrderStatus status,
             @Param("orderId") String orderId,
             @Param("paymentId") String paymentId,
